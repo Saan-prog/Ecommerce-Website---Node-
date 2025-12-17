@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShopStyle - Admin Products</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Source+Code+Pro:wght@700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Open Sans", sans-serif;
+        background-color: #f5f7fa;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      /* Admin Layout */
+      .admin-container {
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .admin-sidebar {
+        width: 250px;
+        background: #2c3e50;
+        color: white;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        transition: all 0.3s;
+        z-index: 1000;
+      }
+
+      .sidebar-brand {
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid #34495e;
+        background: #1a252f;
+      }
+
+      .sidebar-brand h2 {
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .sidebar-brand i {
+        margin-right: 10px;
+        color: #e74c3c;
+      }
+
+      .sidebar-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .sidebar-menu li a {
+        color: #bdc3c7;
+        padding: 15px 20px;
+        display: block;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-left: 3px solid transparent;
+      }
+
+      .sidebar-menu li a:hover,
+      .sidebar-menu li a.active {
+        background: #34495e;
+        color: white;
+        border-left: 3px solid #e74c3c;
+      }
+
+      .sidebar-menu li a i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+      }
+
+      /* Main Content */
+      .admin-main {
+        flex: 1;
+        margin-left: 250px;
+        transition: all 0.3s;
+      }
+
+      .admin-header {
+        background: white;
+        padding: 15px 30px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .admin-user {
+        display: flex;
+        align-items: center;
+      }
+
+      .admin-user span {
+        margin-right: 15px;
+        color: #2c3e50;
+      }
+
+      .logout-btn,
+      .addProduct-btn {
+        margin-right: 5px;
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
+
+      .logout-btn i {
+        margin-right: 5px;
+      }
+
+      .admin-content {
+        padding: 30px;
+      }
+
+      /* Product Table Styles */
+      .products-table-container {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-top: 20px;
+      }
+
+      .products-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .products-table th {
+        background: #34495e;
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid #2c3e50;
+      }
+
+      .products-table td {
+        padding: 15px;
+        border-bottom: 1px solid #ecf0f1;
+        vertical-align: middle;
+      }
+
+      .products-table tr:hover {
+        background: #f8f9fa;
+      }
+
+      .products-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* Product Image in Table */
+      .product-image-table {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 2px solid #ecf0f1;
+      }
+
+      /* Product Info */
+      .product-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .product-details {
+        flex: 1;
+      }
+
+      .product-name {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 5px;
+      }
+
+      .product-price {
+        font-size: 14px;
+        color: #27ae60;
+        font-weight: 600;
+      }
+
+      .product-category-badge {
+        font-size: 12px;
+        color: #7f8c8d;
+        background: #ecf0f1;
+        padding: 2px 8px;
+        border-radius: 12px;
+        display: inline-block;
+        margin-top: 3px;
+      }
+
+      /* Status Badges */
+      .status-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .status-active {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .status-inactive {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .status-out-of-stock {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      /* Action Buttons */
+      .action-buttons {
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn-edit {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        text-decoration: none;
+      }
+
+      .btn-edit:hover {
+        background: #2980b9;
+      }
+
+      .btn-delete {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .btn-delete:hover {
+        background: #c0392b;
+      }
+
+      /* Category & Subcategory */
+      .category-info {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .category-name {
+        font-weight: 500;
+        color: #2c3e50;
+      }
+
+      .subcategory-name {
+        font-size: 12px;
+        color: #7f8c8d;
+      }
+
+      /* Rating */
+      .rating-stars {
+        color: #f1c40f;
+        font-size: 14px;
+      }
+
+      /* Search and Filter Styles */
+      .filters-container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+
+      .filter-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+
+      .filter-group {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .filter-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      .filter-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .filter-select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: white;
+        font-size: 14px;
+      }
+
+      .filter-actions {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+      }
+
+      .btn-filter {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .btn-filter:hover {
+        background: #2980b9;
+      }
+
+      .btn-reset {
+        background: #95a5a6;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .btn-reset:hover {
+        background: #7f8c8d;
+      }
+
+      /* Pagination */
+      .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+      }
+
+      .pagination {
+        display: flex;
+        gap: 5px;
+      }
+
+      .page-item {
+        display: inline-block;
+      }
+
+      .page-link {
+        color: #3498db;
+        border-radius: 4px;
+        padding: 8px 12px;
+        text-decoration: none;
+        border: 1px solid #ddd;
+        display: block;
+      }
+
+      .page-item.active .page-link {
+        background: #3498db;
+        color: white;
+        border: 1px solid #3498db;
+      }
+
+      .page-item.disabled .page-link {
+        color: #bdc3c7;
+        cursor: not-allowed;
+      }
+
+      .page-link:hover {
+        background: #e8f3fc;
+      }
+
+      /* Loading and Error States */
+      .loading {
+        text-align: center;
+        padding: 40px;
+        font-size: 16px;
+        color: #7f8c8d;
+      }
+
+      .error {
+        text-align: center;
+        padding: 40px;
+        font-size: 16px;
+        color: #e74c3c;
+        background: white;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+
+      .no-products {
+        text-align: center;
+        padding: 40px;
+        color: #7f8c8d;
+        background: white;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .admin-sidebar {
+          width: 70px;
+        }
+
+        .admin-sidebar .sidebar-brand h2 span,
+        .admin-sidebar .sidebar-menu li a span {
+          display: none;
+        }
+
+        .admin-sidebar .sidebar-menu li a i {
+          margin-right: 0;
+          font-size: 18px;
+        }
+
+        .admin-main {
+          margin-left: 70px;
+        }
+
+        .products-table {
+          display: block;
+          overflow-x: auto;
+        }
+
+        .filter-row {
+          flex-direction: column;
+        }
+
+        .filter-group {
+          min-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="admin-container">
+      <!-- Sidebar -->
+      <div class="admin-sidebar">
+        <div class="sidebar-brand">
+          <h2>
+            <i class="fas fa-user-shield"></i> <span>ShopStyle Admin</span>
+          </h2>
+        </div>
+        <ul class="sidebar-menu">
+          <li>
+            <a href="admin-dashboard.html"
+              ><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a
+            >
+          </li>
+          <li>
+            <a href="admin-showusers.html"
+              ><i class="fas fa-users"></i> <span>Users</span></a
+            >
+          </li>
+          <li>
+            <a href="admin-orders.html"
+              ><i class="fas fa-shopping-cart"></i> <span>Orders</span></a
+            >
+          </li>
+          <li>
+            <a href="admin-products.html" class="active"
+              ><i class="fas fa-box"></i> <span>Products</span></a
+            >
+          </li>
+          <li>
+            <a href="admin-categories.html"
+              ><i class="fas fa-tags"></i> <span>Categories</span></a
+            >
+          </li>
+          <li>
+            <a href="admin-inventory.html"
+              ><i class="fas fa-warehouse"></i> <span>Inventory</span></a
+            >
+          </li>
+          <li>
+            <a href="admin-reports.html"
+              ><i class="fas fa-chart-bar"></i> <span>Reports</span></a
+            >
+          </li>
+          <li>
+            <a href="#" id="logoutBtn"
+              ><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <!-- Main Content -->
+      <div class="admin-main">
+        <div class="admin-header">
+          <h1>Product Management</h1>
+          <div class="admin-user">
+            <button class="addProduct-btn" id="addProductBtnHeader">
+              <a
+                href="admin-addProduct.html"
+                style="text-decoration: none; color: inherit"
+              >
+                <i class="fas fa-plus"></i> Add Product
+              </a>
+            </button>
+            <button class="logout-btn" id="logoutBtnHeader">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-content">
+          <!-- Filters Section -->
+          <div class="filters-container">
+            <div class="filter-row">
+              <div class="filter-group">
+                <label for="searchInput">Search Products</label>
+                <input
+                  type="text"
+                  id="searchInput"
+                  class="filter-input"
+                  placeholder="Search by name, category..."
+                />
+              </div>
+              <div class="filter-group">
+                <label for="statusFilter">Status</label>
+                <select id="statusFilter" class="filter-select">
+                  <option value="">All Status</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="categoryFilter">Category</label>
+                <select id="categoryFilter" class="filter-select">
+                  <option value="">All Categories</option>
+                  <!-- Categories will be populated dynamically -->
+                </select>
+              </div>
+            </div>
+            <div class="filter-row">
+              <div class="filter-group">
+                <label for="sortFilter">Sort By</label>
+                <select id="sortFilter" class="filter-select">
+                  <option value="newest">Newest First</option>
+                  <option value="name">Name A-Z</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                </select>
+              </div>
+              <div class="filter-actions">
+                <button class="btn-filter" id="applyFilters">
+                  <i class="fas fa-filter"></i> Apply Filters
+                </button>
+                <button class="btn-reset" id="resetFilters">
+                  <i class="fas fa-redo"></i> Reset
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Products Table -->
+          <div class="products-table-container">
+            <table class="products-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Rating</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="products-table-body">
+                <!-- Products will be loaded here dynamically -->
+                <tr>
+                  <td colspan="5" class="loading">Loading products...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination-container">
+            <ul class="pagination" id="pagination-container">
+              <!-- Pagination will be loaded here dynamically -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+<script>
+  // Authentication check - run immediately when page loads
+  (function checkAuth() {
+    const token = localStorage.getItem("adminToken");
+    const isLoggedIn = localStorage.getItem("adminLoggedIn") === "true";
+
+    if (!token || !isLoggedIn) {
+      console.log("Not authenticated, redirecting to login...");
+      window.location.href = "admin-login.html";
+      return;
+    }
+
+    console.log("Admin authenticated, token found:", token ? "Yes" : "No");
+  })();
+
+  let currentPage = 1;
+  const productsPerPage = 10;
+  let currentFilters = {
+    search: "",
+    category: "",
+    status: "",
+    sort: "newest",
+  };
+  let categories = [];
+  let subcategoriesData = {}; // Store subcategory data globally
+
+  // Load categories for filter dropdown
+  async function loadCategories() {
+    try {
+      const token = localStorage.getItem("adminToken");
+      if (!token) return;
+
+      const response = await fetch("/api/admin/products/getCategories", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          categories = data.categories;
+          const categoryFilter = document.getElementById("categoryFilter");
+          categoryFilter.innerHTML =
+            '<option value="">All Categories</option>';
+
+          categories.forEach((category) => {
+            const option = document.createElement("option");
+            option.value = category._id;
+            option.textContent = category.name;
+            categoryFilter.appendChild(option);
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error loading categories:", error);
+    }
+  }
+
+  // Load subcategories for a specific category
+  async function loadSubcategories(categoryId) {
+    try {
+      const token = localStorage.getItem("adminToken");
+      if (!categoryId || !token) return;
+
+      console.log(`Loading subcategories for category: ${categoryId}`);
+
+      const response = await fetch(
+        `/api/admin/products/getSubcategories/${categoryId}`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        console.error("Failed to fetch subcategories");
+        return {};
+      }
+
+      const result = await response.json();
+      console.log("Subcategories response:", result);
+
+      if (result.success && result.subcategories) {
+        // Store subcategories data with their IDs as keys
+        const subcategoriesMap = {};
+        result.subcategories.forEach((subcategory) => {
+          subcategoriesMap[subcategory._id] = subcategory.name;
+        });
+        return subcategoriesMap;
+      } else {
+        console.log("No subcategories found or error in response");
+        return {};
+      }
+    } catch (error) {
+      console.error("Error loading subcategories:", error);
+      return {};
+    }
+  }
+
+  // Load products from MongoDB
+  async function loadProducts(page = 1, filters = {}) {
+    try {
+      // Get token from localStorage
+      const token = localStorage.getItem("adminToken");
+      if (!token) {
+        window.location.href = "admin-login.html";
+        return;
+      }
+
+      currentPage = page;
+      const tableBody = document.getElementById("products-table-body");
+      tableBody.innerHTML =
+        '<tr><td colspan="5" class="loading">Loading products...</td></tr>';
+
+      // Build query parameters
+      const params = new URLSearchParams({
+        page: page,
+        limit: productsPerPage,
+      });
+
+      // Add filters to parameters
+      if (filters.search) params.append("search", filters.search);
+      if (filters.category) params.append("category", filters.category);
+      if (filters.subcategory) params.append("subcategory", filters.subcategory);
+      if (filters.brand) params.append("brand", filters.brand);
+      if (filters.status) params.append("status", filters.status);
+      if (filters.isAvailable) params.append("isAvailable", filters.isAvailable);
+      if (filters.sort) params.append("sort", filters.sort);
+
+       console.log("🔍 Making request to:", `/api/admin/products?${params.toString()}`);
+
+      // Make API request WITH AUTHORIZATION HEADER
+      const response = await fetch(
+        `/api/admin/products?${params.toString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          // Token is invalid or expired
+           alert("Session expired. Please login again.");
+                window.location.href = "admin-login.html"
+         console.log("error")
+          return;
+        }
+        const errorText = await response.text();
+            console.error("❌ API Error Response:", errorText);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Products data:", data);
+
+      if (data.success) {
+        // Fetch category and subcategory names for all products
+        const enhancedProducts = await enhanceProductsWithCategoryAndSubcategoryNames(data.products);
+        renderProductsTable(enhancedProducts);
+        setupPagination(data.pagination);
+      } else {
+        throw new Error(data.message || "Failed to load products");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      document.getElementById("products-table-body").innerHTML =
+        '<tr><td colspan="5" class="error">Error loading products. Please try again.</td></tr>';
+    }
+  }
+
+  // Enhance products with category and subcategory names
+  async function enhanceProductsWithCategoryAndSubcategoryNames(products) {
+    try {
+      const token = localStorage.getItem("adminToken");
+      if (!token) return products;
+
+      // Create array of unique category IDs from products
+      const categoryIds = [
+        ...new Set(products.map((p) => p.category).filter(Boolean)),
+      ];
+      const subcategoryIds = [
+        ...new Set(products.map((p) => p.subcategory).filter(Boolean)),
+      ];
+
+      console.log("Category IDs:", categoryIds);
+      console.log("Subcategory IDs:", subcategoryIds);
+
+      // Fetch categories
+      let categoriesData = {};
+      if (categoryIds.length > 0) {
+        const categoriesResponse = await fetch(
+          `/api/admin/products/getCategories`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (categoriesResponse.ok) {
+          const categoriesResult = await categoriesResponse.json();
+          if (categoriesResult.success) {
+            categoriesResult.categories.forEach((cat) => {
+              categoriesData[cat._id] = cat.name;
+            });
+          }
+        }
+      }
+
+      // Fetch subcategories - load all unique categories' subcategories
+      let subcategoriesData = {};
+      
+      // Get unique categories from products
+      const uniqueCategories = [...new Set(categoryIds)];
+      
+      // Load subcategories for each unique category
+      for (const categoryId of uniqueCategories) {
+        const subcategoriesMap = await loadSubcategories(categoryId);
+        // Merge the subcategories map
+        subcategoriesData = { ...subcategoriesData, ...subcategoriesMap };
+      }
+
+      console.log("Categories data:", categoriesData);
+      console.log("Subcategories data:", subcategoriesData);
+
+      // Enhance products with names
+      return products.map((product) => ({
+        ...product,
+        categoryName: categoriesData[product.category] || "Uncategorized",
+        subcategoryName: subcategoriesData[product.subcategory] || "No Subcategory",
+      }));
+    } catch (error) {
+      console.error("Error enhancing products:", error);
+      return products.map((product) => ({
+        ...product,
+        categoryName: "Uncategorized",
+        subcategoryName: "No Subcategory",
+      }));
+    }
+  }
+
+function renderProductsTable(products) {
+    const tableBody = document.getElementById("products-table-body");
+    tableBody.innerHTML = "";
+
+    if (!products || products.length === 0) {
+        tableBody.innerHTML =
+            '<tr><td colspan="5" class="no-products">No products found matching your criteria.</td></tr>';
+        return;
+    }
+
+//     products.forEach((product) => {
+//        console.log("Product image data:", product.image);
+//         // Get the first image from the array or use placeholder
+//         let productImage = "https://via.placeholder.com/60x60?text=No+Image";
+//    if (product.image && Array.isArray(product.image) && product.image.length > 0) {
+//     let rawImage = product.image[0];
+
+//      if (typeof rawImage === 'object' && rawImage.url) {
+//             rawImage = rawImage.url;
+//         }
+//     // Clean up path
+//     productImage = `/uploads/${rawImage.replace(/\\/g, '/')}`;
+//     console.log("Constructed image path:", productImage);
+    
+// } else if (typeof product.image === 'string' && product.image.trim() !== '') {
+//     productImage = `/uploads/${product.image.replace(/\\/g, '/')}`;
+// }
+       products.forEach((product) => {
+    console.log("Product image data:", product.image);
+    
+    // Get the first image from the array or use placeholder
+    let productImage = "https://via.placeholder.com/60x60?text=No+Image";
+    
+    if (product.image && Array.isArray(product.image) && product.image.length > 0) {
+        let rawImage = product.image[0];
+
+        // Handle object format
+        if (typeof rawImage === 'object' && rawImage.url) {
+            rawImage = rawImage.url;
+        }
+
+        // Clean up path - FIXED VERSION
+        if (typeof rawImage === 'string' && rawImage.trim() !== '') {
+            // First, fix backslashes
+            rawImage = rawImage.replace(/\\/g, '/');
+            
+            // Remove any leading slashes
+            rawImage = rawImage.replace(/^\/+/, '');
+            
+            // Check if it already starts with 'uploads/'
+            if (rawImage.startsWith('uploads/')) {
+                // If it already has 'uploads/', remove it first
+                rawImage = rawImage.replace(/^uploads\//, '');
+            }
+            
+            // Now construct the path
+            productImage = `/uploads/${rawImage}`;
+            console.log("Constructed image path:", productImage);
+        }
+        
+    } else if (typeof product.image === 'string' && product.image.trim() !== '') {
+        // Handle single string image
+        let rawImage = product.image.replace(/\\/g, '/');
+        rawImage = rawImage.replace(/^\/+/, '');
+        
+        // Check if it already starts with 'uploads/'
+        if (rawImage.startsWith('uploads/')) {
+            rawImage = rawImage.replace(/^uploads\//, '');
+        }
+        
+        productImage = `/uploads/${rawImage}`;
+    } 
+        // Determine status based on product.status
+        let statusText = "";
+        let statusClass = "";
+
+        switch (product.status) {
+            case "active":
+                statusText = "Active";
+                statusClass = "status-active";
+                break;
+            case "inactive":
+                statusText = "Inactive";
+                statusClass = "status-inactive";
+                break;
+            case "discontinued":
+                statusText = "Discontinued";
+                statusClass = "status-discontinued";
+                break;
+            case "out_of_stock":
+                statusText = "Out of Stock";
+                statusClass = "status-out-of-stock";
+                break;
+            default:
+                statusText = product.status || "Unknown";
+                statusClass = "status-unknown";
+        }
+
+        const productRow = `
+        <tr>
+          <td>
+            <div class="product-info">
+              <img src="${productImage}" 
+                   alt="${product.name}" 
+                   class="product-image-table">
+              <div class="product-details">
+                <div class="product-name">${product.name}</div>
+                <div class="product-brand">${product.brand || "No Brand"}</div>
+                <div class="product-price">$${product.price ? product.price.toFixed(2) : "0.00"}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="category-info">
+              <div class="category-name">${product.categoryName || "Uncategorized"}</div>
+              <div class="subcategory-name">${product.subcategoryName || "No Subcategory"}</div>
+            </div>
+          </td>
+          <td>
+            <span class="status-badge ${statusClass}">${statusText}</span>
+          </td>
+          <td>
+            <div class="rating-stars">
+              ${generateRatingStars(product.rating || 0)}
+            </div>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <a href="admin-updateProduct.html?id=${product._id}" class="btn-edit">
+                <i class="fas fa-edit"></i> Edit
+              </a>
+              <button class="btn-delete" onclick="deleteProduct('${product._id}')">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+      tableBody.innerHTML += productRow;
+    });
+}
+  function generateRatingStars(rating) {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    let starsHTML = "";
+
+    for (let i = 0; i < 5; i++) {
+      if (i < fullStars) {
+        starsHTML += '<i class="fas fa-star"></i>';
+      } else if (i === fullStars && hasHalfStar) {
+        starsHTML += '<i class="fas fa-star-half-alt"></i>';
+      } else {
+        starsHTML += '<i class="far fa-star"></i>';
+      }
+    }
+    return starsHTML;
+  }
+
+  function setupPagination(pagination) {
+    const paginationContainer = document.getElementById(
+      "pagination-container"
+    );
+    if (!paginationContainer) return;
+
+    paginationContainer.innerHTML = "";
+
+    // Previous button
+    const prevLi = document.createElement("li");
+    prevLi.className = `page-item ${
+      !pagination.hasPrevPage ? "disabled" : ""
+    }`;
+    prevLi.innerHTML = `<a class="page-link" href="#" ${
+      pagination.hasPrevPage
+        ? 'onclick="loadProducts(' +
+          (currentPage - 1) +
+          ', currentFilters)"'
+        : ""
+    }>Previous</a>`;
+    paginationContainer.appendChild(prevLi);
+
+    // Page numbers
+    for (let i = 1; i <= pagination.totalPages; i++) {
+      const pageLi = document.createElement("li");
+      pageLi.className = `page-item ${i === currentPage ? "active" : ""}`;
+      pageLi.innerHTML = `<a class="page-link" href="#" onclick="loadProducts(${i}, currentFilters)">${i}</a>`;
+      paginationContainer.appendChild(pageLi);
+    }
+
+    // Next button
+    const nextLi = document.createElement("li");
+    nextLi.className = `page-item ${
+      !pagination.hasNextPage ? "disabled" : ""
+    }`;
+    nextLi.innerHTML = `<a class="page-link" href="#" ${
+      pagination.hasNextPage
+        ? 'onclick="loadProducts(' +
+          (currentPage + 1) +
+          ', currentFilters)"'
+        : ""
+    }>Next</a>`;
+    paginationContainer.appendChild(nextLi);
+  }
+
+  // Setup event listeners for filters
+  function setupFilters() {
+    // Apply filters button
+    const applyFiltersBtn = document.getElementById("applyFilters");
+    if (applyFiltersBtn) {
+      applyFiltersBtn.addEventListener("click", function () {
+        currentFilters.search =
+          document.getElementById("searchInput").value;
+        currentFilters.category =
+          document.getElementById("categoryFilter").value;
+        currentFilters.status =
+          document.getElementById("statusFilter").value;
+        currentFilters.sort = document.getElementById("sortFilter").value;
+        loadProducts(1, currentFilters);
+      });
+    }
+
+    // Reset filters button
+    const resetFiltersBtn = document.getElementById("resetFilters");
+    if (resetFiltersBtn) {
+      resetFiltersBtn.addEventListener("click", function () {
+        document.getElementById("searchInput").value = "";
+        document.getElementById("categoryFilter").value = "";
+        document.getElementById("statusFilter").value = "";
+        document.getElementById("sortFilter").value = "newest";
+
+        currentFilters = {
+          search: "",
+          category: "",
+          status: "",
+          sort: "newest",
+        };
+
+        loadProducts(1, currentFilters);
+      });
+    }
+
+    // Search on enter key
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) {
+      searchInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          currentFilters.search = this.value;
+          loadProducts(1, currentFilters);
+        }
+      });
+    }
+
+    // Category filter change - load subcategories
+    const categoryFilter = document.getElementById("categoryFilter");
+    if (categoryFilter) {
+      categoryFilter.addEventListener("change", function() {
+        const categoryId = this.value;
+        if (categoryId) {
+          loadSubcategories(categoryId);
+        }
+      });
+    }
+  }
+
+  // Logout function
+  function logout() {
+    // Clear all admin data from localStorage
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminLoggedIn");
+    localStorage.removeItem("adminId");
+    localStorage.removeItem("adminName");
+
+    // Redirect to login page
+    window.location.href = "admin-login.html";
+  }
+
+  // Delete product function
+  async function deleteProduct(productId) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this product? This action cannot be undone."
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch(`/api/admin/products/${productId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          alert("Product deleted successfully");
+          loadProducts(currentPage, currentFilters); // Reload products
+        } else {
+          alert("Error: " + data.message);
+        }
+      } else {
+        alert("Error deleting product");
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      alert("Error deleting product");
+    }
+  }
+
+  // Initialize on page load
+  document.addEventListener("DOMContentLoaded", function () {
+    // Add logout event listeners
+    const logoutBtn = document.getElementById("logoutBtn");
+    const logoutBtnHeader = document.getElementById("logoutBtnHeader");
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        logout();
+      });
+    }
+    if (logoutBtnHeader) {
+      logoutBtnHeader.addEventListener("click", function (e) {
+        e.preventDefault();
+        logout();
+      });
+    }
+
+    // Display admin name if available
+    const adminName = localStorage.getItem("adminName");
+    if (adminName) {
+      const adminNameElement = document.getElementById("adminNameDisplay");
+      if (adminNameElement) {
+        adminNameElement.textContent = adminName;
+      }
+    }
+
+    // Load categories for filter dropdown
+    loadCategories();
+
+    // Load products
+    loadProducts(1);
+    setupFilters();
+  });
+</script>
+  </body>
+</html>

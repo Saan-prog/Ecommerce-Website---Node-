@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>E Store - eCommerce HTML Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="eCommerce HTML Template Free Download" name="keywords" />
+    <meta content="eCommerce HTML Template Free Download" name="description" />
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS Libraries -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="lib/slick/slick.css" rel="stylesheet" />
+    <link href="lib/slick/slick-theme.css" rel="stylesheet" />
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet" />
+    <style>
+      .category-sidebar .nav-link {
+        color: #333;
+        padding: 8px 15px;
+        border-bottom: 1px solid #eee;
+        transition: all 0.3s;
+      }
+      .category-sidebar .nav-link:hover {
+        color: #ff6f61;
+        background-color: #f8f9fa;
+        padding-left: 20px;
+      }
+      .category-sidebar .nav-link i {
+        width: 20px;
+        text-align: center;
+        margin-right: 10px;
+      }
+      .category-sidebar .dropdown-menu {
+        border: none;
+        border-radius: 0;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      }
+      .category-sidebar .dropdown-item {
+        padding: 8px 20px;
+        color: #555;
+        transition: all 0.3s;
+      }
+      .category-sidebar .dropdown-item:hover {
+        background-color: #ff6f61;
+        color: white;
+        padding-left: 25px;
+      }
+      .spinner-border {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Top bar Start -->
+    <div class="top-bar">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-6">
+            <i class="fa fa-envelope"></i>
+            support@email.com
+          </div>
+          <div class="col-sm-6">
+            <i class="fa fa-phone-alt"></i>
+            +012-345-6789
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Top bar End -->
+
+    <!-- Nav Bar Start -->
+    <div class="nav">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+          <a href="#" class="navbar-brand">MENU</a>
+          <button
+            type="button"
+            class="navbar-toggler"
+            data-toggle="collapse"
+            data-target="#navbarCollapse"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div
+            class="collapse navbar-collapse justify-content-between"
+            id="navbarCollapse"
+          >
+            <div class="navbar-nav mr-auto">
+              <a href="index.html" class="nav-item nav-link">Home</a>
+              <a href="product-list.html" class="nav-item nav-link active"
+                >Products</a
+              >
+              <a
+                href="product-detail.html"
+                class="nav-item nav-link"
+                style="display: none"
+                >Product Detail</a
+              >
+              <a
+                href="cart.html"
+                class="nav-item nav-link"
+                id="cartLink"
+                style="display: none"
+                >Cart</a
+              >
+              <a
+                href="checkout.html"
+                class="nav-item nav-link"
+                id="checkoutLink"
+                style="display: none"
+                >Checkout</a
+              >
+              <a
+                href="my-account.html"
+                class="nav-item nav-link"
+                style="display: none"
+                >My Account</a
+              >
+            </div>
+            <div class="navbar-nav ml-auto align-items-center">
+              <!-- User Account dropdown (only visible after login) -->
+              <div
+                class="nav-item dropdown user-account"
+                id="userAccountDropdown"
+                style="display: none"
+              >
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                >
+                  <i class="fa fa-user-circle"></i> My Account
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <a href="my-account.html" class="dropdown-item">Dashboard</a>
+                  <a href="#" class="dropdown-item" id="logoutBtn">Logout</a>
+                </div>
+              </div>
+
+              <!-- Login dropdown (only visible before login) -->
+              <div class="nav-item dropdown" id="loginDropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  >Login</a
+                >
+                <div class="dropdown-menu dropdown-menu-right">
+                  <a href="login.html" class="dropdown-item">Login</a>
+                  <a href="login.html" class="dropdown-item">Register</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <!-- Nav Bar End -->
+
+    <!-- Bottom Bar Start -->
+    <div class="bottom-bar">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-3">
+            <div class="logo">
+              <a href="index.html">
+                <img src="img/logo.png" alt="Logo" />
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="search">
+              <input type="text" placeholder="Search" id="searchInput" />
+              <button><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="user">
+              <a href="wishlist.html" class="btn wishlist">
+                <i class="fa fa-heart"></i>
+                <span>(0)</span>
+              </a>
+              <a href="cart.html" class="btn cart">
+                <i class="fa fa-shopping-cart"></i>
+                <span id="cartCount">(0)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bottom Bar End -->
+
+    <!-- Breadcrumb Start -->
+    <div class="breadcrumb-wrap">
+      <div class="container-fluid">
+        <ul class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="product-list.html">Products</a></li>
+          <li class="breadcrumb-item active">Product List</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Product List Start -->
+    <div class="product-view">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="row">
+              <div class="row" id="products-container">
+                <div class="col-md-12">
+                  <div class="product-view-top">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="product-search">
+                          <input type="text" placeholder="Search products..." id="searchBox" />
+                          <button onclick="handleSearch()"><i class="fa fa-search"></i></button>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="product-short">
+                          <div class="dropdown">
+                            <div class="dropdown-toggle" data-toggle="dropdown">
+                              Product sort by
+                            </div>
+                            <div class="dropdown-menu dropdown-menu-right">
+                              <a href="#" class="dropdown-item" onclick="sortProducts('newest')">Newest</a>
+                              <a href="#" class="dropdown-item" onclick="sortProducts('popular')">Popular</a>
+                              <a href="#" class="dropdown-item" onclick="sortProducts('price-low')">Price: Low to High</a>
+                              <a href="#" class="dropdown-item" onclick="sortProducts('price-high')">Price: High to Low</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="product-price-range">
+                          <div class="dropdown">
+                            <div class="dropdown-toggle" data-toggle="dropdown">
+                              Filter by price
+                            </div>
+                            <div class="dropdown-menu dropdown-menu-right">
+                              <a href="#" class="dropdown-item" onclick="filterByPrice(0, 50)">$0 to $50</a>
+                              <a href="#" class="dropdown-item" onclick="filterByPrice(51, 100)">$51 to $100</a>
+                              <a href="#" class="dropdown-item" onclick="filterByPrice(101, 150)">$101 to $150</a>
+                              <a href="#" class="dropdown-item" onclick="filterByPrice(151, 200)">$151 to $200</a>
+                              <a href="#" class="dropdown-item" onclick="filterByPrice(201, 250)">$201 to $250</a>
+                              <a href="#" class="dropdown-item" onclick="filterByPrice(251, 300)">$251 to $300</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Products will be dynamically loaded here -->
+              </div>
+            </div>
+
+            <!-- Pagination Start -->
+            <div class="col-md-12">
+              <nav aria-label="Page navigation example">
+                <ul
+                  class="pagination justify-content-center"
+                  id="pagination-container"
+                >
+                  <!-- Pagination will be dynamically loaded here -->
+                </ul>
+              </nav>
+            </div>
+            <!-- Pagination End -->
+          </div>
+
+          <!-- Side Bar Start -->
+          <div class="col-lg-4 sidebar">
+            <div class="sidebar-widget category category-sidebar">
+              <h2 class="title">Categories</h2>
+              <nav class="navbar bg-light">
+                <ul class="navbar-nav" id="categoryList">
+                  <!-- Categories will be dynamically loaded here -->
+                  <li class="nav-item text-center py-3">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="sr-only">Loading categories...</span>
+                    </div>
+                    <p class="mt-2 small text-muted">Loading categories...</p>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            
+            <!-- Price Range Filter -->
+            <!-- <div class="sidebar-widget">
+              <h2 class="title">Price Range</h2>
+              <div class="price-range">
+                <input type="range" class="form-range" min="0" max="1000" value="1000" id="priceRange">
+                <div class="d-flex justify-content-between mt-2">
+                  <span>$0</span>
+                  <span id="priceRangeValue">$1000</span>
+                </div>
+                <button class="btn btn-sm btn-primary btn-block mt-3" onclick="applyPriceFilter()">Apply Filter</button>
+              </div>
+            </div> -->
+            
+            <!-- Featured Products -->
+            <!-- <div class="sidebar-widget">
+              <h2 class="title">Featured Products</h2>
+              <div id="featuredProductsSidebar">
+                <!-- Featured products will be loaded here -->
+                <!-- <div class="text-center py-3">
+                  <div class="spinner-border spinner-border-sm text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                </div>
+              </div> -->
+            </div> -->
+          </div>
+          <!-- Side Bar End -->
+        </div>
+      </div>
+    </div>
+    <!-- Product List End -->
+
+    <!-- Footer Start -->
+    <div class="footer">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Get in Touch</h2>
+              <div class="contact-info">
+                <p>
+                  <i class="fa fa-map-marker"></i>123 E Store, Los Angeles, USA
+                </p>
+                <p><i class="fa fa-envelope"></i>email@example.com</p>
+                <p><i class="fa fa-phone"></i>+123-456-7890</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Follow Us</h2>
+              <div class="contact-info">
+                <div class="social">
+                  <a href=""><i class="fab fa-twitter"></i></a>
+                  <a href=""><i class="fab fa-facebook-f"></i></a>
+                  <a href=""><i class="fab fa-linkedin-in"></i></a>
+                  <a href=""><i class="fab fa-instagram"></i></a>
+                  <a href=""><i class="fab fa-youtube"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Company Info</h2>
+              <ul>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms & Condition</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Purchase Info</h2>
+              <ul>
+                <li><a href="#">Payment Policy</a></li>
+                <li><a href="#">Shipping Policy</a></li>
+                <li><a href="#">Return Policy</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="row payment align-items-center">
+          <div class="col-md-6">
+            <div class="payment-method">
+              <h2>We Accept:</h2>
+              <img src="img/payment-method.png" alt="Payment Method" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="payment-security">
+              <h2>Secured By:</h2>
+              <img src="img/godaddy.svg" alt="Payment Security" />
+              <img src="img/norton.svg" alt="Payment Security" />
+              <img src="img/ssl.svg" alt="Payment Security" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Footer Bottom Start -->
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 copyright">
+            <p>
+              Copyright &copy; <a href="#">Your Site Name</a>. All Rights
+              Reserved
+            </p>
+          </div>
+
+          <div class="col-md-6 template-by">
+            <p>Designed By <a href="https://htmlcodex.com">HTML Codex</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer Bottom End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/slick/slick.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+    <script>
+      let currentPage = 1;
+      const productsPerPage = 9;
+      let currentCategory = '';
+      let currentSort = '';
+      let currentPriceFilter = '';
+      let currentSearch = '';
+
+      // ========== INITIALIZATION ==========
+      document.addEventListener("DOMContentLoaded", function () {
+        // Load initial data
+        loadProducts(1);
+        loadCategories();
+        loadFeaturedProductsSidebar();
+        
+        // Setup authentication
+        setupAuth();
+        
+        // Setup event listeners
+        setupEventListeners();
+      });
+
+      // ========== AUTHENTICATION ==========
+      function setupAuth() {
+        const token = localStorage.getItem("token");
+        const loginDropdown = document.getElementById("loginDropdown");
+        const userAccountDropdown = document.getElementById("userAccountDropdown");
+        const cartLink = document.getElementById("cartLink");
+        const checkoutLink = document.getElementById("checkoutLink");
+
+        if (token) {
+          // User is logged in
+          loginDropdown.style.display = "none";
+          userAccountDropdown.style.display = "block";
+          cartLink.style.display = "block";
+          checkoutLink.style.display = "block";
+          updateCartCount();
+        } else {
+          // User is not logged in
+          loginDropdown.style.display = "block";
+          userAccountDropdown.style.display = "none";
+          cartLink.style.display = "none";
+          checkoutLink.style.display = "none";
+        }
+
+        // Logout functionality
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", function () {
+            localStorage.removeItem("token");
+            localStorage.removeItem("cartCount");
+            window.location.href = "index.html";
+          });
+        }
+      }
+
+      // ========== LOAD CATEGORIES ==========
+      async function loadCategories() {
+        try {
+          const response = await fetch('/api/user/category/all');
+          
+          if (!response.ok) {
+            throw new Error('Failed to fetch categories');
+          }
+          
+          const data = await response.json();
+          const categoryList = document.getElementById('categoryList');
+          
+          if (data.success && data.data && data.data.length > 0) {
+            renderCategories(data.data);
+          } else {
+            categoryList.innerHTML = `
+              <li class="nav-item text-center py-3">
+                <p class="text-muted">No categories available</p>
+              </li>
+            `;
+          }
+        } catch (error) {
+          console.error('Error loading categories:', error);
+          document.getElementById('categoryList').innerHTML = `
+            <li class="nav-item text-center py-3">
+              <p class="text-danger">Failed to load categories</p>
+            </li>
+          `;
+        }
+      }
+
+      function renderCategories(categories) {
+        const categoryList = document.getElementById('categoryList');
+        let categoriesHTML = '';
+        
+        // Add "All Categories" option
+        categoriesHTML += `
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="filterByCategory('')">
+              <i class="fa fa-list"></i>All Categories
+            </a>
+          </li>
+        `;
+
+        // Define category icons mapping
+        const iconMap = {
+          'Fashion': 'fa-tshirt',
+          'Electronics': 'fa-laptop',
+          'Mobile': 'fa-mobile-alt',
+          'Clothing': 'fa-tshirt',
+          'Men': 'fa-male',
+          'Women': 'fa-female',
+          'Kids': 'fa-child',
+          'Beauty': 'fa-spa',
+          'Accessories': 'fa-glasses',
+          'Sports': 'fa-running',
+          'Home': 'fa-home',
+          'Kitchen': 'fa-utensils',
+          'Furniture': 'fa-couch',
+          'Books': 'fa-book',
+          'Toys': 'fa-gamepad',
+          'Gadgets': 'fa-microchip',
+          'Watches': 'fa-clock',
+          'Shoes': 'fa-shoe-prints',
+          'Bags': 'fa-shopping-bag',
+          'Jewelry': 'fa-gem',
+          'Health': 'fa-heartbeat',
+          'Automotive': 'fa-car',
+          'Music': 'fa-music'
+        };
+
+        categories.forEach(category => {
+          const categoryId = category._id || category.id || '';
+          const categoryName = category.name || 'Unnamed Category';
+          const iconClass = getCategoryIcon(categoryName, iconMap);
+          
+          // Check if category has subcategories
+          const hasSubcategories = category.subcategories && category.subcategories.length > 0;
+          
+          if (hasSubcategories) {
+            // Category with dropdown for subcategories
+            categoriesHTML += `
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" 
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fa ${iconClass}"></i>${categoryName}
+                </a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="#" onclick="filterByCategory('${categoryId}')">
+                    All ${categoryName}
+                  </a>
+                  ${category.subcategories.map(sub => `
+                    <a class="dropdown-item" href="#" onclick="filterBySubcategory('${sub._id}')">
+                      ${sub.name || 'Subcategory'}
+                    </a>
+                  `).join('')}
+                </div>
+              </li>
+            `;
+          } else {
+            // Simple category link
+            categoriesHTML += `
+              <li class="nav-item">
+                <a class="nav-link" href="#" onclick="filterByCategory('${categoryId}')">
+                  <i class="fa ${iconClass}"></i>${categoryName}
+                </a>
+              </li>
+            `;
+          }
+        });
+        
+        categoryList.innerHTML = categoriesHTML;
+      }
+
+      function getCategoryIcon(categoryName, iconMap) {
+        const normalizedName = categoryName.trim();
+        
+        // Check exact match
+        if (iconMap[normalizedName]) {
+          return iconMap[normalizedName];
+        }
+        
+        // Check partial matches
+        for (const [key, value] of Object.entries(iconMap)) {
+          if (normalizedName.toLowerCase().includes(key.toLowerCase()) ||
+              key.toLowerCase().includes(normalizedName.toLowerCase())) {
+            return value;
+          }
+        }
+        
+        // Return default icon
+        return 'fa-tag';
+      }
+
+      // ========== LOAD PRODUCTS ==========
+      async function loadProducts(page = 1, category = '', subcategory = '', sort = '', priceFilter = '', search = '') {
+        try {
+          currentPage = page;
+          currentCategory = category;
+          currentSubcategory = subcategory;
+          currentSort = sort;
+          currentPriceFilter = priceFilter;
+          currentSearch = search;
+          
+          const productsContainer = document.getElementById("products-container");
+          productsContainer.innerHTML = `
+            <div class="col-12 text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading products...</span>
+              </div>
+              <p class="mt-2">Loading products...</p>
+            </div>
+          `;
+
+          // Build query parameters
+          let queryParams = `page=${page}&limit=${productsPerPage}`;
+          
+          if (category) queryParams += `&category=${category}`;
+          if (subcategory) queryParams += `&subcategory=${subcategory}`;
+          if (sort) queryParams += `&sort=${sort}`;
+          if (priceFilter) queryParams += `&priceRange=${priceFilter}`;
+          if (search) queryParams += `&search=${encodeURIComponent(search)}`;
+
+          const response = await fetch(`/api/user/products?${queryParams}`);
+
+          if (!response.ok) throw new Error("Failed to load products");
+
+          const data = await response.json();
+
+          if (data.success) {
+            renderProducts(data.products);
+            setupPagination(data.pagination);
+          } else {
+            throw new Error(data.message || "Failed to load products");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          document.getElementById("products-container").innerHTML = `
+            <div class="col-12 text-center py-5">
+              <i class="fa fa-exclamation-triangle fa-3x text-danger"></i>
+              <p class="mt-3">Error loading products. Please try again.</p>
+            </div>
+          `;
+        }
+      }
+
+      function renderProducts(products) {
+        const container = document.getElementById("products-container");
+        container.innerHTML = "";
+
+        if (products.length === 0) {
+          container.innerHTML = `
+            <div class="col-12 text-center py-5">
+              <i class="fa fa-search fa-3x text-muted"></i>
+              <h4 class="mt-3">No products found</h4>
+              <p class="text-muted">Try adjusting your search or filter criteria</p>
+              <button class="btn btn-primary" onclick="resetFilters()">Reset Filters</button>
+            </div>
+          `;
+          return;
+        }
+
+        products.forEach((product) => {
+          const productId = product._id || product.id;
+          const productName = product.name || 'Product Name';
+          const productPrice = parseFloat(product.price) || 0;
+          const productRating = product.rating || 0;
+          const productImage = getProductImageUrl(product.image || product.images || []);
+          
+          const productHTML = `
+            <div class="col-md-4">
+              <div class="product-item">
+                <div class="product-title">
+                  <a href="product-detail.html?id=${productId}">${productName}</a>
+                  <div class="ratting">
+                    ${generateRatingStars(productRating)}
+                  </div>
+                </div>
+                <div class="product-image">
+                  <a href="product-detail.html?id=${productId}">
+                    <img src="${productImage}" 
+                         alt="${productName}"
+                         onerror="this.onerror=null; this.src='img/product-1.jpg'">
+                  </a>
+                  
+                </div>
+                <div class="product-price">
+                  <h3><span>$</span>${productPrice.toFixed(2)}</h3>
+                  <a class="btn" href="#" onclick="handleAddToCart(event, '${productId}')">
+                    <i class="fa fa-shopping-cart"></i>Add to Cart
+                  </a>
+                </div>
+              </div>
+            </div>
+          `;
+          container.innerHTML += productHTML;
+        });
+      }
+
+      function generateRatingStars(rating) {
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        let starsHTML = "";
+
+        for (let i = 0; i < 5; i++) {
+          if (i < fullStars) {
+            starsHTML += '<i class="fa fa-star"></i>';
+          } else if (i === fullStars && hasHalfStar) {
+            starsHTML += '<i class="fa fa-star-half-alt"></i>';
+          } else {
+            starsHTML += '<i class="far fa-star"></i>';
+          }
+        }
+        return starsHTML;
+      }
+
+      function getProductImageUrl(imageData) {
+        const defaultImage = 'img/product-1.jpg';
+        
+        if (!imageData) return defaultImage;
+        
+        let imagePath = imageData;
+        if (Array.isArray(imageData)) {
+          if (imageData.length === 0) return defaultImage;
+          imagePath = imageData[0];
+        }
+        
+        if (typeof imagePath === 'string' && imagePath.trim()) {
+          let path = imagePath.trim();
+          
+          while (path.startsWith('uploads/')) {
+            path = path.replace('uploads/', '');
+          }
+          
+          if (path.startsWith('http') || path.startsWith('/')) {
+            return path;
+          } else if (path.includes('.')) {
+            return `/uploads/${path}`;
+          }
+        }
+        
+        return defaultImage;
+      }
+
+      // ========== PAGINATION ==========
+      function setupPagination(pagination) {
+        const paginationContainer = document.getElementById("pagination-container");
+        if (!paginationContainer) return;
+
+        paginationContainer.innerHTML = "";
+
+        if (!pagination || pagination.totalPages <= 1) return;
+
+        // Previous button
+        const prevLi = document.createElement("li");
+        prevLi.className = `page-item ${!pagination.hasPrevPage ? "disabled" : ""}`;
+        prevLi.innerHTML = `<a class="page-link" href="#" ${pagination.hasPrevPage ? `onclick="loadProducts(${currentPage - 1}, '${currentCategory}', '${currentSubcategory}', '${currentSort}', '${currentPriceFilter}', '${currentSearch}')"` : ""}>Previous</a>`;
+        paginationContainer.appendChild(prevLi);
+
+        // Page numbers
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(pagination.totalPages, startPage + maxVisiblePages - 1);
+        
+        if (endPage - startPage + 1 < maxVisiblePages) {
+          startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+          const pageLi = document.createElement("li");
+          pageLi.className = `page-item ${i === currentPage ? "active" : ""}`;
+          pageLi.innerHTML = `<a class="page-link" href="#" onclick="loadProducts(${i}, '${currentCategory}', '${currentSubcategory}', '${currentSort}', '${currentPriceFilter}', '${currentSearch}')">${i}</a>`;
+          paginationContainer.appendChild(pageLi);
+        }
+
+        // Next button
+        const nextLi = document.createElement("li");
+        nextLi.className = `page-item ${!pagination.hasNextPage ? "disabled" : ""}`;
+        nextLi.innerHTML = `<a class="page-link" href="#" ${pagination.hasNextPage ? `onclick="loadProducts(${currentPage + 1}, '${currentCategory}', '${currentSubcategory}', '${currentSort}', '${currentPriceFilter}', '${currentSearch}')"` : ""}>Next</a>`;
+        paginationContainer.appendChild(nextLi);
+      }
+
+      // ========== FILTER FUNCTIONS ==========
+      function filterByCategory(categoryId) {
+        loadProducts(1, categoryId, '', currentSort, currentPriceFilter, currentSearch);
+      }
+
+      function filterBySubcategory(subcategoryId) {
+        loadProducts(1, '', subcategoryId, currentSort, currentPriceFilter, currentSearch);
+      }
+
+      function sortProducts(sortType) {
+        let sortParam = '';
+        switch(sortType) {
+          case 'newest':
+            sortParam = '-createdAt';
+            break;
+          case 'popular':
+            sortParam = '-rating';
+            break;
+          case 'price-low':
+            sortParam = 'price';
+            break;
+          case 'price-high':
+            sortParam = '-price';
+            break;
+        }
+        loadProducts(1, currentCategory, currentSubcategory, sortParam, currentPriceFilter, currentSearch);
+      }
+
+      function filterByPrice(min, max) {
+        const priceFilter = `${min}-${max}`;
+        loadProducts(1, currentCategory, currentSubcategory, currentSort, priceFilter, currentSearch);
+      }
+
+      function applyPriceFilter() {
+        const priceRange = document.getElementById('priceRange').value;
+        filterByPrice(0, priceRange);
+      }
+
+      function handleSearch() {
+        const searchBox = document.getElementById('searchBox');
+        const searchTerm = searchBox.value.trim();
+        loadProducts(1, currentCategory, currentSubcategory, currentSort, currentPriceFilter, searchTerm);
+      }
+
+      function resetFilters() {
+        currentCategory = '';
+        currentSubcategory = '';
+        currentSort = '';
+        currentPriceFilter = '';
+        currentSearch = '';
+        document.getElementById('searchBox').value = '';
+        document.getElementById('priceRange').value = 1000;
+        document.getElementById('priceRangeValue').textContent = '$1000';
+        loadProducts(1);
+      }
+
+      // ========== FEATURED PRODUCTS SIDEBAR ==========
+      async function loadFeaturedProductsSidebar() {
+        try {
+          const response = await fetch('/api/user/products?featured=true&limit=3');
+          
+          if (!response.ok) {
+            throw new Error('Failed to fetch featured products');
+          }
+          
+          const data = await response.json();
+          const featuredContainer = document.getElementById('featuredProductsSidebar');
+          
+          if (data.success && data.products && data.products.length > 0) {
+            renderFeaturedProductsSidebar(data.products);
+          } else {
+            featuredContainer.innerHTML = `
+              <div class="text-center py-3">
+                <p class="text-muted small">No featured products</p>
+              </div>
+            `;
+          }
+        } catch (error) {
+          console.error('Error loading featured products:', error);
+          document.getElementById('featuredProductsSidebar').innerHTML = `
+            <div class="text-center py-3">
+              <p class="text-danger small">Failed to load</p>
+            </div>
+          `;
+        }
+      }
+
+      function renderFeaturedProductsSidebar(products) {
+        const container = document.getElementById('featuredProductsSidebar');
+        let productsHTML = '';
+        
+        products.forEach(product => {
+          const productId = product._id || product.id;
+          const productName = product.name || 'Product';
+          const productPrice = parseFloat(product.price) || 0;
+          const productImage = getProductImageUrl(product.image || product.images || []);
+          
+          productsHTML += `
+            <div class="product-item-sidebar mb-3">
+              <div class="row align-items-center">
+                <div class="col-4">
+                  <a href="product-detail.html?id=${productId}">
+                    <img src="${productImage}" 
+                         alt="${productName}"
+                         class="img-fluid"
+                         onerror="this.onerror=null; this.src='img/product-1.jpg'">
+                  </a>
+                </div>
+                <div class="col-8">
+                  <a href="product-detail.html?id=${productId}" class="d-block text-dark">
+                    <h6 class="mb-1">${productName.length > 30 ? productName.substring(0, 30) + '...' : productName}</h6>
+                  </a>
+                  <div class="ratting mb-1">
+                    ${generateRatingStars(product.rating || 0)}
+                  </div>
+                  <h5 class="mb-0">$${productPrice.toFixed(2)}</h5>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        
+        container.innerHTML = productsHTML;
+      }
+
+      // ========== CART FUNCTIONALITY ==========
+      async function handleAddToCart(event, productId) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+          alert('Please login to add items to cart');
+          window.location.href = 'login.html';
+          return;
+        }
+        
+        try {
+          const response = await fetch('http://localhost:8070/api/user/cart/addtocart', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              productId: productId,
+              quantity: 1,
+              size: 'M'
+            })
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            if (data.cart && data.cart.totalItems) {
+              localStorage.setItem('cartCount', data.cart.totalItems.toString());
+              updateCartCount();
+            }
+            alert('Product added to cart!');
+          } else {
+            alert('Failed to add to cart: ' + data.message);
+          }
+        } catch (error) {
+          console.error('Error adding to cart:', error);
+          alert('Error adding product to cart. Please try again.');
+        }
+      }
+
+      function updateCartCount() {
+        const cartCount = localStorage.getItem('cartCount') || '0';
+        const cartCountElement = document.getElementById('cartCount');
+        if (cartCountElement) {
+          cartCountElement.textContent = `(${cartCount})`;
+        }
+      }
+
+      // ========== EVENT LISTENERS ==========
+      function setupEventListeners() {
+        // Price range display
+        const priceRange = document.getElementById('priceRange');
+        const priceRangeValue = document.getElementById('priceRangeValue');
+        
+        if (priceRange && priceRangeValue) {
+          priceRange.addEventListener('input', function() {
+            priceRangeValue.textContent = `$${this.value}`;
+          });
+        }
+
+        // Enter key for search
+        const searchBox = document.getElementById('searchBox');
+        if (searchBox) {
+          searchBox.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+              handleSearch();
+            }
+          });
+        }
+
+        // Bottom bar search
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+          searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+              currentSearch = this.value.trim();
+              loadProducts(1, currentCategory, currentSubcategory, currentSort, currentPriceFilter, currentSearch);
+            }
+          });
+        }
+      }
+    </script>
+  </body>
+</html>

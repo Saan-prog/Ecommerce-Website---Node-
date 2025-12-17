@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopStyle - Admin Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Source+Code+Pro:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header Styles */
+        .top-bar {
+            background-color: #2d3e50;
+            color: #fff;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        
+        .bottom-bar {
+            background-color: #fff;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-weight: bold;
+            font-size: 24px;
+            color: #2d3e50;
+        }
+        
+        .logo span {
+            color: #e74c3c;
+        }
+        
+        .admin-portal-title {
+            text-align: center;
+            color: #2d3e50;
+            font-weight: 600;
+        }
+        
+        .admin-badge {
+            background-color: #e74c3c;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .store-front-btn {
+            background-color: #2d3e50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .store-front-btn i {
+            margin-right: 5px;
+        }
+        
+        /* Breadcrumb */
+        .breadcrumb-wrap {
+            background-color: #f1f1f1;
+            padding: 15px 0;
+            margin-bottom: 30px;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            list-style: none;
+        }
+        
+        .breadcrumb li {
+            margin-right: 10px;
+        }
+        
+        .breadcrumb li:not(:last-child):after {
+            content: "/";
+            margin-left: 10px;
+            color: #999;
+        }
+        
+        .breadcrumb a {
+            color: #e74c3c;
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Login Form */
+        .admin-login {
+            padding: 40px 0;
+            min-height: calc(100vh - 300px);
+        }
+        
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .admin-login-form {
+            background-color: white;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            border-top: 4px solid #e74c3c;
+        }
+        
+        .form-heading {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #2d3e50;
+            font-size: 28px;
+        }
+        
+        .form-subheading {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        
+        .admin-icon {
+            color: #e74c3c;
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3e50;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .input-group-prepend {
+            background-color: #f8f9fa;
+            padding: 0 15px;
+            border-right: 1px solid #ddd;
+            color: #7f8c8d;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+        }
+        
+        .form-control:focus {
+            background-color: #f8f9fa;
+        }
+        
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .form-check-input {
+            margin-right: 10px;
+        }
+        
+        .admin-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        .admin-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .admin-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .admin-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .admin-links a {
+            color: #e74c3c;
+            text-decoration: none;
+        }
+        
+        .admin-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .admin-features {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .admin-features h5 {
+            color: #2d3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .admin-features ul {
+            padding-left: 20px;
+        }
+        
+        .admin-features li {
+            margin-bottom: 8px;
+            color: #7f8c8d;
+        }
+        
+        /* Alert Messages */
+        .alert {
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert i {
+            margin-right: 10px;
+        }
+        
+        /* Demo Credentials Box */
+        .demo-credentials {
+            background-color: #e8f4fd;
+            border: 1px solid #b8daff;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .demo-credentials h6 {
+            color: #004085;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .demo-credentials p {
+            margin-bottom: 5px;
+            color: #004085;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: #2d3e50;
+            color: #fff;
+            padding: 50px 0 20px;
+        }
+        
+        .footer-widget h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #ecf0f1;
+        }
+        
+        .contact-info p {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .contact-info i {
+            margin-right: 10px;
+            color: #e74c3c;
+        }
+        
+        .social a {
+            display: inline-block;
+            margin-right: 15px;
+            color: #bdc3c7;
+            font-size: 18px;
+        }
+        
+        .social a:hover {
+            color: #e74c3c;
+        }
+        
+        .footer-widget ul {
+            list-style: none;
+        }
+        
+        .footer-widget li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-widget a {
+            color: #bdc3c7;
+            text-decoration: none;
+        }
+        
+        .footer-widget a:hover {
+            color: #e74c3c;
+        }
+        
+        .payment-security {
+            display: flex;
+            align-items: center;
+        }
+        
+        .payment-security h2 {
+            margin-right: 15px;
+            margin-bottom: 0;
+        }
+        
+        .payment-security img {
+            margin-right: 10px;
+            height: 30px;
+        }
+        
+        .footer-bottom {
+            background-color: #1a2530;
+            padding: 20px 0;
+            text-align: center;
+            color: #bdc3c7;
+            margin-top: 30px;
+        }
+        
+        .footer-bottom a {
+            color: #e74c3c;
+            text-decoration: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-login-form {
+                padding: 30px 20px;
+            }
+            
+            .footer .row > div {
+                margin-bottom: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top bar Start -->
+    <div class="top-bar">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <i class="fa fa-envelope"></i>
+                    admin-support@shopstyle.com
+                </div>
+                <div>
+                    <i class="fa fa-phone-alt"></i>
+                    +012-345-6789 (Admin Line)
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Top bar End -->
+    
+    <!-- Bottom Bar -->
+    <div class="bottom-bar">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="logo">
+                    Shop<span>Style</span> Admin
+                </div>
+                <div class="admin-portal-title">
+                    <i class="fas fa-user-shield admin-icon"></i>
+                    Admin Portal
+                    <span class="admin-badge">Secure Access</span>
+                </div>
+                <div>
+                    <a href="../index.html" class="store-front-btn">
+                        <i class="fa fa-store"></i>
+                        Store Front
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Breadcrumb Start -->
+    <div class="breadcrumb-wrap">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="../index.html">Home</a></li>
+                <li>Admin Login</li>
+            </ul>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+    
+    <!-- Admin Login Start -->
+    <div class="admin-login">
+        <div class="container">
+            <div class="login-container">
+                <div class="admin-login-form">
+                    <h2 class="form-heading">
+                        <i class="fas fa-user-shield admin-icon"></i>
+                        Admin Login
+                    </h2>
+                    <p class="form-subheading">
+                        Access the administration dashboard
+                    </p>
+                    
+                    <form id="adminLoginForm">
+                        <div class="form-group">
+                            <label for="adminEmail">Admin Email</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <i class="fa fa-envelope"></i>
+                                </div>
+                                <input class="form-control" type="email" id="adminEmail" 
+                                       placeholder="Enter admin email" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="adminPassword">Password</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <i class="fa fa-lock"></i>
+                                </div>
+                                <input class="form-control" type="password" id="adminPassword" 
+                                       placeholder="Enter password" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Remember me on this device</label>
+                        </div>
+                        
+                        <button type="submit" class="admin-btn" id="adminLoginBtn">
+                            Login to Dashboard
+                        </button>
+                        
+                        <div class="admin-links">
+                            <p><a href="admin-forgot-password.html">Forgot Password?</a></p>
+                        </div>
+                    </form>
+                    
+                    <!-- <div class="demo-credentials">
+                        <h6><i class="fas fa-info-circle"></i> Demo Credentials</h6>
+                        <p><strong>Email:</strong> admin@shopstyle.com</p>
+                        <p><strong>Password:</strong> admin123</p>
+                    </div> -->
+                    
+                    <div class="admin-features">
+                        <h5><i class="fas fa-cogs"></i> Admin Features</h5>
+                        <ul>
+                            <li>Product & Inventory Management</li>
+                            <li>Order Processing & Tracking</li>
+                            <li>Customer & User Management</li>
+                            <li>Sales Analytics & Reports</li>
+                            <li>Content & Promotion Management</li>
+                        </ul>
+                    </div>
+
+                    <div id="adminSuccessMessage" class="alert alert-success" style="display: none;">
+                        <i class="fa fa-check-circle"></i>
+                        <span id="adminSuccessText"></span>
+                    </div>
+
+                    <div id="adminErrorMessage" class="alert alert-danger" style="display: none;">
+                        <i class="fa fa-exclamation-circle"></i>
+                        <span id="adminErrorText"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Admin Login End -->
+    
+    <!-- Footer Start -->
+    <div class="footer">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+                <div class="footer-widget">
+                    <h2>Admin Support</h2>
+                    <div class="contact-info">
+                        <p><i class="fa fa-map-marker"></i>123 E Store, Los Angeles, USA</p>
+                        <p><i class="fa fa-envelope"></i>admin-support@shopstyle.com</p>
+                        <p><i class="fa fa-phone"></i>+012-345-6789 (Admin Line)</p>
+                    </div>
+                </div>
+                
+                <div class="footer-widget">
+                    <h2>Follow Us</h2>
+                    <div class="contact-info">
+                        <div class="social">
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-youtube"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-widget">
+                    <h2>Admin Resources</h2>
+                    <ul>
+                        <li><a href="#">Admin Documentation</a></li>
+                        <li><a href="#">Security Guidelines</a></li>
+                        <li><a href="#">System Status</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-widget">
+                    <h2>Quick Links</h2>
+                    <ul>
+                        <li><a href="../index.html">Store Front</a></li>
+                        <li><a href="#">Admin Help</a></li>
+                        <li><a href="#">Report an Issue</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; flex-wrap: wrap;">
+                <div class="payment-security">
+                    <h2>Secured By:</h2>
+                    <img src="https://cdn.jsdelivr.net/gh/creativetimofficial/public-assets@master/logos_godaddy.svg" alt="GoDaddy" style="height: 30px;">
+                    <img src="https://cdn.jsdelivr.net/gh/creativetimofficial/public-assets@master/logos_norton.svg" alt="Norton" style="height: 30px;">
+                    <img src="https://cdn.jsdelivr.net/gh/creativetimofficial/public-assets@master/logos_ssl.svg" alt="SSL" style="height: 30px;">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+    
+    <!-- Footer Bottom Start -->
+    <div class="footer-bottom">
+        <div class="container">
+            <p>Copyright &copy; 2023 <a href="#">ShopStyle</a>. All Rights Reserved | Admin Portal v2.1</p>
+        </div>
+    </div>
+    <!-- Footer Bottom End -->
+
+    <script>
+document.getElementById("adminLoginForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    
+    const email = document.getElementById("adminEmail").value;
+    const password = document.getElementById("adminPassword").value;
+    const rememberMe = document.getElementById("rememberMe").checked;
+    
+    console.log("🔄 Admin login attempt:", email);
+    
+    // Reset messages
+    hideAdminMessages();
+    
+    // Validation
+    if (!email || !password) {
+        showAdminError("Please enter both email and password.");
+        return;
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showAdminError("Please enter a valid email address.");
+        return;
+    }
+    
+    // Show loading
+    showAdminLoading();
+    
+    try {
+        // Try the API call first
+        const response = await fetch("/api/admin/login", {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ 
+                email: email,
+                password: password
+            })
+        });
+        
+        // Check if response is OK before parsing JSON
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log("📨 Admin login response:", data);
+        
+        if (data.success) {
+            showAdminSuccess(data.message || "Login successful! Redirecting to dashboard...");
+            
+            // Store admin session data
+            localStorage.setItem('adminLoggedIn', 'true');
+            localStorage.setItem('adminToken', data.token);
+            localStorage.setItem('adminId', data.adminId);
+            localStorage.setItem('adminName', data.adminName || 'Admin');
+            
+            setTimeout(() => {
+                window.location.href = "admin-dashboard.html";
+            }, 1500);
+        } else {
+            // Handle specific error messages
+            if (data.message === "Admin not found") {
+                showAdminError("Admin account not found. Please check your email address.");
+            } else if (data.message === "Invalid credentials") {
+                showAdminError("Invalid password. Please try again.");
+            } else {
+                showAdminError(data.message || "Login failed. Please try again.");
+            }
+        }
+    } catch (err) {
+        console.error("Admin login error:", err);
+        
+        // Check if it's a network error or server error
+        if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+            showAdminError("Cannot connect to server. Please check your internet connection and try again.");
+        } else if (err.message.includes('HTTP error')) {
+            showAdminError("Server error. Please try again later.");
+        } else {
+            showAdminError("Login failed: " + err.message);
+        }
+    } finally {
+        hideAdminLoading();
+    }
+});
+
+function showAdminLoading() {
+    const loginBtn = document.getElementById("adminLoginBtn");
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Authenticating...';
+}
+
+function hideAdminLoading() {
+    const loginBtn = document.getElementById("adminLoginBtn");
+    loginBtn.disabled = false;
+    loginBtn.innerHTML = 'Login to Dashboard';
+}
+
+function showAdminSuccess(message) {
+    const successMessage = document.getElementById("adminSuccessMessage");
+    const successText = document.getElementById("adminSuccessText");
+    successText.textContent = message;
+    successMessage.style.display = "flex";
+    document.getElementById("adminErrorMessage").style.display = "none";
+}
+
+function showAdminError(message) {
+    const errorMessage = document.getElementById("adminErrorMessage");
+    const errorText = document.getElementById("adminErrorText");
+    errorText.textContent = message;
+    errorMessage.style.display = "flex";
+    document.getElementById("adminSuccessMessage").style.display = "none";
+}
+
+function hideAdminMessages() {
+    document.getElementById("adminSuccessMessage").style.display = "none";
+    document.getElementById("adminErrorMessage").style.display = "none";
+}
+
+// Auto-fill demo credentials for testing
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if already logged in
+    if (localStorage.getItem('adminLoggedIn') === 'true') {
+        window.location.href = "admin-dashboard.html";
+        return;
+    }
+    
+    // Pre-fill demo credentials (optional - remove in production)
+    document.getElementById('adminEmail').value = 'admin@shopstyle.com';
+    document.getElementById('adminPassword').value = 'admin123';
+});
+
+// Add this to help debug - check if API is reachable
+async function checkApiStatus() {
+    try {
+        const response = await fetch('/api/admin/login', { method: 'HEAD' });
+        console.log('✅ API is reachable');
+    } catch (error) {
+        console.warn('❌ API is not reachable:', error.message);
+    }
+}
+
+// Uncomment the line below to test API connectivity on page load
+// checkApiStatus();
+</script>
+</body>
+</html>

@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ShopStyle</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="eCommerce HTML Template Free Download" name="keywords" />
+    <meta content="eCommerce HTML Template Free Download" name="description" />
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS Libraries -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="lib/slick/slick.css" rel="stylesheet" />
+    <link href="lib/slick/slick-theme.css" rel="stylesheet" />
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet" />
+    <style>
+      .account-details-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      .form-section {
+        margin-bottom: 25px;
+      }
+      .readonly-field {
+        background-color: #e9ecef !important;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Top bar Start -->
+    <div class="top-bar">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-6">
+            <i class="fa fa-envelope"></i>
+            support@shopstyle.com
+          </div>
+          <div class="col-sm-6">
+            <i class="fa fa-phone-alt"></i>
+            +012-345-6789
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Top bar End -->
+
+    <!-- Nav Bar Start -->
+    <div class="nav">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+          <a href="#" class="navbar-brand">MENU</a>
+          <button
+            type="button"
+            class="navbar-toggler"
+            data-toggle="collapse"
+            data-target="#navbarCollapse"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div
+            class="collapse navbar-collapse justify-content-between"
+            id="navbarCollapse"
+          >
+            <div class="navbar-nav mr-auto">
+              <a href="index.html" class="nav-item nav-link">Home</a>
+              <a href="product-list.html" class="nav-item nav-link">Products</a>
+              <a href="product-detail.html" class="nav-item nav-link"
+                >Product Detail</a
+              >
+              <a href="cart.html" class="nav-item nav-link">Cart</a>
+              <a href="checkout.html" class="nav-item nav-link">Checkout</a>
+              <!-- <a href="my-account.html" class="nav-item nav-link active">My Account</a> -->
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  >More Pages</a
+                >
+                <div class="dropdown-menu">
+                  <a href="wishlist.html" class="dropdown-item">Wishlist</a>
+                  <!-- <a href="login.html" class="dropdown-item">Login & Register</a> -->
+                  <a href="contact.html" class="dropdown-item">Contact Us</a>
+                </div>
+              </div>
+            </div>
+            <div class="navbar-nav ml-auto">
+              <div class="nav-item dropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  >User Account</a
+                >
+                <div class="dropdown-menu">
+                  <a href="#" class="dropdown-item">Login</a>
+                  <a href="#" class="dropdown-item">Register</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <!-- Nav Bar End -->
+
+    <!-- Bottom Bar Start -->
+    <div class="bottom-bar">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-3">
+            <div class="logo">
+              <a href="index.html">
+                <img src="img/logo.png" alt="Logo" />
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="search">
+              <input type="text" placeholder="Search" />
+              <button><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="user">
+              <a href="wishlist.html" class="btn wishlist">
+                <i class="fa fa-heart"></i>
+                <span>(0)</span>
+              </a>
+              <a href="cart.html" class="btn cart">
+                <i class="fa fa-shopping-cart"></i>
+                <span>(0)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bottom Bar End -->
+
+    <!-- Breadcrumb Start -->
+    <div class="breadcrumb-wrap">
+      <div class="container-fluid">
+        <ul class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">Products</a></li>
+          <li class="breadcrumb-item active">My Account</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Breadcrumb End -->
+
+    <!-- User Welcome Bar -->
+    <div
+      class="user-welcome-bar"
+      style="
+        background: linear-gradient(135deg, #b077e9 0%, #ee714a 100%);
+        color: white;
+        padding: 15px 0;
+        margin-bottom: 30px;
+      "
+    >
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h4 style="margin: 0; font-weight: 600">
+              <i class="fa fa-user-circle mr-2"></i>
+              Welcome back, <span id="userName">Guest User</span>!
+            </h4>
+            <small style="opacity: 0.9">
+              <i class="fa fa-envelope mr-1"></i>
+              <span id="userEmail">Please log in to see your email</span>
+            </small>
+          </div>
+          <div class="col-md-4 text-md-right">
+            <span class="badge badge-light" style="color: #333">
+              <i class="fa fa-shield-alt mr-1"></i>
+              Account Active
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User WelcomeBar ends -->
+
+    <!-- My Account Start -->
+    <div class="my-account">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3">
+            <!-- Navigation menu (same as before) -->
+            <div
+              class="nav flex-column nav-pills"
+              role="tablist"
+              aria-orientation="vertical"
+            >
+              <a
+                class="nav-link active"
+                id="dashboard-nav"
+                data-toggle="pill"
+                href="#dashboard-tab"
+                role="tab"
+                ><i class="fa fa-tachometer-alt"></i>Dashboard</a
+              >
+              <a
+                class="nav-link"
+                id="orders-nav"
+                data-toggle="pill"
+                href="#orders-tab"
+                role="tab"
+                ><i class="fa fa-shopping-bag"></i>Orders</a
+              >
+              <a
+                class="nav-link"
+                id="payment-nav"
+                data-toggle="pill"
+                href="#payment-tab"
+                role="tab"
+                ><i class="fa fa-credit-card"></i>Payment Method</a
+              >
+              <a
+                class="nav-link"
+                id="address-nav"
+                href="address.html"
+                ><i class="fa fa-map-marker-alt"></i>address</a>
+                <!-- <a class="nav-link" id="address-nav" href="address.html">
+            <i class="fa fa-map-marker-alt"></i>Address
+         </a> -->
+              <a
+                class="nav-link"
+                id="account-nav"
+                data-toggle="pill"
+                href="#account-tab"
+                role="tab"
+                ><i class="fa fa-user"></i>Account Details</a
+              >
+              <a class="nav-link" href="index.html"
+                ><i class="fa fa-sign-out-alt"></i>Logout</a
+              >
+            </div>
+          </div>
+          <div class="col-md-9">
+            <div class="tab-content">
+              <!-- Other tabs remain the same -->
+
+              <div
+                class="tab-pane fade show active"
+                id="dashboard-tab"
+                role="tabpanel"
+                aria-labelledby="dashboard-nav"
+              >
+                <h4>Dashboard</h4>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                  condimentum quam ac mi viverra dictum. In efficitur ipsum
+                  diam, at dignissim lorem tempor in. Vivamus tempor hendrerit
+                  finibus. Nulla tristique viverra nisl, sit amet bibendum ante
+                  suscipit non. Praesent in faucibus tellus, sed gravida lacus.
+                  Vivamus eu diam eros. Aliquam et sapien eget arcu rhoncus
+                  scelerisque.
+                </p>
+              </div>
+
+              <!-- Account Details Tab -->
+              <div
+                class="tab-pane fade"
+                id="account-tab"
+                role="tabpanel"
+                aria-labelledby="account-nav"
+              >
+                <div class="account-details-section">
+                  <h4>Account Details</h4>
+                  <form id="accountDetailsForm">
+                    <div class="form-section">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label for="fullName"
+                              ><strong>Full Name</strong></label
+                            >
+                            <input
+                              class="form-control"
+                              type="text"
+                              id="fullName"
+                              name="name"
+                              placeholder="Your Full Name"
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="mobileNumber"
+                              ><strong>Mobile Number</strong></label
+                            >
+                            <input
+                              class="form-control"
+                              type="text"
+                              id="mobileNumber"
+                              name="phone"
+                              placeholder="Your Mobile Number"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="emailAddress"
+                              ><strong>Email Address</strong></label
+                            >
+                            <input
+                              class="form-control readonly-field"
+                              type="email"
+                              id="emailAddress"
+                              placeholder="Your Email"
+                              readonly
+                            />
+                            <small class="form-text text-muted">
+                              <i class="fa fa-info-circle"></i> Email cannot be
+                              changed
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-12">
+                          <button
+                            type="submit"
+                            class="btn btn-primary"
+                            id="updateProfileBtn"
+                            style="
+                              background: linear-gradient(
+                                135deg,
+                                #ee714a 0%,
+                                #b37de8 100%
+                              );
+                              border: none;
+                              color: white;
+                            "
+                          >
+                            <i class="fa fa-save mr-2"></i>Update Profile
+                          </button>
+                          <div
+                            id="updateMessage"
+                            class="mt-3 alert"
+                            style="display: none"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <div class="account-details-section">
+                  <h4>Password Change</h4>
+                  <form id="passwordChangeForm">
+                    <div class="form-section">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label for="currentPassword"
+                              ><strong>Current Password</strong></label
+                            >
+                            <input
+                              class="form-control"
+                              type="password"
+                              id="currentPassword"
+                              placeholder="Current Password"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="newPassword"
+                              ><strong>New Password</strong></label
+                            >
+                            <input
+                              class="form-control"
+                              type="password"
+                              id="newPassword"
+                              placeholder="New Password"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="confirmPassword"
+                              ><strong>Confirm Password</strong></label
+                            >
+                            <input
+                              class="form-control"
+                              type="password"
+                              id="confirmPassword"
+                              placeholder="Confirm Password"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-12">
+                          <button
+                            type="submit"
+                            class="btn btn-success"
+                            style="
+                              background: linear-gradient(
+                                135deg,
+                                #d65831 0%,
+                                #b37de8 100%
+                              );
+                              border: none;
+                              color: white;
+                            "
+                          >
+                            <i class="fa fa-key mr-2"></i>Save Changes
+                          </button>
+                          <div
+                            id="passwordMessage"
+                            class="mt-3 alert"
+                            style="display: none"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Start -->
+    <div class="footer">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Get in Touch</h2>
+              <div class="contact-info">
+                <p>
+                  <i class="fa fa-map-marker"></i>123 E Store, Los Angeles, USA
+                </p>
+                <p><i class="fa fa-envelope"></i>email@example.com</p>
+                <p><i class="fa fa-phone"></i>+123-456-7890</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Follow Us</h2>
+              <div class="contact-info">
+                <div class="social">
+                  <a href=""><i class="fab fa-twitter"></i></a>
+                  <a href=""><i class="fab fa-facebook-f"></i></a>
+                  <a href=""><i class="fab fa-linkedin-in"></i></a>
+                  <a href=""><i class="fab fa-instagram"></i></a>
+                  <a href=""><i class="fab fa-youtube"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Company Info</h2>
+              <ul>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms & Condition</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Purchase Info</h2>
+              <ul>
+                <li><a href="#">Pyament Policy</a></li>
+                <li><a href="#">Shipping Policy</a></li>
+                <li><a href="#">Return Policy</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="row payment align-items-center">
+          <div class="col-md-6">
+            <div class="payment-method">
+              <h2>We Accept:</h2>
+              <img src="img/payment-method.png" alt="Payment Method" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="payment-security">
+              <h2>Secured By:</h2>
+              <img src="img/godaddy.svg" alt="Payment Security" />
+              <img src="img/norton.svg" alt="Payment Security" />
+              <img src="img/ssl.svg" alt="Payment Security" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Footer Bottom Start -->
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 copyright">
+            <p>
+              Copyright &copy; <a href="#">Your Site Name</a>. All Rights
+              Reserved
+            </p>
+          </div>
+
+          <div class="col-md-6 template-by">
+            <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
+            <p>Designed By <a href="https://htmlcodex.com">HTML Codex</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer Bottom End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/slick/slick.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async function () {
+        const token = localStorage.getItem("token");
+        console.log("🔐 Token from localStorage:", token);
+
+        if (!token) {
+          alert("Please log in first.");
+          window.location.href = "login.html";
+          return;
+        }
+
+        try {
+          console.log("🚀 Starting to fetch user profile...");
+
+          // Call your actual backend API
+          const response = await fetch("/api/user/profile", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          console.log("📡 HTTP Status:", response.status);
+          console.log("📡 Response OK?", response.ok);
+
+          if (response.ok) {
+            const userData = await response.json();
+            console.log("✅ REAL API Data received:", userData);
+
+            // ✅ CORRECT: Based on your GET controller structure
+            const userName = userData.user?.name || "User";
+            const userEmail = userData.user?.email || "No email";
+            const userPhone = userData.user?.phone || "";
+
+            console.log(
+              "Extracted data - Name:",
+              userName,
+              "Email:",
+              userEmail,
+              "Phone:",
+              userPhone
+            );
+
+            // Update the page with REAL user data
+            document.getElementById("userName").textContent = userName;
+            document.getElementById("userEmail").textContent = userEmail;
+            document.getElementById("fullName").value = userName;
+            document.getElementById("mobileNumber").value = userPhone;
+            document.getElementById("emailAddress").value = userEmail;
+
+            console.log("🎉 Page updated with real user data!");
+          } else if (response.status === 401) {
+            // Handle 401 Unauthorized
+            console.error("🔑 401 Unauthorized - Token is invalid or expired");
+
+            // Clear the invalid token and redirect to login
+            localStorage.removeItem("token");
+            alert("Your session has expired. Please log in again.");
+            window.location.href = "login.html";
+            return;
+          } else {
+            // Handle other HTTP errors
+            console.error("❌ API returned error status:", response.status);
+            alert("Failed to load profile. Please try again.");
+          }
+        } catch (error) {
+          console.error("💥 Network error:", error);
+          alert("Network error. Please check your connection.");
+        }
+
+        // Handle profile update form submission
+        document
+          .getElementById("accountDetailsForm")
+          .addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const token = localStorage.getItem("token");
+            if (!token) {
+              alert("Please log in again.");
+              window.location.href = "login.html";
+              return;
+            }
+
+            const updateBtn = document.getElementById("updateProfileBtn");
+            const messageDiv = document.getElementById("updateMessage");
+
+            updateBtn.disabled = true;
+            updateBtn.innerHTML =
+              '<i class="fa fa-spinner fa-spin mr-2"></i>Updating...';
+
+            try {
+              const formData = {
+                name: document.getElementById("fullName").value,
+                phone: document.getElementById("mobileNumber").value,
+              };
+
+              console.log("🔄 Updating profile with:", formData);
+
+              const updateResponse = await fetch("/api/user/profile", {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(formData),
+              });
+
+              console.log("📡 Update response status:", updateResponse.status);
+
+              if (updateResponse.ok) {
+                const updatedData = await updateResponse.json();
+                console.log("✅ Profile updated successfully:", updatedData);
+
+                messageDiv.style.display = "block";
+                messageDiv.className = "mt-3 alert alert-success";
+                messageDiv.textContent = "Profile updated successfully!";
+
+                // Update welcome bar with new name
+                document.getElementById("userName").textContent = formData.name;
+              } else {
+                if (updateResponse.status === 401) {
+                  throw new Error("Session expired. Please log in again.");
+                }
+                const errorData = await updateResponse.json();
+                throw new Error(
+                  errorData.message || "Failed to update profile"
+                );
+              }
+            } catch (error) {
+              console.error("❌ Update error:", error);
+              messageDiv.style.display = "block";
+              messageDiv.className = "mt-3 alert alert-danger";
+              messageDiv.textContent = "Error: " + error.message;
+
+              if (error.message.includes("Session expired")) {
+                localStorage.removeItem("token");
+                setTimeout(() => {
+                  window.location.href = "login.html";
+                }, 2000);
+              }
+            } finally {
+              updateBtn.disabled = false;
+              updateBtn.innerHTML =
+                '<i class="fa fa-save mr-2"></i>Update Profile';
+
+              setTimeout(() => {
+                messageDiv.style.display = "none";
+              }, 5000);
+            }
+          });
+
+        // Handle password change form submission
+        document
+          .getElementById("passwordChangeForm")
+          .addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const token = localStorage.getItem("token");
+            if (!token) {
+              alert("Please log in again.");
+              window.location.href = "login.html";
+              return;
+            }
+
+            const saveBtn = this.querySelector('button[type="submit"]');
+            const messageDiv = document.getElementById("passwordMessage");
+            const currentPassword =
+              document.getElementById("currentPassword").value;
+            const newPassword = document.getElementById("newPassword").value;
+            const confirmPassword =
+              document.getElementById("confirmPassword").value;
+
+            // Validation
+            if (newPassword !== confirmPassword) {
+              messageDiv.style.display = "block";
+              messageDiv.className = "mt-3 alert alert-danger";
+              messageDiv.textContent = "Passwords do not match!";
+              return;
+            }
+
+            if (newPassword.length < 6) {
+              messageDiv.style.display = "block";
+              messageDiv.className = "mt-3 alert alert-danger";
+              messageDiv.textContent =
+                "Password must be at least 6 characters!";
+              return;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.innerHTML =
+              '<i class="fa fa-spinner fa-spin mr-2"></i>Saving...';
+
+            try {
+              const passwordData = {
+                currentPassword: currentPassword,
+                newPassword: newPassword,
+              };
+
+              // Call your password update API (you'll need to create this endpoint)
+              const passwordResponse = await fetch(
+                "/api/user/change-password",
+                {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify(passwordData),
+                }
+              );
+
+              if (passwordResponse.ok) {
+                messageDiv.style.display = "block";
+                messageDiv.className = "mt-3 alert alert-success";
+                messageDiv.textContent = "Password changed successfully!";
+
+                // Clear password fields
+                document.getElementById("currentPassword").value = "";
+                document.getElementById("newPassword").value = "";
+                document.getElementById("confirmPassword").value = "";
+              } else {
+                const errorData = await passwordResponse.json();
+                throw new Error(
+                  errorData.message || "Failed to change password"
+                );
+              }
+            } catch (error) {
+              console.error("Update error:", error);
+
+              // Handle HTML error responses
+              if (error.message.includes("Unexpected token")) {
+                messageDiv.style.display = "block";
+                messageDiv.className = "mt-3 alert alert-danger";
+                messageDiv.textContent =
+                  "Server error occurred. Please try again later.";
+              } else {
+                messageDiv.style.display = "block";
+                messageDiv.className = "mt-3 alert alert-danger";
+                messageDiv.textContent = "Error: " + error.message;
+              }
+
+              if (error.message.includes("Session expired")) {
+                localStorage.removeItem("token");
+                setTimeout(() => {
+                  window.location.href = "login.html";
+                }, 2000);
+              }
+            }
+          });
+      });
+    </script>
+  </body>
+</html>

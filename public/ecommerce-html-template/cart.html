@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>E Store - eCommerce HTML Template</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="eCommerce HTML Template Free Download" name="keywords">
+        <meta content="eCommerce HTML Template Free Download" name="description">
+
+        <!-- Favicon -->
+        <link href="img/favicon.ico" rel="icon">
+
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap" rel="stylesheet">
+
+        <!-- CSS Libraries -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+        <link href="lib/slick/slick.css" rel="stylesheet">
+        <link href="lib/slick/slick-theme.css" rel="stylesheet">
+
+        <!-- Template Stylesheet -->
+        <link href="css/style.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <!-- Top bar Start -->
+        <div class="top-bar">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <i class="fa fa-envelope"></i>
+                        support@email.com
+                    </div>
+                    <div class="col-sm-6">
+                        <i class="fa fa-phone-alt"></i>
+                        +012-345-6789
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Top bar End -->
+        
+        <!-- Nav Bar Start -->
+        <div class="nav">
+            <div class="container-fluid">
+                <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+                    <a href="#" class="navbar-brand">MENU</a>
+                    <button
+                        type="button"
+                        class="navbar-toggler"
+                        data-toggle="collapse"
+                        data-target="#navbarCollapse"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div
+                        class="collapse navbar-collapse justify-content-between"
+                        id="navbarCollapse"
+                    >
+                        <div class="navbar-nav mr-auto">
+                            <a href="index.html" class="nav-item nav-link">Home</a>
+                            <a href="product-list.html" class="nav-item nav-link active">Products</a>
+                            <a href="product-detail.html" class="nav-item nav-link" style="display: none;">Product Detail</a>
+                            <a href="cart.html" class="nav-item nav-link">Cart</a>
+                            <a href="checkout.html" class="nav-item nav-link">Checkout</a>
+                            <a href="my-account.html" class="nav-item nav-link" style="display: none;">My Account</a>
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" style="display: none;">More Pages</a>
+                                <div class="dropdown-menu">
+                                    <a href="wishlist.html" class="dropdown-item">Wishlist</a>
+                                    <a href="login.html" class="dropdown-item">Login & Register</a>
+                                    <a href="contact.html" class="dropdown-item">Contact Us</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="navbar-nav ml-auto align-items-center">
+                            <!-- User Account dropdown (only visible after login) -->
+                            <div class="nav-item dropdown user-account" id="userAccountDropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-user-circle"></i> My Account
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a href="my-account.html" class="dropdown-item">Dashboard</a>
+                                    <a href="#" class="dropdown-item" id="logoutBtn">Logout</a>
+                                </div>
+                            </div>
+
+                            <!-- Login dropdown (only visible before login) -->
+                            <div class="nav-item dropdown" id="loginDropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Login</a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a href="login.html" class="dropdown-item">Login</a>
+                                    <a href="login.html" class="dropdown-item">Register</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- Nav Bar End -->
+             
+        
+        <!-- Bottom Bar Start -->
+        <div class="bottom-bar">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <div class="logo">
+                            <a href="index.html">
+                                <img src="img/logo.png" alt="Logo">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="search">
+                            <input type="text" placeholder="Search">
+                            <button><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="user">
+                            <a href="wishlist.html" class="btn wishlist">
+                                <i class="fa fa-heart"></i>
+                                <span>(0)</span>
+                            </a>
+                            <a href="cart.html" class="btn cart">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span>(0)</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Bottom Bar End -->
+        
+        <!-- Breadcrumb Start -->
+        <div class="breadcrumb-wrap">
+            <div class="container-fluid">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Products</a></li>
+                    <li class="breadcrumb-item active">Cart</li>
+                </ul>
+            </div>
+        </div>
+        <!-- Breadcrumb End -->
+        
+        <!-- Cart Start -->
+        <div class="cart-page">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="cart-page-inner">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Total</th>
+                                            <th>Remove</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="align-middle" id="cartItems">
+                                        <!-- Dynamic cart items will be inserted here -->
+                                        <tr id="emptyCartMessage" style="display: none;">
+                                            <td colspan="5" class="text-center">
+                                                <h3>Your cart is empty</h3>
+                                                <a href="product-list.html" class="btn">Continue Shopping</a>
+                                            </td>
+                                        </tr>
+                                        <tr id="loginMessage" style="display: none;">
+                                            <td colspan="5" class="text-center">
+                                                <h3>Please log in to view your cart</h3>
+                                                <a href="login.html" class="btn">Login</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="cart-page-inner">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="coupon">
+                                        <input type="text" placeholder="Coupon Code">
+                                        <button>Apply Code</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="cart-summary">
+                                        <div class="cart-content">
+                                            <h1>Cart Summary</h1>
+                                            <p>Sub Total<span id="subTotal">$0</span></p>
+                                            <p>Shipping Cost<span>$1</span></p>
+                                            <h2>Grand Total<span id="grandTotal">$1</span></h2>
+                                        </div>
+                                        <div class="cart-btn">
+                                            <button onclick="clearCart()">Clear Cart</button>
+                                            <button onclick="checkout()">Checkout</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Cart End -->
+        
+        <!-- Footer Start -->
+        <div class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-widget">
+                            <h2>Get in Touch</h2>
+                            <div class="contact-info">
+                                <p><i class="fa fa-map-marker"></i>123 E Store, Los Angeles, USA</p>
+                                <p><i class="fa fa-envelope"></i>email@example.com</p>
+                                <p><i class="fa fa-phone"></i>+123-456-7890</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-widget">
+                            <h2>Follow Us</h2>
+                            <div class="contact-info">
+                                <div class="social">
+                                    <a href=""><i class="fab fa-twitter"></i></a>
+                                    <a href=""><i class="fab fa-facebook-f"></i></a>
+                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
+                                    <a href=""><i class="fab fa-instagram"></i></a>
+                                    <a href=""><i class="fab fa-youtube"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-widget">
+                            <h2>Company Info</h2>
+                            <ul>
+                                <li><a href="#">About Us</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Terms & Condition</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-widget">
+                            <h2>Purchase Info</h2>
+                            <ul>
+                                <li><a href="#">Pyament Policy</a></li>
+                                <li><a href="#">Shipping Policy</a></li>
+                                <li><a href="#">Return Policy</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row payment align-items-center">
+                    <div class="col-md-6">
+                        <div class="payment-method">
+                            <h2>We Accept:</h2>
+                            <img src="img/payment-method.png" alt="Payment Method" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="payment-security">
+                            <h2>Secured By:</h2>
+                            <img src="img/godaddy.svg" alt="Payment Security" />
+                            <img src="img/norton.svg" alt="Payment Security" />
+                            <img src="img/ssl.svg" alt="Payment Security" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+        
+        <!-- Footer Bottom Start -->
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 copyright">
+                        <p>Copyright &copy; <a href="#">Your Site Name</a>. All Rights Reserved</p>
+                    </div>
+
+                    <div class="col-md-6 template-by">				
+                        <p>Designed By <a href="https://htmlcodex.com">HTML Codex</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer Bottom End -->       
+        
+        <!-- Back to Top -->
+        <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+        
+        <!-- JavaScript Libraries -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+        <script src="lib/easing/easing.min.js"></script>
+        <script src="lib/slick/slick.min.js"></script>
+        
+        <!-- Template Javascript -->
+        <script src="js/main.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Debug function to check localStorage
+        function debugLocalStorage() {
+            console.log('=== LOCALSTORAGE DEBUG ===');
+            console.log('cart:', localStorage.getItem('cart'));
+            console.log('cartCount:', localStorage.getItem('cartCount'));
+            console.log('token:', localStorage.getItem('token'));
+            console.log('==========================');
+        }
+
+        debugLocalStorage();
+
+        const token = localStorage.getItem("token");
+        const cartItemsContainer = document.getElementById('cartItems');
+        const emptyCartMessage = document.getElementById('emptyCartMessage');
+        const loginMessage = document.getElementById('loginMessage');
+        const subTotalElement = document.getElementById('subTotal');
+        const grandTotalElement = document.getElementById('grandTotal');
+
+        const loginDropdown = document.getElementById("loginDropdown");
+        const userAccountDropdown = document.getElementById("userAccountDropdown");
+
+        // Authentication handling
+        if (token) {
+            loginDropdown.style.display = "none";
+            userAccountDropdown.style.display = "block";
+            fetchCartFromBackend();
+        } else {
+            loginDropdown.style.display = "block";
+            userAccountDropdown.style.display = "none";
+            fetchCartFromLocalStorage();
+        }
+
+        // Logout functionality
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", function () {
+                localStorage.removeItem("token");
+                localStorage.removeItem("cart");
+                localStorage.removeItem("cartCount");
+                window.location.reload();
+            });
+        }
+
+        // ========== FIXED FETCH CART FROM BACKEND ==========
+        async function fetchCartFromBackend() {
+            try {
+                console.log('Fetching cart from backend with token:', token);
+                
+                const response = await fetch('/api/user/cart/getAll', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Backend cart data:', data);
+
+                // Handle different response structures
+                let cartData;
+                
+                if (data.cart && data.cart.items) {
+                    // Structure: { success: true, cart: { items: [], total: 0, totalItems: 0 } }
+                    cartData = data.cart;
+                } else if (data.items) {
+                    // Structure: { _id: '', user: '', items: [], createdAt: '', updatedAt: '' }
+                    cartData = {
+                        items: data.items || [],
+                        total: calculateCartTotal(data.items || []),
+                        totalItems: calculateTotalItems(data.items || [])
+                    };
+                } else if (data.success && data.data) {
+                    // Structure: { success: true, data: { items: [] } }
+                    cartData = {
+                        items: data.data.items || [],
+                        total: calculateCartTotal(data.data.items || []),
+                        totalItems: calculateTotalItems(data.data.items || [])
+                    };
+                } else if (data.success) {
+                    // Try to extract cart data from the response
+                    cartData = {
+                        items: data.cartItems || data.items || [],
+                        total: data.total || calculateCartTotal(data.cartItems || data.items || []),
+                        totalItems: data.totalItems || calculateTotalItems(data.cartItems || data.items || [])
+                    };
+                } else {
+                    console.error('Unknown cart structure:', data);
+                    throw new Error('Unknown cart structure');
+                }
+
+                console.log('Processed cart data for display:', cartData);
+                displayCart(cartData);
+                
+                // Update localStorage cart count
+                localStorage.setItem('cartCount', cartData.totalItems.toString());
+                updateCartCountDisplay();
+
+            } catch (error) {
+                console.error('Error fetching cart from backend:', error);
+                console.log('Falling back to localStorage cart');
+                fetchCartFromLocalStorage();
+            }
+        }
+
+        // Helper functions for cart calculations
+        function calculateCartTotal(items) {
+            return items.reduce((sum, item) => {
+                const price = parseFloat(item.product?.price) || parseFloat(item.price) || 0;
+                const quantity = parseInt(item.quantity) || 1;
+                return sum + (price * quantity);
+            }, 0);
+        }
+
+        function calculateTotalItems(items) {
+            return items.reduce((sum, item) => sum + (parseInt(item.quantity) || 1), 0);
+        }
+
+        // ========== FETCH CART FROM LOCALSTORAGE ==========
+        function fetchCartFromLocalStorage() {
+            try {
+                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                console.log('LocalStorage cart:', cart);
+                
+                if (cart.length === 0) {
+                    showEmptyCart();
+                } else {
+                    const cartData = {
+                        items: cart,
+                        total: calculateCartTotal(cart),
+                        totalItems: calculateTotalItems(cart)
+                    };
+                    console.log('Processed cart data:', cartData);
+                    displayCart(cartData);
+                }
+                
+                updateCartCountDisplay();
+            } catch (error) {
+                console.error('Error parsing cart from localStorage:', error);
+                showEmptyCart();
+            }
+        }
+
+        // ========== FIXED IMAGE HANDLER FUNCTION ==========
+        function getProductImageUrl(imageArray) {
+            const defaultImage = 'img/product-1.jpg';
+            
+            if (!imageArray || !Array.isArray(imageArray) || imageArray.length === 0) {
+                return defaultImage;
+            }
+            
+            const firstImage = imageArray[0];
+            
+            if (!firstImage || typeof firstImage !== 'string') {
+                return defaultImage;
+            }
+            
+            // If it's already a full URL, use it as-is
+            if (firstImage.startsWith('http') || firstImage.startsWith('//')) {
+                return firstImage;
+            }
+            
+            // If it starts with /uploads/, use it as-is
+            if (firstImage.startsWith('/uploads/')) {
+                return firstImage;
+            }
+            
+            // If it contains uploads/ anywhere, clean it
+            let cleanImage = firstImage.trim();
+            
+            // Remove duplicate uploads/ only if it's at the beginning
+            if (cleanImage.startsWith('uploads/uploads/')) {
+                cleanImage = cleanImage.replace('uploads/uploads/', 'uploads/');
+            }
+            
+            // Add /uploads/ prefix only if it doesn't already have it
+            if (!cleanImage.startsWith('/') && !cleanImage.startsWith('uploads/')) {
+                cleanImage = 'uploads/' + cleanImage;
+            } else if (cleanImage.startsWith('uploads/') && !cleanImage.startsWith('/uploads/')) {
+                cleanImage = '/' + cleanImage;
+            }
+            
+            console.log('Image URL processed:', cleanImage);
+            return cleanImage;
+        }
+
+        // ========== FIXED DISPLAY CART ==========
+        function displayCart(cart) {
+            console.log('Displaying cart data:', cart);
+            
+            if (!cart || !cart.items || cart.items.length === 0) {
+                showEmptyCart();
+                return;
+            }
+
+            // Hide messages
+            if (emptyCartMessage) emptyCartMessage.style.display = 'none';
+            if (loginMessage) loginMessage.style.display = 'none';
+
+            // Update cart items table
+            cartItemsContainer.innerHTML = cart.items.map(item => {
+                console.log('Cart item details:', item);
+                
+                // Handle different item structures
+                const product = item.product || item || {};
+                const productId = product._id || item._id || 'unknown';
+                const itemId = item._id || productId; // Use cart item ID if available
+                const productName = product.name || product.productName || 'Product Name';
+                const productPrice = parseFloat(product.price) || parseFloat(item.price) || 0;
+                
+                // Get image using the fixed handler function
+                const productImage = getProductImageUrl(product.image || product.images || item.image);
+                
+                const quantity = parseInt(item.quantity) || 1;
+                const size = item.size || product.size || 'N/A';
+
+                return `
+                    <tr>
+                        <td>
+                            <div class="img d-flex align-items-start">
+                                <a href="product-detail.html?id=${productId}" class="mr-3">
+                                    <img src="${productImage}" 
+                                         alt="${productName}"
+                                         style="width: 120px; height: 120px; object-fit: cover;"
+                                         onerror="this.onerror=null; this.src='img/product-1.jpg'">
+                                </a>
+                                <div class="product-info">
+                                    <p class="mb-1"><strong>${productName}</strong></p><br>
+                                    <small class="text-muted">Size: ${size}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="align-middle">$${productPrice.toFixed(2)}</td>
+                        <td class="align-middle">
+                            <div class="qty">
+                                <button class="btn-minus" onclick="updateQuantity('${itemId}', ${quantity - 1}, '${size}')">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                                <input type="text" value="${quantity}" readonly>
+                                <button class="btn-plus" onclick="updateQuantity('${itemId}', ${quantity + 1}, '${size}')">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td class="align-middle">$${(productPrice * quantity).toFixed(2)}</td>
+                        <td class="align-middle">
+                            <button class="btn btn-danger btn-sm" onclick="removeItem('${itemId}', '${size}')">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Update totals
+            const shippingCost = 1;
+            const subTotal = cart.total || calculateCartTotal(cart.items);
+            const grandTotal = subTotal + shippingCost;
+            
+            if (subTotalElement) subTotalElement.textContent = `$${subTotal.toFixed(2)}`;
+            if (grandTotalElement) grandTotalElement.textContent = `$${grandTotal.toFixed(2)}`;
+            
+            // Update cart count
+            updateCartCountDisplay();
+        }
+
+        function showEmptyCart() {
+            if (emptyCartMessage) emptyCartMessage.style.display = 'table-row';
+            if (loginMessage) loginMessage.style.display = 'none';
+            if (subTotalElement) subTotalElement.textContent = '$0';
+            if (grandTotalElement) grandTotalElement.textContent = '$1';
+            updateCartCountDisplay();
+        }
+
+        // ========== UPDATE CART COUNT ==========
+        function updateCartCountDisplay() {
+            try {
+                const cartCount = localStorage.getItem('cartCount') || '0';
+                const cartCountElements = document.querySelectorAll('.cart span');
+                cartCountElements.forEach(element => {
+                    element.textContent = `(${cartCount})`;
+                });
+            } catch (error) {
+                console.error('Error updating cart count display:', error);
+                const cartCountElements = document.querySelectorAll('.cart span');
+                cartCountElements.forEach(element => {
+                    element.textContent = '(0)';
+                });
+            }
+        }
+
+        // ========== QUANTITY UPDATE FUNCTIONS ==========
+        window.updateQuantity = async function(itemId, newQuantity, size) {
+            if (newQuantity < 1) {
+                // If quantity becomes 0, remove item
+                removeItem(itemId, size);
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+            
+            if (token) {
+                await updateBackendQuantity(itemId, newQuantity, size);
+            } else {
+                updateLocalStorageQuantity(itemId, newQuantity, size);
+            }
+        };
+
+        // Update quantity in backend
+        async function updateBackendQuantity(itemId, newQuantity, size) {
+            try {
+                const response = await fetch(`/api/user/cart/updateCart/${itemId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        quantity: newQuantity,
+                        size: size 
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    fetchCartFromBackend();
+                } else {
+                    alert('Error updating quantity: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error updating quantity:', error);
+                alert('Error updating quantity');
+            }
+        }
+
+        // Update quantity in localStorage
+        function updateLocalStorageQuantity(productId, newQuantity, size) {
+            try {
+                let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                const itemIndex = cart.findIndex(item => 
+                    (item._id === productId || item.product?._id === productId) && item.size === size
+                );
+
+                if (itemIndex > -1) {
+                    cart[itemIndex].quantity = newQuantity;
+                    if (cart[itemIndex].product && cart[itemIndex].product.price) {
+                        cart[itemIndex].totalPrice = cart[itemIndex].product.price * newQuantity;
+                    }
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    updateCartCountDisplay();
+                    fetchCartFromLocalStorage();
+                }
+            } catch (error) {
+                console.error('Error updating localStorage quantity:', error);
+                alert('Error updating quantity');
+            }
+        }
+
+        // ========== REMOVE ITEM FUNCTIONS ==========
+        window.removeItem = async function(itemId, size) {
+            if (!confirm('Are you sure you want to remove this item from your cart?')) return;
+
+            const token = localStorage.getItem('token');
+            
+            if (token) {
+                await removeFromBackend(itemId, size);
+            } else {
+                removeFromLocalStorage(itemId, size);
+            }
+        };
+
+        // Remove from backend
+        async function removeFromBackend(itemId, size) {
+            try {
+                const response = await fetch(`/api/user/cart/removeCartItem/${itemId}?size=${size}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    fetchCartFromBackend();
+                } else {
+                    alert('Error removing item: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error removing item:', error);
+                alert('Error removing item');
+            }
+        }
+
+        // Remove from localStorage
+        function removeFromLocalStorage(itemId, size) {
+            try {
+                let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                cart = cart.filter(item => !(
+                    (item._id === itemId || item.product?._id === itemId) && item.size === size
+                ));
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCountDisplay();
+                fetchCartFromLocalStorage();
+            } catch (error) {
+                console.error('Error removing from localStorage:', error);
+                alert('Error removing item');
+            }
+        }
+
+        // ========== CLEAR CART ==========
+        window.clearCart = async function() {
+            if (!confirm('Are you sure you want to clear your entire cart?')) return;
+
+            const token = localStorage.getItem('token');
+            
+            if (token) {
+                await clearBackendCart();
+            } else {
+                clearLocalStorageCart();
+            }
+        };
+
+        async function clearBackendCart() {
+            try {
+                const response = await fetch('/api/user/cart', {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    fetchCartFromBackend();
+                } else {
+                    alert('Error clearing cart: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error clearing cart:', error);
+                alert('Error clearing cart');
+            }
+        }
+
+        function clearLocalStorageCart() {
+            localStorage.removeItem('cart');
+            localStorage.setItem('cartCount', '0');
+            updateCartCountDisplay();
+            fetchCartFromLocalStorage();
+        }
+
+        // ========== CHECKOUT ==========
+        window.checkout = function() {
+            const token = localStorage.getItem('token');
+            
+            // Check if cart is empty by looking at the current display
+            const cartRows = cartItemsContainer.querySelectorAll('tr');
+            const isEmpty = cartRows.length === 0 || 
+                          (emptyCartMessage && emptyCartMessage.style.display !== 'none');
+            
+            if (isEmpty) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            if (!token) {
+                alert('Please login to proceed to checkout');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            window.location.href = 'checkout.html';
+        };
+
+        // Initialize cart count
+        updateCartCountDisplay();
+    });
+</script>
+    </body>
+</html>
