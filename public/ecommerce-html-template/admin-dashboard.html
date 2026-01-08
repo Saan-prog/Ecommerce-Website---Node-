@@ -896,7 +896,7 @@
     </div>
 
     <!-- ---------------------------JavaScript-------------------------- -->
-    <script>
+     <script>
 // Check authentication on page load
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🔍 DOM Content Loaded - Checking authentication');
@@ -913,9 +913,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!isLoggedIn || !adminToken) {
         console.log('❌ Not logged in - redirecting to login');
         // alert('Please login first');
-        //  window.location.href = 'admin-login.html';
+        window.location.href = 'admin-login.html';
         return;
     }
+    
     
     console.log('✅ Authentication passed');
     
@@ -925,23 +926,103 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load dashboard data
     loadDashboardData();
+    // Load recent users
+    loadRecentUsers();
 });
 
-function initializeTabs() {
-    console.log('🔄 Initializing tab functionality');
+// Load recent users from API
+async function loadRecentUsers() {
+    console.log('🔄 loadRecentUsers called');
     
-    // Tab navigation
-    document.querySelectorAll('.sidebar-menu a[data-tab]').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const tabName = this.getAttribute('data-tab');
-            showTab(tabName);
+    try {
+        const token = localStorage.getItem('adminToken');
+        console.log('📝 Using token for users:', token);
+        
+        // Make API call to get users
+        console.log('🌐 Making API call to: /api/admin/users');
+        const response = await fetch('/api/admin/users', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
         });
-    });
-    
-
+        
+        console.log('📨 Users Response:', {
+            status: response.status,
+            statusText: response.statusText,
+            ok: response.ok
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log('✅ Users API Success - Data received:', data);
+            
+            if (data.success && data.users) {
+                updateRecentUsersTable(data.users);
+            } else {
+                console.log('❌ Users API returned success: false', data);
+                useDemoUsersData();
+            }
+        } else {
+            console.log('❌ Users API Failed - Status:', response.status);
+            useDemoUsersData();
+        }
+    } catch (error) {
+        console.error('💥 Network error loading users:', error);
+        useDemoUsersData();
+    }
 }
 
+// Update recent users table with real data
+function updateRecentUsersTable(users) {
+    console.log('📊 Updating recent users table with:', users);
+    
+    const usersTableBody = document.querySelector('#dashboard .content-section:nth-child(3) .table tbody');
+    
+    if (!usersTableBody) {
+        console.log('❌ Users table body not found');
+        return;
+    }
+    
+    // Clear existing rows (keep the first 3 demo rows as fallback)
+    // Or you can clear them all: usersTableBody.innerHTML = '';
+    
+    // Get the most recent 3 users
+    const recentUsers = users.slice(0, 3);
+    
+    // Update each row with real data
+    recentUsers.forEach((user, index) => {
+        const row = usersTableBody.rows[index];
+        if (row) {
+            // Format user ID
+            const userId = `#USR-${String(user._id || index + 1001).slice(-4)}`;
+            
+            // Format date
+            const joinDate = user.createdAt ? new Date(user.createdAt).toISOString().split('T')[0] : '2023-12-01';
+            
+            // Determine status
+            const isActive = user.status === 'active' || user.isActive === true;
+            const statusBadge = isActive ? 
+                '<span class="badge badge-success">Active</span>' : 
+                '<span class="badge badge-warning">Inactive</span>';
+            
+            // Update row cells
+            row.cells[0].textContent = userId;
+            row.cells[1].textContent = user.name || user.fullName || 'Unknown User';
+            row.cells[2].textContent = user.email || 'No email';
+            row.cells[3].textContent = joinDate;
+            row.cells[4].innerHTML = statusBadge;
+        }
+    });
+    
+    console.log('✅ Recent users table updated successfully');
+}
+
+// Use demo users data if API fails
+function useDemoUsersData() {
+    console.log('🔄 Using demo users data (fallback)');
+    // Demo data is already in the HTML, so no changes needed
+}
 
 // Load dashboard data from API
 async function loadDashboardData() {
@@ -1041,10 +1122,83 @@ function logout() {
     }
 }
 
-// Test function to manually trigger dashboard load
-window.testDashboard = function() {
-    console.log('🧪 Manual test triggered');
-    loadDashboardData();
+// Also update the Users Management section if needed
+async function loadAllUsersForManagement() {
+    console.log('🔄 Loading all users for management section');
+    
+    try {
+        const token = localStorage.getItem('adminToken');
+        const response = await fetch('/api/admin/users', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.users) {
+                updateUsersManagementTable(data.users);
+            }
+        }
+    } catch (error) {
+        console.error('Error loading users for management:', error);
+    }
+}
+
+function updateUsersManagementTable(users) {
+    const usersTableBody = document.querySelector('#users .content-section .table tbody');
+    
+    if (!usersTableBody) return;
+    
+    // Clear existing rows
+    usersTableBody.innerHTML = '';
+    
+    // Add new rows for each user
+    users.forEach((user, index) => {
+        // Format user ID
+        const userId = `#USR-${String(user._id || index + 1001).slice(-4)}`;
+        
+        // Format date
+        const joinDate = user.createdAt ? new Date(user.createdAt).toISOString().split('T')[0] : '2023-12-01';
+        
+        // Determine status
+        const isActive = user.status === 'active' || user.isActive === true;
+        const statusBadge = isActive ? 
+            '<span class="badge badge-success">Active</span>' : 
+            '<span class="badge badge-warning">Inactive</span>';
+        
+        // Create row
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${userId}</td>
+            <td>${escapeHtml(user.name || user.fullName || 'Unknown User')}</td>
+            <td>${escapeHtml(user.email || 'No email')}</td>
+            <td>${user.phone || '(123) 456-7890'}</td>
+            <td>${joinDate}</td>
+            <td>${statusBadge}</td>
+            <td>
+                <button class="btn btn-sm btn-primary" onclick="editUser('${user._id}')">Edit</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteUser('${user._id}')">Delete</button>
+            </td>
+        `;
+        
+        usersTableBody.appendChild(row);
+    });
+}
+
+// Helper function to escape HTML
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Test function to manually trigger users load
+window.testUsersLoad = function() {
+    console.log('🧪 Manual users load test triggered');
+    loadRecentUsers();
 };
 </script>
 </body>

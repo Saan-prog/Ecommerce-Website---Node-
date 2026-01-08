@@ -7,10 +7,11 @@ const adminRoutes = require("./routes/admin.js");
 const userRoutes = require("./routes/user.js");
 const adminProductRoutes = require("./routes/adminProduct.js");
 const adminCategoriesRoutes = require("./routes/adminCategories.js");
-const adminSubcategories = require("./routes/adminSubcategories.js");
+// const adminSubcategories = require("./routes/adminSubcategories.js");
 const userProductRoutes = require("./routes/userProduct.js");
 const userCategoryRoute = require("./routes/userCategories.js");
 const cartRoutes = require("./routes/cart.js");
+const orderRoutes = require("./routes/order.js");
 const seedAdmin = require("./scripts/seedAdmin.js");
 const { swaggerUi, swaggerSpec } = require("./swagger.js"); 
 
@@ -32,7 +33,8 @@ app.use("/api/user/products", userProductRoutes);
 app.use("/api/admin/category", adminCategoriesRoutes);
 app.use("/api/user/cart", cartRoutes);
 app.use("/api/user/category", userCategoryRoute);
-app.use("/api/admin/category", adminSubcategories);
+app.use("/api/user/cart/order", orderRoutes);
+// app.use("/api/admin/category", adminSubcategories);
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, "public")));

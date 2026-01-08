@@ -17,6 +17,7 @@ const getCart = async (req, res) => {
             return res.json({
                 success: true,
                 cart: { 
+                    _id: null,
                     items: [], 
                     total: 0,
                     totalItems: 0
@@ -48,6 +49,7 @@ const getCart = async (req, res) => {
             return res.json({
                 success: true,
                 cart: { 
+                    _id: null,
                     items: [], 
                     total: 0,
                     totalItems: 0
@@ -70,6 +72,7 @@ const getCart = async (req, res) => {
         res.json({
             success: true,
             cart: {
+                _id: cart._id,
                 items: validItems.map(item => ({
                     _id: item._id,
                     product: {

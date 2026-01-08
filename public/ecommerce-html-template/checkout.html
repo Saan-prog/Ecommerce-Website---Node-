@@ -1,476 +1,1525 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>E Store - eCommerce HTML Template</title>
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
-        <meta content="eCommerce HTML Template Free Download" name="keywords">
-        <meta content="eCommerce HTML Template Free Download" name="description">
+  <head>
+    <meta charset="utf-8" />
+    <title>ShopStyle - Checkout</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="eCommerce HTML Template Free Download" name="keywords" />
+    <meta content="eCommerce HTML Template Free Download" name="description" />
 
-        <!-- Favicon -->
-        <link href="img/favicon.ico" rel="icon">
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon" />
 
-        <!-- Google Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap"
+      rel="stylesheet"
+    />
 
-        <!-- CSS Libraries -->
-        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-        <link href="lib/slick/slick.css" rel="stylesheet">
-        <link href="lib/slick/slick-theme.css" rel="stylesheet">
+    <!-- CSS Libraries -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="lib/slick/slick.css" rel="stylesheet" />
+    <link href="lib/slick/slick-theme.css" rel="stylesheet" />
 
-        <!-- Template Stylesheet -->
-        <link href="css/style.css" rel="stylesheet">
-    </head>
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet" />
+    <style>
+      .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+      }
 
-    <body>
-        <!-- Top bar Start -->
-        <div class="top-bar">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <i class="fa fa-envelope"></i>
-                        support@email.com
-                    </div>
-                    <div class="col-sm-6">
-                        <i class="fa fa-phone-alt"></i>
-                        +012-345-6789
-                    </div>
+      .loading-spinner {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      .checkout-btn button {
+        background-color: #28a745;
+        border-color: #28a745;
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .checkout-btn button:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+      }
+
+      .order-summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .order-total {
+        font-size: 18px;
+        font-weight: 700;
+        color: #28a745;
+      }
+
+      .address-change-link {
+        text-align: right;
+        margin-bottom: 15px;
+      }
+
+      .alert-message {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+      }
+
+      .selected-items-list {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .selected-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      .selected-item:last-child {
+        border-bottom: none;
+      }
+
+      .item-image-container {
+        width: 60px;
+        height: 60px;
+        margin-right: 15px;
+        flex-shrink: 0;
+      }
+
+      .item-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 5px;
+        border: 1px solid #dee2e6;
+      }
+
+      .item-image-placeholder {
+        width: 100%;
+        height: 100%;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        font-size: 12px;
+      }
+
+      .item-info {
+        flex: 1;
+      }
+
+      .item-name {
+        font-weight: 500;
+        margin-bottom: 3px;
+        font-size: 14px;
+      }
+
+      .item-details {
+        font-size: 12px;
+        color: #666;
+      }
+
+      .item-price {
+        font-weight: 600;
+        min-width: 80px;
+        text-align: right;
+        font-size: 14px;
+      }
+
+      .razorpay-section {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        border-left: 4px solid #3395ff;
+      }
+
+      .razorpay-logo {
+        height: 30px;
+        margin-bottom: 10px;
+      }
+
+      .empty-cart-message {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+      }
+
+      .empty-cart-message a {
+        display: inline-block;
+        margin-top: 10px;
+      }
+
+      .payment-method {
+        margin-bottom: 15px;
+      }
+
+      .payment-content {
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        margin-top: 10px;
+        display: none;
+      }
+
+      .payment-method input[type="radio"]:checked ~ .payment-content {
+        display: block;
+      }
+
+      .razorpay-pay-btn {
+        background-color: #3395ff;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 5px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      .razorpay-pay-btn:hover {
+        background-color: #2678d6;
+      }
+
+      .item-quantity {
+        font-size: 12px;
+        color: #666;
+        margin-top: 2px;
+      }
+
+      .total-items-badge {
+        background-color: #28a745;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <p class="mt-3" id="loadingMessage">Processing your order...</p>
+      </div>
+    </div>
+
+    <!-- Top bar Start -->
+    <div class="top-bar">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-6">
+            <i class="fa fa-envelope"></i>
+            support@shopstyle.com
+          </div>
+          <div class="col-sm-6">
+            <i class="fa fa-phone-alt"></i>
+            +91-98765-43210
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Top bar End -->
+
+    <!-- Nav Bar Start -->
+    <div class="nav">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+          <a href="#" class="navbar-brand">MENU</a>
+          <button
+            type="button"
+            class="navbar-toggler"
+            data-toggle="collapse"
+            data-target="#navbarCollapse"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div
+            class="collapse navbar-collapse justify-content-between"
+            id="navbarCollapse"
+          >
+            <div class="navbar-nav mr-auto">
+              <a href="index.html" class="nav-item nav-link">Home</a>
+              <a href="product-list.html" class="nav-item nav-link active"
+                >Products</a
+              >
+              <a href="cart.html" class="nav-item nav-link">Cart</a>
+              <a href="checkout.html" class="nav-item nav-link">Checkout</a>
+              <a href="order-history.html" class="nav-item nav-link">My Orders</a>
+            </div>
+            <div class="navbar-nav ml-auto align-items-center">
+              <!-- User Account dropdown (only visible after login) -->
+              <div
+                class="nav-item dropdown user-account"
+                id="userAccountDropdown"
+              >
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                >
+                  <i class="fa fa-user-circle"></i> My Account
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <a href="order-history.html" class="dropdown-item"><i class="fas fa-box"></i> My Orders</a>
+                  <a href="profile.html" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
+                  <div class="dropdown-divider"></div>
+                  <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
-            </div>
-        </div>
-        <!-- Top bar End -->
-        
-        <!-- Nav Bar Start -->
-        <!-- Nav Bar Start -->
-<div class="nav">
-  <div class="container-fluid">
-    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-      <a href="#" class="navbar-brand">MENU</a>
-      <button
-        type="button"
-        class="navbar-toggler"
-        data-toggle="collapse"
-        data-target="#navbarCollapse"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
+              </div>
 
-      <div
-        class="collapse navbar-collapse justify-content-between"
-        id="navbarCollapse"
-      >
-        <div class="navbar-nav mr-auto">
-          <a href="index.html" class="nav-item nav-link">Home</a>
-          <a href="product-list.html" class="nav-item nav-link active">Products</a>
-          <a href="product-detail.html" class="nav-item nav-link" style="display: none;">Product Detail</a>
-          <a href="cart.html" class="nav-item nav-link">Cart</a>
-          <a href="checkout.html" class="nav-item nav-link">Checkout</a>
-          <a href="my-account.html" class="nav-item nav-link" style="display: none;">My Account</a>
-          <div class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" style="display: none;">More Pages</a>
-            <div class="dropdown-menu">
-              <a href="wishlist.html" class="dropdown-item">Wishlist</a>
-              <a href="login.html" class="dropdown-item">Login & Register</a>
-              <a href="contact.html" class="dropdown-item">Contact Us</a>
+              <!-- Login dropdown (only visible before login) -->
+              <div class="nav-item dropdown" id="loginDropdown">
+                <a
+                  href="#"
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                  >Login</a
+                >
+                <div class="dropdown-menu dropdown-menu-right">
+                  <a href="login.html" class="dropdown-item">Login</a>
+                  <a href="register.html" class="dropdown-item">Register</a>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="navbar-nav ml-auto align-items-center">
-          <!-- User Account dropdown (only visible after login) -->
-          <div class="nav-item dropdown user-account" id="userAccountDropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-user-circle"></i> My Account
-            </a>
-            <div class="dropdown-menu dropdown-menu-right">
-              <a href="my-account.html" class="dropdown-item">Dashboard</a>
-              <a href="#" class="dropdown-item" id="logoutBtn">Logout</a>
+        </nav>
+      </div>
+    </div>
+    <!-- Nav Bar End -->
+
+    <!-- Bottom Bar Start -->
+    <div class="bottom-bar">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-3">
+            <div class="logo">
+              <a href="index.html">
+                <img src="img/logo.png" alt="Logo" />
+              </a>
             </div>
           </div>
-
-          <!-- Login dropdown (only visible before login) -->
-          <div class="nav-item dropdown" id="loginDropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Login</a>
-            <div class="dropdown-menu dropdown-menu-right">
-              <a href="login.html" class="dropdown-item">Login</a>
-              <a href="login.html" class="dropdown-item">Register</a>
+          <div class="col-md-6">
+            <div class="search">
+              <input type="text" placeholder="Search products..." />
+              <button><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="user">
+              <a href="wishlist.html" class="btn wishlist">
+                <i class="fa fa-heart"></i>
+                <span id="wishlistCount">(0)</span>
+              </a>
+              <a href="cart.html" class="btn cart">
+                <i class="fa fa-shopping-cart"></i>
+                <span id="cartCount">(0)</span>
+              </a>
             </div>
           </div>
         </div>
       </div>
-    </nav>
-  </div>
-</div>
-<!-- Nav Bar End -->
-        <!-- Nav Bar End -->      
-        
-        <!-- Bottom Bar Start -->
-        <div class="bottom-bar">
-            <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-md-3">
-                        <div class="logo">
-                            <a href="index.html">
-                                <img src="img/logo.png" alt="Logo">
-                            </a>
-                        </div>
+    </div>
+    <!-- Bottom Bar End -->
+
+    <!-- Breadcrumb Start -->
+    <div class="breadcrumb-wrap">
+      <div class="container-fluid">
+        <ul class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="cart.html">Cart</a></li>
+          <li class="breadcrumb-item active">Checkout</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Checkout Start -->
+    <div class="checkout">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="checkout-inner">
+              <div class="billing-address">
+                <div class="address-change-link">
+                  <a href="address.html" class="btn btn-sm btn-outline-primary">
+                    <i class="fa fa-edit mr-1"></i>Change Address
+                  </a>
+                </div>
+                <h2>Billing Address</h2>
+                <form id="billingForm">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label>Full Name *</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="billingFullName"
+                        placeholder="Full Name"
+                        required
+                      />
                     </div>
                     <div class="col-md-6">
-                        <div class="search">
-                            <input type="text" placeholder="Search">
-                            <button><i class="fa fa-search"></i></button>
-                        </div>
+                      <label>Phone Number *</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="billingPhone"
+                        placeholder="Phone Number"
+                        required
+                      />
                     </div>
-                    <div class="col-md-3">
-                        <div class="user">
-                            <a href="wishlist.html" class="btn wishlist">
-                                <i class="fa fa-heart"></i>
-                                <span>(0)</span>
-                            </a>
-                            <a href="cart.html" class="btn cart">
-                                <i class="fa fa-shopping-cart"></i>
-                                <span>(0)</span>
-                            </a>
-                        </div>
+                    <div class="col-md-12">
+                      <label>House/Building/Apartment *</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="billingHouse"
+                        placeholder="House/Building/Apartment"
+                        required
+                      />
                     </div>
-                </div>
-            </div>
-        </div>
-        <!-- Bottom Bar End --> 
-        
-        <!-- Breadcrumb Start -->
-        <div class="breadcrumb-wrap">
-            <div class="container-fluid">
-                <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item"><a href="#">Products</a></li>
-                    <li class="breadcrumb-item active">Checkout</li>
-                </ul>
-            </div>
-        </div>
-        <!-- Breadcrumb End -->
-        
-        <!-- Checkout Start -->
-        <div class="checkout">
-            <div class="container-fluid"> 
-                <div class="row">
-                    <div class="col-lg-8">
-                        <div class="checkout-inner">
-                            <div class="billing-address">
-                                <h2>Billing Address</h2>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label>First Name</label>
-                                        <input class="form-control" type="text" placeholder="First Name">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>Last Name"</label>
-                                        <input class="form-control" type="text" placeholder="Last Name">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>E-mail</label>
-                                        <input class="form-control" type="text" placeholder="E-mail">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>Mobile No</label>
-                                        <input class="form-control" type="text" placeholder="Mobile No">
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label>Address</label>
-                                        <input class="form-control" type="text" placeholder="Address">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>Country</label>
-                                        <select class="custom-select">
-                                            <option selected>United States</option>
-                                            <option>Afghanistan</option>
-                                            <option>Albania</option>
-                                            <option>Algeria</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>City</label>
-                                        <input class="form-control" type="text" placeholder="City">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>State</label>
-                                        <input class="form-control" type="text" placeholder="State">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>ZIP Code</label>
-                                        <input class="form-control" type="text" placeholder="ZIP Code">
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="newaccount">
-                                            <label class="custom-control-label" for="newaccount">Create an account</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="shipto">
-                                            <label class="custom-control-label" for="shipto">Ship to different address</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="shipping-address">
-                                <h2>Shipping Address</h2>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label>First Name</label>
-                                        <input class="form-control" type="text" placeholder="First Name">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>Last Name"</label>
-                                        <input class="form-control" type="text" placeholder="Last Name">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>E-mail</label>
-                                        <input class="form-control" type="text" placeholder="E-mail">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>Mobile No</label>
-                                        <input class="form-control" type="text" placeholder="Mobile No">
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label>Address</label>
-                                        <input class="form-control" type="text" placeholder="Address">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>Country</label>
-                                        <select class="custom-select">
-                                            <option selected>United States</option>
-                                            <option>Afghanistan</option>
-                                            <option>Albania</option>
-                                            <option>Algeria</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>City</label>
-                                        <input class="form-control" type="text" placeholder="City">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>State</label>
-                                        <input class="form-control" type="text" placeholder="State">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>ZIP Code</label>
-                                        <input class="form-control" type="text" placeholder="ZIP Code">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="checkout-inner">
-                            <div class="checkout-summary">
-                                <h1>Cart Total</h1>
-                                <p>Product Name<span>$99</span></p>
-                                <p class="sub-total">Sub Total<span>$99</span></p>
-                                <p class="ship-cost">Shipping Cost<span>$1</span></p>
-                                <h2>Grand Total<span>$100</span></h2>
-                            </div>
-
-                            <div class="checkout-payment">
-                                <div class="payment-methods">
-                                    <h1>Payment Methods</h1>
-                                    <div class="payment-method">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" id="payment-1" name="payment">
-                                            <label class="custom-control-label" for="payment-1">Paypal</label>
-                                        </div>
-                                        <div class="payment-content" id="payment-1-show">
-                                            <p>
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tincidunt orci ac eros volutpat maximus lacinia quis diam.
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="payment-method">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" id="payment-2" name="payment">
-                                            <label class="custom-control-label" for="payment-2">Payoneer</label>
-                                        </div>
-                                        <div class="payment-content" id="payment-2-show">
-                                            <p>
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tincidunt orci ac eros volutpat maximus lacinia quis diam.
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="payment-method">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" id="payment-3" name="payment">
-                                            <label class="custom-control-label" for="payment-3">Check Payment</label>
-                                        </div>
-                                        <div class="payment-content" id="payment-3-show">
-                                            <p>
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tincidunt orci ac eros volutpat maximus lacinia quis diam.
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="payment-method">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" id="payment-4" name="payment">
-                                            <label class="custom-control-label" for="payment-4">Direct Bank Transfer</label>
-                                        </div>
-                                        <div class="payment-content" id="payment-4-show">
-                                            <p>
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tincidunt orci ac eros volutpat maximus lacinia quis diam.
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="payment-method">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" id="payment-5" name="payment">
-                                            <label class="custom-control-label" for="payment-5">Cash on Delivery</label>
-                                        </div>
-                                        <div class="payment-content" id="payment-5-show">
-                                            <p>
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tincidunt orci ac eros volutpat maximus lacinia quis diam.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="checkout-btn">
-                                    <button>Place Order</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Checkout End -->
-        
-        <!-- Footer Start -->
-        <div class="footer">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-widget">
-                            <h2>Get in Touch</h2>
-                            <div class="contact-info">
-                                <p><i class="fa fa-map-marker"></i>123 E Store, Los Angeles, USA</p>
-                                <p><i class="fa fa-envelope"></i>email@example.com</p>
-                                <p><i class="fa fa-phone"></i>+123-456-7890</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-widget">
-                            <h2>Follow Us</h2>
-                            <div class="contact-info">
-                                <div class="social">
-                                    <a href=""><i class="fab fa-twitter"></i></a>
-                                    <a href=""><i class="fab fa-facebook-f"></i></a>
-                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
-                                    <a href=""><i class="fab fa-instagram"></i></a>
-                                    <a href=""><i class="fab fa-youtube"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-widget">
-                            <h2>Company Info</h2>
-                            <ul>
-                                <li><a href="#">About Us</a></li>
-                                <li><a href="#">Privacy Policy</a></li>
-                                <li><a href="#">Terms & Condition</a></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-widget">
-                            <h2>Purchase Info</h2>
-                            <ul>
-                                <li><a href="#">Pyament Policy</a></li>
-                                <li><a href="#">Shipping Policy</a></li>
-                                <li><a href="#">Return Policy</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row payment align-items-center">
-                    <div class="col-md-6">
-                        <div class="payment-method">
-                            <h2>We Accept:</h2>
-                            <img src="img/payment-method.png" alt="Payment Method" />
-                        </div>
+                    <div class="col-md-12">
+                      <label>Street/Locality</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="billingStreet"
+                        placeholder="Street/Locality"
+                      />
                     </div>
                     <div class="col-md-6">
-                        <div class="payment-security">
-                            <h2>Secured By:</h2>
-                            <img src="img/godaddy.svg" alt="Payment Security" />
-                            <img src="img/norton.svg" alt="Payment Security" />
-                            <img src="img/ssl.svg" alt="Payment Security" />
+                      <label>City *</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="billingCity"
+                        placeholder="City"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>State *</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="billingState"
+                        placeholder="State"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>Pin Code *</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="billingPinCode"
+                        placeholder="Pin Code"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>Country</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        value="India"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div class="shipping-address">
+                <h2>Shipping Address</h2>
+                <div class="custom-control custom-checkbox mb-3">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="sameAsBilling"
+                    checked
+                  />
+                  <label class="custom-control-label" for="sameAsBilling"
+                    >Same as billing address</label
+                  >
+                </div>
+
+                <form id="shippingForm">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label>Full Name *</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="shippingFullName"
+                        placeholder="Full Name"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>Phone Number *</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="shippingPhone"
+                        placeholder="Phone Number"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-12">
+                      <label>House/Building/Apartment *</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="shippingHouse"
+                        placeholder="House/Building/Apartment"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-12">
+                      <label>Street/Locality</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="shippingStreet"
+                        placeholder="Street/Locality"
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>City *</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="shippingCity"
+                        placeholder="City"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>State *</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="shippingState"
+                        placeholder="State"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>Pin Code *</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="shippingPinCode"
+                        placeholder="Pin Code"
+                        required
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label>Country</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        value="India"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="checkout-inner">
+              <div class="checkout-summary">
+                <h1>Order Summary <span class="total-items-badge" id="selectedItemsBadge">0</span></h1>
+
+                <!-- Selected Items List -->
+                <div class="selected-items-list">
+                  <h5>
+                    Selected Items (<span id="selectedItemsCount">0</span>)
+                  </h5>
+                  <div id="selectedItemsList">
+                    <!-- Items will be populated dynamically -->
+                    <div class="empty-cart-message">
+                      <p>No items selected for checkout.</p>
+                      <p>Please go back to your cart and select items to checkout.</p>
+                      <a href="cart.html" class="btn btn-primary">Back to Cart</a>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="orderSummary">
+                  <div class="order-summary-item">
+                    <span>Total Items:</span>
+                    <span id="totalItemsCount">0</span>
+                  </div>
+                  <div class="order-summary-item">
+                    <span>Sub Total:</span>
+                    <span id="subTotal">₹0.00</span>
+                  </div>
+                  <div class="order-summary-item">
+                    <span>Shipping Cost:</span>
+                    <span id="shippingCost">₹50.00</span>
+                  </div>
+                  <div class="order-summary-item order-total">
+                    <span>Total Cost:</span>
+                    <span id="totalCost">₹0.00</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="checkout-payment">
+                <div class="payment-methods">
+                  <h1>Payment Methods</h1>
+                  <div class="payment-method">
+                    <div class="custom-control custom-radio">
+                      <input
+                        type="radio"
+                        class="custom-control-input"
+                        id="payment-1"
+                        name="payment"
+                        value="ONLINE"
+                        checked
+                      />
+                      <label class="custom-control-label" for="payment-1"
+                        >Online Payment (Razorpay)</label
+                      >
+                    </div>
+                    <div class="payment-content" id="payment-1-show">
+                      <div class="razorpay-section">
+                        <div
+                          style="
+                            background-color: white;
+                            padding: 10px;
+                            border-radius: 5px;
+                            display: inline-block;
+                            margin-bottom: 10px;
+                          "
+                        >
+                          <img
+                            src="https://razorpay.com/assets/razorpay-logo.svg"
+                            alt="Razorpay"
+                            class="razorpay-logo"
+                          />
                         </div>
+                        <p
+                          style="font-size: 14px; color: #666; margin-top: 10px"
+                        >
+                          Secure payment powered by Razorpay. You'll be redirected to Razorpay's secure payment gateway to complete your purchase.
+                        </p>
+                        <button
+                          type="button"
+                          class="razorpay-pay-btn"
+                          id="razorpayPayBtn"
+                          disabled
+                        >
+                          <i class="fa fa-credit-card mr-2"></i>Pay with Razorpay
+                        </button>
+                      </div>
                     </div>
+                  </div>
+                  <div class="payment-method">
+                    <div class="custom-control custom-radio">
+                      <input
+                        type="radio"
+                        class="custom-control-input"
+                        id="payment-2"
+                        name="payment"
+                        value="COD"
+                      />
+                      <label class="custom-control-label" for="payment-2"
+                        >Cash on Delivery</label
+                      >
+                    </div>
+                    <div class="payment-content" id="payment-2-show">
+                      <p>Pay when your order is delivered. No extra charges.</p>
+                    </div>
+                  </div>
                 </div>
-            </div>
-        </div>
-        <!-- Footer End -->
-        
-        <!-- Footer Bottom Start -->
-        <div class="footer-bottom">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 copyright">
-                        <p>Copyright &copy; <a href="#">Your Site Name</a>. All Rights Reserved</p>
-                    </div>
-
-                    <div class="col-md-6 template-by">
-						<!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->					
-                        <p>Designed By <a href="https://htmlcodex.com">HTML Codex</a></p>
-                    </div>
+                <div class="checkout-btn">
+                  <button id="placeOrderBtn" disabled>Place Order</button>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
-        <!-- Footer Bottom End -->     
-        
-        <!-- Back to Top -->
-        <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
-        
-        <!-- JavaScript Libraries -->
-        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-        <script src="lib/easing/easing.min.js"></script>
-        <script src="lib/slick/slick.min.js"></script>
-        
-        <!-- Template Javascript -->
-        <script src="js/main.js"></script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-    const token = localStorage.getItem("token");
+      </div>
+    </div>
+    <!-- Checkout End -->
 
-    const loginDropdown = document.getElementById("loginDropdown");
-    const userAccountDropdown = document.getElementById("userAccountDropdown");
+    <!-- Footer Start -->
+    <div class="footer">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Get in Touch</h2>
+              <div class="contact-info">
+                <p><i class="fa fa-map-marker"></i>123 Fashion Street, Mumbai, India</p>
+                <p><i class="fa fa-envelope"></i>support@shopstyle.com</p>
+                <p><i class="fa fa-phone"></i>+91-98765-43210</p>
+              </div>
+            </div>
+          </div>
 
-    if (token) {
-        // User is logged in
-        loginDropdown.style.display = "none";
-        userAccountDropdown.style.display = "block";
-    } else {
-        // User is not logged in
-        loginDropdown.style.display = "block";
-        userAccountDropdown.style.display = "none";
-    }
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Follow Us</h2>
+              <div class="contact-info">
+                <div class="social">
+                  <a href=""><i class="fab fa-twitter"></i></a>
+                  <a href=""><i class="fab fa-facebook-f"></i></a>
+                  <a href=""><i class="fab fa-linkedin-in"></i></a>
+                  <a href=""><i class="fab fa-instagram"></i></a>
+                  <a href=""><i class="fab fa-youtube"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
 
-    // Logout
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", function () {
-            localStorage.removeItem("token");
-            window.location.reload();
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Company Info</h2>
+              <ul>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms & Condition</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>Purchase Info</h2>
+              <ul>
+                <li><a href="#">Payment Policy</a></li>
+                <li><a href="#">Shipping Policy</a></li>
+                <li><a href="#">Return Policy</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="row payment align-items-center">
+          <div class="col-md-6">
+            <div class="payment-method">
+              <h2>We Accept:</h2>
+              <img src="img/payment-method.png" alt="Payment Method" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="payment-security">
+              <h2>Secured By:</h2>
+              <img src="img/godaddy.svg" alt="Payment Security" />
+              <img src="img/norton.svg" alt="Payment Security" />
+              <img src="img/ssl.svg" alt="Payment Security" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Footer Bottom Start -->
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 copyright">
+            <p>
+              Copyright &copy; <a href="#">ShopStyle</a>. All Rights Reserved
+            </p>
+          </div>
+
+          <div class="col-md-6 template-by">
+            <p>Designed By <a href="https://htmlcodex.com">HTML Codex</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer Bottom End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/slick/slick.min.js"></script>
+    <!-- Razorpay Checkout SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+    <script>
+      // Your Razorpay Key ID
+      const RAZORPAY_KEY_ID = "rzp_test_S05mU7xZjuGxw5";
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const token = localStorage.getItem("token");
+        const loginDropdown = document.getElementById("loginDropdown");
+        const userAccountDropdown = document.getElementById("userAccountDropdown");
+
+        // Check authentication
+        if (token) {
+          loginDropdown.style.display = "none";
+          userAccountDropdown.style.display = "block";
+        } else {
+          loginDropdown.style.display = "block";
+          userAccountDropdown.style.display = "none";
+          showMessage("Please login to proceed to checkout", "warning");
+          setTimeout(() => {
+            window.location.href = "login.html?redirect=checkout.html";
+          }, 1500);
+          return;
+        }
+
+        // Load selected items and update UI
+        loadSelectedItems();
+
+        // Load selected address
+        loadSelectedAddress();
+
+        // Setup event listeners
+        setupEventListeners();
+
+        // Razorpay Pay Button Click Handler
+        document.getElementById("razorpayPayBtn").addEventListener("click", processRazorpayPayment);
+
+        // Logout functionality
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", function () {
+            localStorage.clear();
+            window.location.href = "index.html";
+          });
+        }
+      });
+
+      // Load selected items from localStorage
+      function loadSelectedItems() {
+        try {
+          const selectedCheckoutItems = JSON.parse(
+            localStorage.getItem("selectedCheckoutItems") || "[]"
+          );
+
+          console.log("Selected checkout items:", selectedCheckoutItems);
+
+          if (selectedCheckoutItems.length === 0) {
+            showEmptyCheckout();
+            return;
+          }
+
+          displaySelectedItems(selectedCheckoutItems);
+          calculateAndDisplayTotals(selectedCheckoutItems);
+
+          // Fetch cart ID if not in localStorage
+          const cartId = localStorage.getItem("cartId");
+          if (!cartId) {
+            fetchCartId();
+          }
+        } catch (error) {
+          console.error("Error loading selected items:", error);
+          showEmptyCheckout();
+        }
+      }
+
+      // Fetch cart ID from server
+      async function fetchCartId() {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        try {
+          const response = await fetch("/api/user/cart/getAll", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (response.ok) {
+            const cartData = await response.json();
+            if (cartData._id) {
+              localStorage.setItem("cartId", cartData._id);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching cart ID:", error);
+        }
+      }
+
+      // Display selected items with images
+      function displaySelectedItems(items) {
+        const itemsList = document.getElementById("selectedItemsList");
+        const selectedItemsCount = document.getElementById("selectedItemsCount");
+        const selectedItemsBadge = document.getElementById("selectedItemsBadge");
+
+        if (!items || items.length === 0) {
+          showEmptyCheckout();
+          return;
+        }
+
+        let itemsHtml = "";
+        items.forEach((item) => {
+          const itemName = item.name || "Product";
+          const itemSize = item.size || "";
+          const itemPrice = item.price || 0;
+          const itemQuantity = item.quantity || 1;
+          const totalPrice = itemPrice * itemQuantity;
+          
+          // Get image URL - handle both single image and array
+          let imageUrl = '';
+          if (item.image) {
+            if (Array.isArray(item.image) && item.image.length > 0) {
+              imageUrl = item.image[0];
+            } else if (typeof item.image === 'string') {
+              imageUrl = item.image;
+            }
+          }
+          
+          // Also check for images field
+          if (!imageUrl && item.images && Array.isArray(item.images) && item.images.length > 0) {
+            imageUrl = item.images[0];
+          }
+
+          itemsHtml += `
+            <div class="selected-item">
+              <div class="item-image-container">
+                ${imageUrl ? 
+                  `<img src="${imageUrl}" alt="${itemName}" class="item-image" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\"item-image-placeholder\"><i class=\"fas fa-image\"></i></div>' ` : 
+                  `<div class="item-image-placeholder"><i class="fas fa-image"></i></div>`
+                }
+              </div>
+              <div class="item-info">
+                <div class="item-name">${itemName}</div>
+                <div class="item-details">
+                  ${itemSize ? `Size: ${itemSize}` : ""}
+                </div>
+                <div class="item-quantity">Quantity: ${itemQuantity}</div>
+              </div>
+              <div class="item-price">₹${totalPrice.toFixed(2)}</div>
+            </div>
+          `;
         });
-    }
-});
 
-        </script>
-    </body>
+        itemsList.innerHTML = itemsHtml;
+        selectedItemsCount.textContent = items.length;
+        selectedItemsBadge.textContent = items.length;
+      }
+
+      // Show empty checkout message
+      function showEmptyCheckout() {
+        const itemsList = document.getElementById("selectedItemsList");
+        const selectedItemsCount = document.getElementById("selectedItemsCount");
+        const selectedItemsBadge = document.getElementById("selectedItemsBadge");
+        const placeOrderBtn = document.getElementById("placeOrderBtn");
+        const razorpayPayBtn = document.getElementById("razorpayPayBtn");
+
+        if (itemsList) {
+          itemsList.innerHTML = `
+            <div class="empty-cart-message">
+              <p>No items selected for checkout.</p>
+              <p>Please go back to your cart and select items to checkout.</p>
+              <a href="cart.html" class="btn btn-primary">Back to Cart</a>
+            </div>
+          `;
+        }
+
+        if (selectedItemsCount) selectedItemsCount.textContent = "0";
+        if (selectedItemsBadge) selectedItemsBadge.textContent = "0";
+        if (placeOrderBtn) {
+          placeOrderBtn.textContent = "No Items Selected";
+          placeOrderBtn.disabled = true;
+        }
+        if (razorpayPayBtn) {
+          razorpayPayBtn.disabled = true;
+          razorpayPayBtn.textContent = "No Items Selected";
+        }
+
+        document.getElementById("totalItemsCount").textContent = "0";
+        document.getElementById("subTotal").textContent = "₹0.00";
+        document.getElementById("shippingCost").textContent = "₹50.00";
+        document.getElementById("totalCost").textContent = "₹0.00";
+      }
+
+      // Calculate and display totals
+      function calculateAndDisplayTotals(items) {
+        if (!items || items.length === 0) {
+          showEmptyCheckout();
+          return;
+        }
+
+        const subtotal = items.reduce((total, item) => {
+          const itemPrice = item.price || 0;
+          const itemQuantity = item.quantity || 1;
+          return total + itemPrice * itemQuantity;
+        }, 0);
+
+        const totalItemsCount = items.reduce((total, item) => {
+          return total + (item.quantity || 1);
+        }, 0);
+
+        const shippingCost = 50.0;
+        const totalCost = subtotal + shippingCost;
+
+        document.getElementById("totalItemsCount").textContent = totalItemsCount;
+        document.getElementById("subTotal").textContent = `₹${subtotal.toFixed(2)}`;
+        document.getElementById("shippingCost").textContent = `₹${shippingCost.toFixed(2)}`;
+        document.getElementById("totalCost").textContent = `₹${totalCost.toFixed(2)}`;
+
+        const placeOrderBtn = document.getElementById("placeOrderBtn");
+        if (placeOrderBtn) {
+          placeOrderBtn.textContent = `Place Order - ₹${totalCost.toFixed(2)}`;
+          placeOrderBtn.disabled = false;
+        }
+
+        const razorpayPayBtn = document.getElementById("razorpayPayBtn");
+        if (razorpayPayBtn) {
+          razorpayPayBtn.textContent = `Pay ₹${totalCost.toFixed(2)} with Razorpay`;
+          razorpayPayBtn.disabled = false;
+        }
+
+        localStorage.setItem("checkoutSubtotal", subtotal.toFixed(2));
+        localStorage.setItem("checkoutTotal", totalCost.toFixed(2));
+        localStorage.setItem("checkoutItemsCount", totalItemsCount);
+      }
+
+      // Load selected address
+      async function loadSelectedAddress() {
+        const token = localStorage.getItem("token");
+        const selectedAddressId = localStorage.getItem("selectedAddressId");
+
+        if (!token) {
+          console.log("No token, cannot load address");
+          return;
+        }
+
+        if (!selectedAddressId) {
+          console.log("⚠️ No address selected in localStorage");
+          showMessage("Please select an address from Manage Addresses page", "warning");
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/user/addresses", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const addresses = data.addresses || data.data || [];
+            const selectedAddress = addresses.find(
+              (addr) => addr._id === selectedAddressId
+            );
+
+            if (selectedAddress) {
+              populateBillingForm(selectedAddress);
+            } else {
+              showMessage("Selected address not found. Please select a new address.", "warning");
+            }
+          }
+        } catch (error) {
+          console.error("Error loading addresses:", error);
+        }
+      }
+
+      // Populate billing form with address data
+      function populateBillingForm(address) {
+        if (address.fullName)
+          document.getElementById("billingFullName").value = address.fullName;
+        if (address.phone)
+          document.getElementById("billingPhone").value = address.phone;
+        if (address.house)
+          document.getElementById("billingHouse").value = address.house;
+        if (address.street)
+          document.getElementById("billingStreet").value = address.street;
+        if (address.city)
+          document.getElementById("billingCity").value = address.city;
+        if (address.state)
+          document.getElementById("billingState").value = address.state;
+        if (address.pinCode)
+          document.getElementById("billingPinCode").value = address.pinCode;
+
+        document.getElementById("sameAsBilling").checked = true;
+        copyBillingToShipping();
+      }
+
+      // Copy billing address to shipping address
+      function copyBillingToShipping() {
+        document.getElementById("shippingFullName").value =
+          document.getElementById("billingFullName").value;
+        document.getElementById("shippingPhone").value =
+          document.getElementById("billingPhone").value;
+        document.getElementById("shippingHouse").value =
+          document.getElementById("billingHouse").value;
+        document.getElementById("shippingStreet").value =
+          document.getElementById("billingStreet").value;
+        document.getElementById("shippingCity").value =
+          document.getElementById("billingCity").value;
+        document.getElementById("shippingState").value =
+          document.getElementById("billingState").value;
+        document.getElementById("shippingPinCode").value =
+          document.getElementById("billingPinCode").value;
+      }
+
+      // Setup event listeners
+      function setupEventListeners() {
+        const sameAsBilling = document.getElementById("sameAsBilling");
+        sameAsBilling.addEventListener("change", function () {
+          if (this.checked) {
+            copyBillingToShipping();
+          }
+        });
+
+        const placeOrderBtn = document.getElementById("placeOrderBtn");
+        placeOrderBtn.addEventListener("click", placeOrder);
+
+        const billingInputs = document.querySelectorAll("#billingForm input");
+        billingInputs.forEach((input) => {
+          input.addEventListener("input", function () {
+            if (sameAsBilling.checked) {
+              copyBillingToShipping();
+            }
+          });
+        });
+
+        const paymentOptions = document.querySelectorAll('input[name="payment"]');
+        paymentOptions.forEach(option => {
+          option.addEventListener('change', function() {
+            console.log("Payment method changed to:", this.value);
+          });
+        });
+      }
+
+      // Variable to store the order ID for verification
+      let createdOrderId = null;
+
+      // Razorpay Payment Processing
+      async function processRazorpayPayment() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          showMessage("Please login to make payment", "warning");
+          window.location.href = "login.html";
+          return;
+        }
+
+        const selectedCheckoutItems = JSON.parse(
+          localStorage.getItem("selectedCheckoutItems") || "[]"
+        );
+
+        if (selectedCheckoutItems.length === 0) {
+          showMessage("No items selected for checkout", "warning");
+          return;
+        }
+
+        if (!validateForms()) {
+          return;
+        }
+
+        const cartId = localStorage.getItem("cartId");
+        const addressId = localStorage.getItem("selectedAddressId");
+        const paymentMethod = "ONLINE";
+
+        console.log("Payment details:", {
+          cartId,
+          addressId,
+          paymentMethod,
+          itemCount: selectedCheckoutItems.length
+        });
+
+        if (!cartId) {
+          showMessage("Cart not found. Please try again.", "warning");
+          return;
+        }
+
+        if (!addressId) {
+          showMessage("Please select a delivery address", "warning");
+          return;
+        }
+
+        const totalAmount = parseFloat(
+          document.getElementById("totalCost").textContent.replace("₹", "")
+        );
+
+        const amountInPaise = Math.round(totalAmount * 100);
+
+        if (amountInPaise < 100) {
+          showMessage("Minimum payment amount is ₹1", "warning");
+          return;
+        }
+
+        showLoading("Creating payment order...");
+
+        try {
+          const orderEndpoint = `/api/user/cart/order/checkout/${cartId}/${addressId}/${paymentMethod}`;
+          console.log("Calling endpoint:", orderEndpoint);
+
+          const orderResponse = await fetch(orderEndpoint, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              amount: amountInPaise,
+              currency: "INR",
+              receipt: `receipt_${Date.now()}`,
+              notes: {
+                itemsCount: selectedCheckoutItems.length,
+                orderType: "cart_checkout",
+              },
+            }),
+          });
+
+          if (!orderResponse.ok) {
+            const errorData = await orderResponse.json();
+            throw new Error(`Failed to create payment order: ${errorData.message || "Unknown error"}`);
+          }
+
+          const orderData = await orderResponse.json();
+          console.log("Order created response:", orderData);
+
+          if (orderData.data && orderData.data.order && orderData.data.order.id) {
+            createdOrderId = orderData.data.order.id;
+            localStorage.setItem("lastCreatedOrderId", createdOrderId);
+            localStorage.setItem("paymentSuccess", "true");
+            localStorage.setItem("latestOrderId", createdOrderId);
+          } else {
+            throw new Error("Failed to get order ID from server");
+          }
+
+          const options = {
+            key: RAZORPAY_KEY_ID,
+            amount: orderData.data?.payment?.amount || amountInPaise,
+            currency: orderData.data?.payment?.currency || "INR",
+            name: "ShopStyle",
+            description: "Purchase from ShopStyle",
+            order_id: orderData.data?.payment?.razorpayOrderId || orderData.data?.order?.orderId,
+            handler: async function (response) {
+              console.log("Payment successful:", response);
+              
+              showLoading("Verifying payment...");
+              
+              try {
+                console.log("Sending verification data:", {
+                  orderId: createdOrderId,
+                  razorpayPaymentId: response.razorpay_payment_id,
+                  razorpaySignature: response.razorpay_signature
+                });
+
+                const verifyResponse = await fetch("/api/user/cart/order/verifyPayment", {
+                  method: "POST",
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    orderId: createdOrderId,
+                    razorpayPaymentId: response.razorpay_payment_id,
+                    razorpaySignature: response.razorpay_signature,
+                  }),
+                });
+
+                if (verifyResponse.ok) {
+                  const verificationResult = await verifyResponse.json();
+                  console.log("Verification result:", verificationResult);
+                  
+                  if (verificationResult.success) {
+                    showMessage("Payment successful! Order placed.", "success");
+                    
+                    // Clear localStorage
+                    localStorage.removeItem("selectedCheckoutItems");
+                    localStorage.removeItem("checkoutSubtotal");
+                    localStorage.removeItem("checkoutTotal");
+                    localStorage.removeItem("checkoutItemsCount");
+                    localStorage.removeItem("cartId");
+                    localStorage.removeItem("cartItems");
+                    localStorage.removeItem("cartTotal");
+                    localStorage.removeItem("lastCreatedOrderId");
+                    localStorage.removeItem("selectedAddressId");
+                    
+                    updateCartCount(0);
+                    
+                    hideLoading();
+                    
+                    setTimeout(() => {
+                      window.location.href = `order-history.html?payment=success&orderId=${
+                        verificationResult.order?.id || verificationResult.orderId || createdOrderId
+                      }&paymentId=${response.razorpay_payment_id}`;
+                    }, 1500);
+                  } else {
+                    showMessage("Payment verification failed: " + (verificationResult.message || "Unknown error"), "danger");
+                    hideLoading();
+                  }
+                } else {
+                  const errorText = await verifyResponse.text();
+                  throw new Error(`Verification failed: ${errorText}`);
+                }
+              } catch (error) {
+                console.error("Verification error:", error);
+                showMessage("Error verifying payment: " + error.message, "danger");
+                hideLoading();
+              }
+            },
+            prefill: {
+              name: document.getElementById("billingFullName").value || "",
+              email: getCurrentUserEmail() || "customer@example.com",
+              contact: document.getElementById("billingPhone").value || "",
+            },
+            theme: {
+              color: "#3395ff",
+            },
+            modal: {
+              ondismiss: function() {
+                console.log("Payment modal dismissed");
+                hideLoading();
+              }
+            }
+          };
+
+          const rzp = new Razorpay(options);
+          rzp.open();
+          
+        } catch (error) {
+          console.error("Razorpay error:", error);
+          showMessage("Error processing payment: " + error.message, "danger");
+          hideLoading();
+        }
+      }
+
+      // Helper function to get current user email
+      function getCurrentUserEmail() {
+        const userData = localStorage.getItem("userData");
+        if (userData) {
+          try {
+            const parsedUser = JSON.parse(userData);
+            return parsedUser.email;
+          } catch (e) {
+            return null;
+          }
+        }
+        return null;
+      }
+
+      // Function to update cart count in header
+      function updateCartCount(count) {
+        const cartCountElement = document.getElementById("cartCount");
+        if (cartCountElement) {
+          cartCountElement.textContent = `(${count})`;
+        }
+        localStorage.setItem("cartItemCount", count);
+      }
+
+      // Updated place order function for COD
+      async function placeOrder() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          showMessage("Please login to place order", "warning");
+          window.location.href = "login.html";
+          return;
+        }
+
+        const selectedCheckoutItems = JSON.parse(
+          localStorage.getItem("selectedCheckoutItems") || "[]"
+        );
+
+        if (selectedCheckoutItems.length === 0) {
+          showMessage("No items selected for checkout", "warning");
+          return;
+        }
+
+        const paymentMethod = document.querySelector(
+          'input[name="payment"]:checked'
+        ).value;
+
+        console.log("Selected payment method:", paymentMethod);
+
+        if (paymentMethod === "ONLINE") {
+          console.log("Switching to Razorpay payment flow");
+          processRazorpayPayment();
+          return;
+        }
+
+        if (paymentMethod !== "COD") {
+          showMessage(`Invalid payment method: ${paymentMethod}. Use COD or ONLINE`, "danger");
+          return;
+        }
+
+        if (!validateForms()) {
+          return;
+        }
+
+        const cartId = localStorage.getItem("cartId");
+        const addressId = localStorage.getItem("selectedAddressId");
+
+        console.log("COD Order details:", {
+          cartId,
+          addressId,
+          paymentMethod,
+          itemCount: selectedCheckoutItems.length
+        });
+
+        if (!cartId) {
+          showMessage("Cart not found. Please try again.", "warning");
+          return;
+        }
+
+        if (!addressId) {
+          showMessage("Please select a delivery address", "warning");
+          return;
+        }
+
+        showLoading("Placing your COD order...");
+
+        try {
+          const orderEndpoint = `/api/user/cart/order/checkout/${cartId}/${addressId}/COD`;
+          console.log("Calling COD endpoint:", orderEndpoint);
+
+          const orderResponse = await fetch(orderEndpoint, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            }
+          });
+
+          if (orderResponse.ok) {
+            const orderResult = await orderResponse.json();
+            console.log("COD Order created:", orderResult);
+
+            showMessage("COD Order placed successfully!", "success");
+
+            localStorage.setItem("paymentSuccess", "true");
+            localStorage.setItem("latestOrderId", orderResult.data?.order?.id || "success");
+
+            localStorage.removeItem("selectedCheckoutItems");
+            localStorage.removeItem("checkoutSubtotal");
+            localStorage.removeItem("checkoutTotal");
+            localStorage.removeItem("checkoutItemsCount");
+            localStorage.removeItem("cartId");
+            localStorage.removeItem("selectedAddressId");
+            localStorage.removeItem("cartItems");
+            localStorage.removeItem("cartTotal");
+
+            updateCartCount(0);
+
+            hideLoading();
+
+            setTimeout(() => {
+              window.location.href = `order-history.html?payment=success&orderId=${
+                orderResult.data?.order?.id || "success"
+              }`;
+            }, 1500);
+          } else {
+            const errorData = await orderResponse.json();
+            console.error("COD Order failed:", errorData);
+            throw new Error(errorData.message || "Failed to place COD order");
+          }
+        } catch (error) {
+          console.error("Error placing COD order:", error);
+          showMessage("Error placing order: " + error.message, "danger");
+          hideLoading();
+        }
+      }
+
+      // Validate forms
+      function validateForms() {
+        const billingForm = document.getElementById("billingForm");
+
+        if (!billingForm.checkValidity()) {
+          showMessage("Please fill all required billing address fields", "warning");
+          billingForm.reportValidity();
+          return false;
+        }
+
+        return true;
+      }
+
+      // Show loading overlay
+      function showLoading(message = "Processing...") {
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        const loadingMessage = document.getElementById("loadingMessage");
+        loadingMessage.textContent = message;
+        loadingOverlay.style.display = "flex";
+      }
+
+      // Hide loading overlay
+      function hideLoading() {
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        loadingOverlay.style.display = "none";
+      }
+
+      // Show message function
+      function showMessage(message, type) {
+        const existingAlerts = document.querySelectorAll(".alert");
+        existingAlerts.forEach((alert) => alert.remove());
+
+        const alertDiv = document.createElement("div");
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show alert-message`;
+        alertDiv.innerHTML = `
+          ${message}
+          <button type="button" class="close" data-dismiss="alert">
+            <span>&times;</span>
+          </button>
+        `;
+
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+          if (alertDiv.parentElement) {
+            alertDiv.remove();
+          }
+        }, 5000);
+      }
+    </script>
+  </body>
 </html>

@@ -848,1534 +848,1058 @@
 
     <!-- Product Detail Script with Zoom Feature -->
     <script>
-      // Global variables
-      let currentProduct = null;
-      let selectedSize = null;
-      let currentQuantity = 1;
-      let basePrice = 0;
-      let currentSlideIndex = 0;
-      let productImages = [];
-      let zoomEnabled = true;
-      let zoomLevel = 2.0; // Default zoom level (2x magnification)
+// ========== INITIALIZATION ==========
+document.addEventListener("DOMContentLoaded", function() {
+  console.log("=== Product Detail Page Loaded ===");
+  console.log("Token exists:", localStorage.getItem("token") ? "YES" : "NO");
+  
+  // Initialize everything
+  updateCartCount();
+  setupAuth();
+  loadProductDetails();
+  setupQuantityControls();
+});
 
-      // ========== HELPER FUNCTIONS ==========
+// ========== GLOBAL VARIABLES ==========
+let currentProduct = null;
+let selectedSize = null;
+let currentQuantity = 1;
+let basePrice = 0;
+let productImages = [];
+let currentSlideIndex = 0;
+let zoomEnabled = true;
+let zoomLevel = 2.0;
 
-      // Function to check if user is authenticated
-      function isUserAuthenticated() {
-        const token = localStorage.getItem("token");
-        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-        const userId = localStorage.getItem("userId");
-        return token && isLoggedIn && userId;
+// ========== HELPER FUNCTIONS ==========
+function getProductIdFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get("id");
+}
+
+function getImageUrl(imageSrc) {
+  if (!imageSrc) return "img/product-1.jpg";
+  
+  if (imageSrc.startsWith("http") || imageSrc.startsWith("/")) {
+    return imageSrc;
+  }
+  
+  if (imageSrc.startsWith("uploads/")) {
+    imageSrc = imageSrc.replace("uploads/", "");
+  }
+  
+  return `/uploads/${imageSrc}`;
+}
+
+// ========== PRODUCT LOADING ==========
+async function loadProductDetails() {
+  const productId = getProductIdFromURL();
+  if (!productId) {
+    showError();
+    return;
+  }
+
+  try {
+    showLoading();
+    const response = await fetch(`/api/user/products/${productId}`);
+    
+    if (!response.ok) {
+      throw new Error("Product not found");
+    }
+
+    const data = await response.json();
+    
+    if (data.success) {
+      currentProduct = data.product;
+      displayProductDetails(currentProduct);
+      showContent();
+    } else {
+      throw new Error(data.message || "Failed to load product");
+    }
+  } catch (error) {
+    console.error("Error loading product:", error);
+    showError();
+  }
+}
+
+function displayProductDetails(product) {
+  // Update product info
+  document.getElementById("product-name").textContent = product.name;
+  document.getElementById("breadcrumb-product").textContent = product.name;
+  
+  // Update price
+  basePrice = parseFloat(product.price) || 0;
+  updatePriceDisplay();
+  
+  // Update images with zoom and thumbnails
+  updateProductImages(product);
+  
+  // Update description
+  document.getElementById("product-description").textContent = 
+    product.description || "No description available.";
+  
+  // Update rating
+  updateProductRating(product.rating || 0);
+  
+  // Update size options
+  updateSizeOptions();
+  
+  // Load sidebar data
+  loadSidebarData();
+  
+  // Setup cart buttons
+  setupAddToCart();
+}
+
+function updatePriceDisplay() {
+  if (!basePrice) return;
+  
+  const totalPrice = basePrice * currentQuantity;
+  const discountedPrice = Math.round(totalPrice * 1.2);
+  
+  const priceElement = document.getElementById("product-price");
+  if (priceElement) {
+    priceElement.innerHTML = `$${totalPrice.toFixed(2)} <span>$${discountedPrice.toFixed(2)}</span>`;
+  }
+}
+
+// ========== PRODUCT IMAGES WITH ZOOM ==========
+function updateProductImages(product) {
+  const slider = document.getElementById("product-image-slider");
+  slider.innerHTML = "";
+  
+  // Get product images array
+  productImages = product.image || [];
+  if (!Array.isArray(productImages)) {
+    productImages = [productImages];
+  }
+  
+  if (productImages.length === 0) {
+    productImages.push("img/product-1.jpg");
+  }
+  
+  // Create zoom container and main image
+  createZoomImageSlider(product, productImages);
+  
+  // Create thumbnails if multiple images
+  if (productImages.length > 1) {
+    createThumbnailsForSlider(product, productImages);
+  }
+}
+
+function createZoomImageSlider(product, images) {
+  // Create zoom container
+  const zoomContainer = document.createElement("div");
+  zoomContainer.className = "zoom-container";
+  zoomContainer.id = "zoomContainer";
+
+  // Create main product image
+  const mainImg = document.createElement("img");
+  mainImg.id = "mainProductImage";
+  mainImg.src = getImageUrl(images[0]);
+  mainImg.alt = `${product.name} - Main Image`;
+  mainImg.onerror = function () {
+    this.src = "img/product-1.jpg";
+    setTimeout(() => initZoomFeature(), 100);
+  };
+
+  // Add navigation buttons if multiple images
+  if (images.length > 1) {
+    const prevBtn = document.createElement("button");
+    prevBtn.innerHTML = '<i class="fa fa-chevron-left"></i>';
+    prevBtn.className = "slider-btn slider-prev";
+    prevBtn.addEventListener("click", () => changeSlide(-1));
+
+    const nextBtn = document.createElement("button");
+    nextBtn.innerHTML = '<i class="fa fa-chevron-right"></i>';
+    nextBtn.className = "slider-btn slider-next";
+    nextBtn.addEventListener("click", () => changeSlide(1));
+
+    zoomContainer.appendChild(prevBtn);
+    zoomContainer.appendChild(nextBtn);
+  }
+
+  zoomContainer.appendChild(mainImg);
+  document.getElementById("product-image-slider").appendChild(zoomContainer);
+
+  // Initialize zoom after image loads
+  mainImg.onload = function () {
+    console.log("Main product image loaded, initializing zoom...");
+    initZoomFeature();
+  };
+}
+
+function createThumbnailsForSlider(product, images) {
+  const thumbnailsContainer = document.createElement("div");
+  thumbnailsContainer.className = "product-thumbnails";
+
+  images.forEach((imageSrc, index) => {
+    const thumbnailDiv = document.createElement("div");
+    thumbnailDiv.className = "thumbnail-item";
+    thumbnailDiv.dataset.index = index;
+
+    // Add active class to first thumbnail
+    if (index === 0) {
+      thumbnailDiv.classList.add("active");
+    }
+
+    const thumbnailImg = document.createElement("img");
+    thumbnailImg.src = getImageUrl(imageSrc);
+    thumbnailImg.alt = `${product.name} - Thumbnail ${index + 1}`;
+    thumbnailImg.onerror = function () {
+      this.src = "img/product-1.jpg";
+    };
+
+    // Add click event to switch to this image
+    thumbnailDiv.addEventListener("click", () => {
+      switchToImage(index);
+    });
+
+    thumbnailDiv.appendChild(thumbnailImg);
+    thumbnailsContainer.appendChild(thumbnailDiv);
+  });
+
+  // Add thumbnails to the slider container
+  const sliderContainer = document.querySelector(".product-slider-single");
+  if (sliderContainer) {
+    sliderContainer.appendChild(thumbnailsContainer);
+  }
+}
+
+function changeSlide(direction) {
+  if (productImages.length <= 1) return;
+
+  // Calculate new index
+  currentSlideIndex = (currentSlideIndex + direction + productImages.length) % productImages.length;
+
+  // Update main image
+  const mainImg = document.getElementById("mainProductImage");
+  if (mainImg) {
+    mainImg.src = getImageUrl(productImages[currentSlideIndex]);
+    mainImg.alt = `${currentProduct.name} - Image ${currentSlideIndex + 1}`;
+
+    // Update zoom result image when main image changes
+    setTimeout(() => {
+      const resultImg = document.querySelector("#zoomResultImage");
+      if (resultImg) {
+        resultImg.src = mainImg.src;
       }
+      // Re-initialize zoom for new image
+      initZoomFeature();
+    }, 50);
+  }
 
-      // Get product ID from URL parameters
-      function getProductIdFromURL() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get("id");
+  // Update active thumbnail
+  updateActiveThumbnail(currentSlideIndex);
+}
+
+function switchToImage(index) {
+  if (index < 0 || index >= productImages.length) return;
+
+  // Update current slide index
+  currentSlideIndex = index;
+
+  // Update main image
+  const mainImg = document.getElementById("mainProductImage");
+  if (mainImg) {
+    mainImg.src = getImageUrl(productImages[index]);
+    mainImg.alt = `${currentProduct.name} - Image ${index + 1}`;
+
+    // Update zoom result image
+    setTimeout(() => {
+      const resultImg = document.querySelector("#zoomResultImage");
+      if (resultImg) {
+        resultImg.src = mainImg.src;
       }
+      // Re-initialize zoom for new image
+      initZoomFeature();
+    }, 50);
+  }
 
-      // Helper function to get correct image URL
-      function getImageUrl(imageSrc) {
-        if (!imageSrc) return "img/product-1.jpg";
+  // Update active thumbnail
+  updateActiveThumbnail(index);
+}
 
-        console.log("Original image source:", imageSrc);
+function updateActiveThumbnail(index) {
+  const thumbnails = document.querySelectorAll(".thumbnail-item");
+  thumbnails.forEach((thumb, thumbIndex) => {
+    if (thumbIndex === index) {
+      thumb.classList.add("active");
+    } else {
+      thumb.classList.remove("active");
+    }
+  });
+}
 
-        // If imageSrc already has a path, use it
-        if (imageSrc.startsWith("http") || imageSrc.startsWith("/")) {
-          return imageSrc;
+// ========== ZOOM FEATURE FUNCTIONS ==========
+function initZoomFeature() {
+  // Only enable zoom on desktop screens (width > 992px)
+  if (window.innerWidth <= 992) {
+    console.log("Zoom disabled on mobile devices");
+    zoomEnabled = false;
+    return;
+  }
+
+  const img = document.getElementById("mainProductImage");
+  if (!img) {
+    console.error("Main product image not found for zoom");
+    return;
+  }
+
+  // Create zoom lens element if it doesn't exist
+  let lens = document.querySelector(".zoom-lens");
+  if (!lens) {
+    lens = document.createElement("div");
+    lens.className = "zoom-lens";
+    document.querySelector(".zoom-container").appendChild(lens);
+  }
+
+  // Create zoom result element if it doesn't exist
+  let result = document.querySelector(".zoom-result");
+  if (!result) {
+    result = document.createElement("div");
+    result.className = "zoom-result";
+    document.querySelector(".product-image-section").appendChild(result);
+
+    // Create image inside zoom result
+    const resultImg = document.createElement("img");
+    resultImg.id = "zoomResultImage";
+    resultImg.src = img.src;
+    resultImg.alt = "Zoomed product image";
+    result.appendChild(resultImg);
+  }
+
+  // Create zoom controls if they don't exist
+  createZoomControls();
+
+  // Set up mouse events for zoom
+  setupZoomEvents(img, lens, result);
+
+  console.log("Zoom feature initialized");
+}
+
+function createZoomControls() {
+  const container = document.querySelector(".zoom-container");
+  if (!container || container.querySelector(".zoom-controls")) return;
+
+  const controls = document.createElement("div");
+  controls.className = "zoom-controls";
+
+  const zoomInBtn = document.createElement("button");
+  zoomInBtn.className = "zoom-btn";
+  zoomInBtn.innerHTML = '<i class="fa fa-search-plus"></i>';
+  zoomInBtn.title = "Zoom In";
+  zoomInBtn.onclick = () => adjustZoomLevel(0.5);
+
+  const zoomOutBtn = document.createElement("button");
+  zoomOutBtn.className = "zoom-btn";
+  zoomOutBtn.innerHTML = '<i class="fa fa-search-minus"></i>';
+  zoomOutBtn.title = "Zoom Out";
+  zoomOutBtn.onclick = () => adjustZoomLevel(-0.5);
+
+  const resetBtn = document.createElement("button");
+  resetBtn.className = "zoom-btn";
+  resetBtn.innerHTML = '<i class="fa fa-sync-alt"></i>';
+  resetBtn.title = "Reset Zoom";
+  resetBtn.onclick = () => resetZoomLevel();
+
+  controls.appendChild(zoomInBtn);
+  controls.appendChild(zoomOutBtn);
+  controls.appendChild(resetBtn);
+
+  container.appendChild(controls);
+}
+
+function adjustZoomLevel(change) {
+  const newZoom = zoomLevel + change;
+  if (newZoom >= 1.0 && newZoom <= 5.0) {
+    zoomLevel = newZoom;
+    console.log("Zoom level changed to:", zoomLevel);
+
+    // Update zoom result if visible
+    const result = document.querySelector(".zoom-result");
+    if (result && result.style.display === "block") {
+      const img = document.getElementById("mainProductImage");
+      const lens = document.querySelector(".zoom-lens");
+      if (img && lens) {
+        updateZoomResult(img, lens, result);
+      }
+    }
+  }
+}
+
+function resetZoomLevel() {
+  zoomLevel = 2.0;
+  console.log("Zoom level reset to:", zoomLevel);
+
+  // Update zoom result if visible
+  const result = document.querySelector(".zoom-result");
+  if (result && result.style.display === "block") {
+    const img = document.getElementById("mainProductImage");
+    const lens = document.querySelector(".zoom-lens");
+    if (img && lens) {
+      updateZoomResult(img, lens, result);
+    }
+  }
+}
+
+function setupZoomEvents(img, lens, result) {
+  const container = img.parentElement;
+
+  // Mouse enter - show lens and result
+  container.addEventListener("mouseenter", function (e) {
+    if (!zoomEnabled) return;
+
+    lens.style.display = "block";
+    result.style.display = "block";
+
+    // Update zoom result immediately
+    updateZoomResult(img, lens, result, e);
+  });
+
+  // Mouse leave - hide lens and result
+  container.addEventListener("mouseleave", function () {
+    lens.style.display = "none";
+    result.style.display = "none";
+  });
+
+  // Mouse move - update lens and zoom result
+  container.addEventListener("mousemove", function (e) {
+    if (!zoomEnabled) return;
+
+    // Get cursor position relative to the image container
+    const rect = container.getBoundingClientRect();
+    let x = e.clientX - rect.left;
+    let y = e.clientY - rect.top;
+
+    // Constrain cursor position to container bounds
+    x = Math.max(0, Math.min(x, rect.width));
+    y = Math.max(0, Math.min(y, rect.height));
+
+    // Update lens position
+    updateLensPosition(x, y, lens, container);
+
+    // Update zoom result
+    updateZoomResult(img, lens, result, e);
+  });
+}
+
+function updateLensPosition(x, y, lens, container) {
+  const lensSize = parseInt(lens.style.width) || 100;
+
+  // Calculate lens position (center lens on cursor)
+  let lensX = x - lensSize / 2;
+  let lensY = y - lensSize / 2;
+
+  // Constrain lens within container bounds
+  const rect = container.getBoundingClientRect();
+  lensX = Math.max(0, Math.min(lensX, rect.width - lensSize));
+  lensY = Math.max(0, Math.min(lensY, rect.height - lensSize));
+
+  // Apply position
+  lens.style.left = lensX + "px";
+  lens.style.top = lensY + "px";
+}
+
+function updateZoomResult(img, lens, result, e) {
+  const resultImg = result.querySelector("img");
+  if (!resultImg) return;
+
+  // Get dimensions
+  const imgWidth = img.clientWidth;
+  const imgHeight = img.clientHeight;
+  const lensSize = parseInt(lens.style.width) || 100;
+
+  // Get lens position
+  const lensX = parseInt(lens.style.left) || 0;
+  const lensY = parseInt(lens.style.top) || 0;
+
+  // Calculate what portion of the image is being viewed
+  const xPercentage = (lensX / imgWidth) * 100;
+  const yPercentage = (lensY / imgHeight) * 100;
+
+  // Calculate position for zoom result image
+  const resultX = -xPercentage * zoomLevel;
+  const resultY = -yPercentage * zoomLevel;
+
+  // Apply transform to zoom result image
+  resultImg.style.transform = `translate(${resultX}%, ${resultY}%) scale(${zoomLevel})`;
+
+  // Update zoom result position based on cursor
+  if (e) {
+    const rect = result.parentElement.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+
+    // Position result to the right of cursor, or left if near right edge
+    let resultLeft = e.clientX + 20;
+    if (resultLeft + 350 > viewportWidth) {
+      resultLeft = e.clientX - 370; // Position to the left of cursor
+    }
+
+    result.style.left = resultLeft + "px";
+    result.style.top = Math.max(20, e.clientY - 175) + "px";
+  }
+}
+
+// ========== PRODUCT RATING ==========
+function updateProductRating(rating) {
+  const container = document.getElementById("product-rating");
+  container.innerHTML = "";
+  
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
+  
+  for (let i = 0; i < 5; i++) {
+    const star = document.createElement("i");
+    if (i < fullStars) {
+      star.className = "fa fa-star";
+    } else if (i === fullStars && hasHalfStar) {
+      star.className = "fa fa-star-half-alt";
+    } else {
+      star.className = "far fa-star";
+    }
+    container.appendChild(star);
+  }
+}
+
+// ========== SIZE OPTIONS ==========
+function updateSizeOptions() {
+  const sizeButtons = document.getElementById("size-buttons");
+  sizeButtons.innerHTML = "";
+  
+  const sizes = ["S", "M", "L", "XL"];
+  sizes.forEach((size) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "btn";
+    button.textContent = size;
+    button.addEventListener("click", () => selectSize(size, button));
+    sizeButtons.appendChild(button);
+  });
+  
+  // Auto-select first size
+  if (sizes.length > 0) {
+    setTimeout(() => {
+      const firstSizeBtn = sizeButtons.querySelector(".btn");
+      if (firstSizeBtn) {
+        selectSize(sizes[0], firstSizeBtn);
+      }
+    }, 100);
+  }
+}
+
+function selectSize(size, button) {
+  selectedSize = size;
+  
+  // Remove active class from all size buttons
+  document.querySelectorAll("#size-buttons .btn").forEach((btn) => {
+    btn.classList.remove("active");
+  });
+  
+  // Add active class to selected button
+  button.classList.add("active");
+}
+
+// ========== QUANTITY CONTROLS ==========
+function setupQuantityControls() {
+  const minusBtn = document.querySelector(".btn-minus");
+  const plusBtn = document.querySelector(".btn-plus");
+  const quantityInput = document.getElementById("quantity-input");
+  
+  if (!minusBtn || !plusBtn || !quantityInput) return;
+  
+  // Set initial quantity
+  currentQuantity = 1;
+  quantityInput.value = currentQuantity;
+  
+  minusBtn.addEventListener("click", function() {
+    if (currentQuantity > 1) {
+      currentQuantity--;
+      quantityInput.value = currentQuantity;
+      updatePriceDisplay();
+    }
+  });
+  
+  plusBtn.addEventListener("click", function() {
+    currentQuantity++;
+    quantityInput.value = currentQuantity;
+    updatePriceDisplay();
+  });
+  
+  quantityInput.addEventListener("change", function() {
+    let value = parseInt(this.value);
+    if (isNaN(value) || value < 1) {
+      value = 1;
+      this.value = 1;
+    }
+    currentQuantity = value;
+    updatePriceDisplay();
+  });
+}
+
+// ========== CART FUNCTIONS ==========
+function setupAddToCart() {
+  const addToCartBtn = document.getElementById("add-to-cart-btn");
+  const buyNowBtn = document.getElementById("buy-now-btn");
+  
+  if (addToCartBtn) {
+    addToCartBtn.addEventListener("click", function(e) {
+      e.preventDefault();
+      handleAddToCart(false);
+    });
+  }
+  
+  if (buyNowBtn) {
+    buyNowBtn.addEventListener("click", function(e) {
+      e.preventDefault();
+      handleAddToCart(true);
+    });
+  }
+}
+
+function handleAddToCart(isBuyNow = false) {
+  if (!selectedSize) {
+    alert("Please select a size");
+    return;
+  }
+  
+  if (!currentProduct) {
+    alert("Product information not available");
+    return;
+  }
+  
+  addToCartToBackend(isBuyNow);
+}
+
+async function addToCartToBackend(isBuyNow = false) {
+  const productId = getProductIdFromURL();
+  const token = localStorage.getItem("token");
+  
+  if (!token) {
+    alert("Please login to add items to cart");
+    window.location.href = "login.html";
+    return;
+  }
+  
+  try {
+    const response = await fetch("/api/user/cart/addtocart", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        productId: productId,
+        quantity: currentQuantity,
+        size: selectedSize,
+      }),
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("userId");
+        alert("Session expired. Please login again.");
+        window.location.href = "login.html";
+        return;
+      }
+      throw new Error(data.message || `HTTP error! status: ${response.status}`);
+    }
+    
+    if (!data.success) {
+      throw new Error(data.message || "Failed to add to cart");
+    }
+    
+    // Update cart count
+    updateCartCountFromResponse(data);
+    
+    // Show success message
+    alert(`✓ Added ${currentQuantity} ${currentProduct.name} (${selectedSize}) to cart!`);
+    
+    // Redirect if Buy Now
+    if (isBuyNow) {
+      setTimeout(() => {
+        window.location.href = "checkout.html";
+      }, 500);
+    }
+    
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+    alert("Error adding product to cart: " + error.message);
+  }
+}
+
+function updateCartCountFromResponse(data) {
+  let cartCount = 0;
+  
+  // Try different response formats
+  if (data.cart && data.cart.totalItems !== undefined) {
+    cartCount = data.cart.totalItems;
+  } else if (data.totalItems !== undefined) {
+    cartCount = data.totalItems;
+  } else if (data.cart && data.cart.items && Array.isArray(data.cart.items)) {
+    cartCount = data.cart.items.length;
+  } else if (data.items && Array.isArray(data.items)) {
+    cartCount = data.items.length;
+  }
+  
+  // Update localStorage
+  if (cartCount > 0) {
+    localStorage.setItem("cartCount", cartCount.toString());
+  } else {
+    // Increment existing count
+    const currentCount = parseInt(localStorage.getItem("cartCount") || "0");
+    cartCount = currentCount + 1;
+    localStorage.setItem("cartCount", cartCount.toString());
+  }
+  
+  // Update display
+  updateCartCount();
+}
+
+// ========== CART COUNT FUNCTIONS ==========
+function updateCartCount() {
+  const cartCount = localStorage.getItem("cartCount") || "0";
+  const cartCountElement = document.getElementById("cart-count");
+  
+  if (cartCountElement) {
+    cartCountElement.textContent = `(${cartCount})`;
+  }
+  
+  // Also fetch from backend for accuracy
+  fetchCartFromBackend();
+}
+
+async function fetchCartFromBackend() {
+  const token = localStorage.getItem("token");
+  if (!token) return;
+  
+  try {
+    const response = await fetch("/api/user/cart", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.success && data.cart) {
+        const cartCount = data.cart.totalItems || data.cart.items?.length || 0;
+        localStorage.setItem("cartCount", cartCount.toString());
+        updateCartCount();
+      }
+    }
+  } catch (error) {
+    console.error("Error fetching cart:", error);
+  }
+}
+
+// ========== AUTHENTICATION ==========
+function setupAuth() {
+  const token = localStorage.getItem("token");
+  const loginDropdown = document.getElementById("loginDropdown");
+  const userAccountDropdown = document.getElementById("userAccountDropdown");
+  
+  if (token) {
+    // User is logged in
+    if (loginDropdown) loginDropdown.style.display = "none";
+    if (userAccountDropdown) userAccountDropdown.style.display = "block";
+  } else {
+    // User is not logged in
+    if (loginDropdown) loginDropdown.style.display = "block";
+    if (userAccountDropdown) userAccountDropdown.style.display = "none";
+  }
+  
+  // Logout button
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", function(e) {
+      e.preventDefault();
+      if (confirm("Are you sure you want to logout?")) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("cartCount");
+        window.location.reload();
+      }
+    });
+  }
+}
+
+// ========== SIDEBAR FUNCTIONS WITH CAROUSEL ==========
+async function loadSidebarData() {
+  try {
+    // Load categories
+    const catResponse = await fetch("/api/user/category/all");
+    if (catResponse.ok) {
+      const catData = await catResponse.json();
+      if (catData.success && catData.data) {
+        renderCategories(catData.data);
+      }
+    }
+    
+    // Load featured products for carousel
+    await loadSidebarProducts();
+  } catch (error) {
+    console.error("Error loading sidebar data:", error);
+  }
+}
+
+function renderCategories(categories) {
+  const categoryList = document.getElementById("category-list");
+  if (!categoryList) return;
+  
+  let html = '';
+  categories.forEach((category) => {
+    const categoryId = category._id || category.id || "";
+    const categoryName = category.name || "Unnamed Category";
+    
+    html += `
+      <li class="nav-item">
+        <a class="nav-link" href="product-list.html?category=${categoryId}">
+          <i class="fa fa-tag mr-2"></i>${categoryName}
+        </a>
+      </li>
+    `;
+  });
+  
+  categoryList.innerHTML = html;
+}
+
+async function loadSidebarProducts() {
+  try {
+    let products = [];
+
+    // Try featured products first
+    const featuredResponse = await fetch("/api/user/products?featured=true&limit=5");
+    if (featuredResponse.ok) {
+      const featuredData = await featuredResponse.json();
+      if (featuredData.success && featuredData.products && featuredData.products.length > 0) {
+        products = featuredData.products;
+      }
+    }
+
+    // If no featured products, try latest products
+    if (products.length === 0) {
+      const latestResponse = await fetch("/api/user/products?limit=5&sort=-createdAt");
+      if (latestResponse.ok) {
+        const latestData = await latestResponse.json();
+        if (latestData.success && latestData.products) {
+          products = latestData.products;
         }
-
-        // Remove duplicate "uploads/" if present
-        if (imageSrc.startsWith("uploads/")) {
-          imageSrc = imageSrc.replace("uploads/", "");
-        }
-
-        // Otherwise, prepend the uploads path correctly
-        const finalUrl = `/uploads/${imageSrc}`;
-        console.log("Final image URL:", finalUrl);
-        return finalUrl;
       }
+    }
 
-      // Show/hide loading indicator
-      function showLoading() {
-        document.getElementById("loading-indicator").style.display = "flex";
-        document.getElementById("product-detail-content").style.display = "none";
-        document.getElementById("error-message").style.display = "none";
+    // Render the products in sidebar slider
+    renderSidebarSlider(products);
+  } catch (error) {
+    console.error("Error loading sidebar products:", error);
+    // Use fallback products on error
+    const fallbackProducts = getFallbackProducts();
+    renderSidebarSlider(fallbackProducts);
+  }
+}
+
+function renderSidebarSlider(products) { 
+  const sliderContainer = document.getElementById("sidebar-products-slider");
+
+  if (!sliderContainer) {
+    console.error("Sidebar slider container not found");
+    return;
+  }
+
+  if (!products || products.length === 0) {
+    sliderContainer.innerHTML = `
+      <div class="text-center p-4">
+        <i class="fa fa-exclamation-circle fa-2x text-muted"></i>
+        <p class="mt-2 text-muted">No products available</p>
+      </div>
+    `;
+    return;
+  }
+
+  let productsHTML = "";
+  let slideIndicatorsHTML = "";
+
+  // Create product slides
+  products.forEach((product, index) => {
+    const productId = product._id || product.id || "";
+    const productName = product.name || "Product Name";
+    const productPrice = parseFloat(product.price) || 0;
+    const productImage = getProductImageForSidebar(product.image || product.images || "");
+    const productRating = product.rating || 0;
+
+    // Create rating stars
+    let ratingStars = "";
+    const fullStars = Math.floor(productRating);
+    const hasHalfStar = productRating % 1 >= 0.5;
+
+    for (let i = 0; i < 5; i++) {
+      if (i < fullStars) {
+        ratingStars += '<i class="fa fa-star"></i>';
+      } else if (i === fullStars && hasHalfStar) {
+        ratingStars += '<i class="fa fa-star-half-alt"></i>';
+      } else {
+        ratingStars += '<i class="far fa-star"></i>';
       }
-
-      function hideLoading() {
-        document.getElementById("loading-indicator").style.display = "none";
-      }
-
-      function showError() {
-        document.getElementById("loading-indicator").style.display = "none";
-        document.getElementById("product-detail-content").style.display = "none";
-        document.getElementById("error-message").style.display = "block";
-      }
-
-      function showContent() {
-        document.getElementById("loading-indicator").style.display = "none";
-        document.getElementById("error-message").style.display = "none";
-        document.getElementById("product-detail-content").style.display =
-          "block";
-      }
-
-      // ========== MAIN PRODUCT LOADING ==========
-
-      // Fetch product details from API
-      async function loadProductDetails() {
-        const productId = getProductIdFromURL();
-
-        if (!productId) {
-          console.error("No product ID found in URL");
-          showError();
-          return;
-        }
-
-        try {
-          showLoading();
-
-          const response = await fetch(`/api/user/products/${productId}`);
-
-          if (!response.ok) {
-            if (response.status === 404) {
-              throw new Error("Product not found");
-            } else {
-              throw new Error("Server error");
-            }
-          }
-
-          const data = await response.json();
-
-          if (data.success) {
-            currentProduct = data.product;
-            basePrice = parseFloat(currentProduct.price) || 0;
-            displayProductDetails(currentProduct);
-            showContent();
-          } else {
-            throw new Error(data.message || "Failed to load product");
-          }
-        } catch (error) {
-          console.error("Error loading product:", error);
-          showError();
-        }
-      }
-
-      // Display product details on the page
-      function displayProductDetails(product) {
-        console.log("Displaying product:", product);
-
-        // Update product title
-        document.getElementById("product-name").textContent = product.name;
-        document.getElementById("breadcrumb-product").textContent = product.name;
-
-        // Update base price and display
-        basePrice = parseFloat(product.price) || 0;
-        currentQuantity = 1; // Reset quantity to 1
-        document.getElementById("quantity-input").value = currentQuantity;
-
-        updatePriceDisplay();
-
-        // Update product images with zoom feature
-        updateProductImages(product);
-
-        // Update product description
-        updateProductDescription(product);
-
-        // Update product rating
-        updateProductRating(product.rating || 0);
-
-        // Update size options
-        updateSizeOptions(product);
-
-        // Update related products section
-        updateRelatedProducts(product);
-
-        // Load sidebar data
-        loadSidebarData();
-
-        // Setup cart buttons AFTER product is loaded
-        setupAddToCart();
-
-        // Setup quantity controls
-        setupQuantityControls();
-
-        // Initialize zoom feature for the current image
-        setTimeout(() => {
-          initZoomFeature();
-        }, 100);
-      }
-
-      // Update price display based on quantity
-      function updatePriceDisplay() {
-        if (!basePrice || basePrice === 0) {
-          console.error("Base price not set correctly");
-          return;
-        }
-
-        const totalPrice = basePrice * currentQuantity;
-        const discountedPrice = Math.round(totalPrice * 1.2); // 20% more for the "original" price
-
-        const priceElement = document.getElementById("product-price");
-        if (priceElement) {
-          priceElement.innerHTML = `$${totalPrice.toFixed(
-            2
-          )} <span>$${discountedPrice.toFixed(2)}</span>`;
-        }
-      }
-
-      // ========== ZOOM FEATURE FUNCTIONS ==========
-
-      // Initialize zoom feature for the current image
-      function initZoomFeature() {
-        // Only enable zoom on desktop screens (width > 992px)
-        if (window.innerWidth <= 992) {
-          console.log("Zoom disabled on mobile devices");
-          zoomEnabled = false;
-          return;
-        }
-
-        const img = document.getElementById("mainProductImage");
-        if (!img) {
-          console.error("Main product image not found for zoom");
-          return;
-        }
-
-        // Create zoom lens element if it doesn't exist
-        let lens = document.querySelector(".zoom-lens");
-        if (!lens) {
-          lens = document.createElement("div");
-          lens.className = "zoom-lens";
-          document.querySelector(".zoom-container").appendChild(lens);
-        }
-
-        // Create zoom result element if it doesn't exist
-        let result = document.querySelector(".zoom-result");
-        if (!result) {
-          result = document.createElement("div");
-          result.className = "zoom-result";
-          document.querySelector(".product-image-section").appendChild(result);
-
-          // Create image inside zoom result
-          const resultImg = document.createElement("img");
-          resultImg.id = "zoomResultImage";
-          resultImg.src = img.src;
-          resultImg.alt = "Zoomed product image";
-          result.appendChild(resultImg);
-        }
-
-        // Create zoom controls if they don't exist
-        createZoomControls();
-
-        // Set up mouse events for zoom
-        setupZoomEvents(img, lens, result);
-
-        console.log("Zoom feature initialized");
-      }
-
-      // Create zoom control buttons
-      function createZoomControls() {
-        const container = document.querySelector(".zoom-container");
-        if (!container || container.querySelector(".zoom-controls")) return;
-
-        const controls = document.createElement("div");
-        controls.className = "zoom-controls";
-
-        const zoomInBtn = document.createElement("button");
-        zoomInBtn.className = "zoom-btn";
-        zoomInBtn.innerHTML = '<i class="fa fa-search-plus"></i>';
-        zoomInBtn.title = "Zoom In";
-        zoomInBtn.onclick = () => adjustZoomLevel(0.5);
-
-        const zoomOutBtn = document.createElement("button");
-        zoomOutBtn.className = "zoom-btn";
-        zoomOutBtn.innerHTML = '<i class="fa fa-search-minus"></i>';
-        zoomOutBtn.title = "Zoom Out";
-        zoomOutBtn.onclick = () => adjustZoomLevel(-0.5);
-
-        const resetBtn = document.createElement("button");
-        resetBtn.className = "zoom-btn";
-        resetBtn.innerHTML = '<i class="fa fa-sync-alt"></i>';
-        resetBtn.title = "Reset Zoom";
-        resetBtn.onclick = () => resetZoomLevel();
-
-        controls.appendChild(zoomInBtn);
-        controls.appendChild(zoomOutBtn);
-        controls.appendChild(resetBtn);
-
-        container.appendChild(controls);
-      }
-
-      // Adjust zoom level
-      function adjustZoomLevel(change) {
-        const newZoom = zoomLevel + change;
-        if (newZoom >= 1.0 && newZoom <= 5.0) {
-          zoomLevel = newZoom;
-          console.log("Zoom level changed to:", zoomLevel);
-
-          // Update zoom result if visible
-          const result = document.querySelector(".zoom-result");
-          if (result && result.style.display === "block") {
-            const img = document.getElementById("mainProductImage");
-            const lens = document.querySelector(".zoom-lens");
-            if (img && lens) {
-              updateZoomResult(img, lens, result);
-            }
-          }
-        }
-      }
-
-      // Reset zoom level to default
-      function resetZoomLevel() {
-        zoomLevel = 2.0;
-        console.log("Zoom level reset to:", zoomLevel);
-
-        // Update zoom result if visible
-        const result = document.querySelector(".zoom-result");
-        if (result && result.style.display === "block") {
-          const img = document.getElementById("mainProductImage");
-          const lens = document.querySelector(".zoom-lens");
-          if (img && lens) {
-            updateZoomResult(img, lens, result);
-          }
-        }
-      }
-
-      // Set up mouse events for zoom functionality
-      function setupZoomEvents(img, lens, result) {
-        const container = img.parentElement;
-
-        // Mouse enter - show lens and result
-        container.addEventListener("mouseenter", function (e) {
-          if (!zoomEnabled) return;
-
-          lens.style.display = "block";
-          result.style.display = "block";
-
-          // Update zoom result immediately
-          updateZoomResult(img, lens, result, e);
-        });
-
-        // Mouse leave - hide lens and result
-        container.addEventListener("mouseleave", function () {
-          lens.style.display = "none";
-          result.style.display = "none";
-        });
-
-        // Mouse move - update lens and zoom result
-        container.addEventListener("mousemove", function (e) {
-          if (!zoomEnabled) return;
-
-          // Get cursor position relative to the image container
-          const rect = container.getBoundingClientRect();
-          let x = e.clientX - rect.left;
-          let y = e.clientY - rect.top;
-
-          // Constrain cursor position to container bounds
-          x = Math.max(0, Math.min(x, rect.width));
-          y = Math.max(0, Math.min(y, rect.height));
-
-          // Update lens position
-          updateLensPosition(x, y, lens, container);
-
-          // Update zoom result
-          updateZoomResult(img, lens, result, e);
-        });
-      }
-
-      // Update lens position
-      function updateLensPosition(x, y, lens, container) {
-        const lensSize = parseInt(lens.style.width) || 100;
-
-        // Calculate lens position (center lens on cursor)
-        let lensX = x - lensSize / 2;
-        let lensY = y - lensSize / 2;
-
-        // Constrain lens within container bounds
-        const rect = container.getBoundingClientRect();
-        lensX = Math.max(0, Math.min(lensX, rect.width - lensSize));
-        lensY = Math.max(0, Math.min(lensY, rect.height - lensSize));
-
-        // Apply position
-        lens.style.left = lensX + "px";
-        lens.style.top = lensY + "px";
-      }
-
-      // Update zoom result based on lens position
-      function updateZoomResult(img, lens, result, e) {
-        const resultImg = result.querySelector("img");
-        if (!resultImg) return;
-
-        // Get dimensions
-        const imgWidth = img.clientWidth;
-        const imgHeight = img.clientHeight;
-        const lensSize = parseInt(lens.style.width) || 100;
-
-        // Get lens position
-        const lensX = parseInt(lens.style.left) || 0;
-        const lensY = parseInt(lens.style.top) || 0;
-
-        // Calculate what portion of the image is being viewed
-        const xPercentage = (lensX / imgWidth) * 100;
-        const yPercentage = (lensY / imgHeight) * 100;
-
-        // Calculate position for zoom result image
-        const resultX = -xPercentage * zoomLevel;
-        const resultY = -yPercentage * zoomLevel;
-
-        // Apply transform to zoom result image
-        resultImg.style.transform = `translate(${resultX}%, ${resultY}%) scale(${zoomLevel})`;
-
-        // Update zoom result position based on cursor
-        if (e) {
-          const rect = result.parentElement.getBoundingClientRect();
-          const viewportWidth = window.innerWidth;
-
-          // Position result to the right of cursor, or left if near right edge
-          let resultLeft = e.clientX + 20;
-          if (resultLeft + 350 > viewportWidth) {
-            resultLeft = e.clientX - 370; // Position to the left of cursor
-          }
-
-          result.style.left = resultLeft + "px";
-          result.style.top = Math.max(20, e.clientY - 175) + "px";
-        }
-      }
-
-      // ========== PRODUCT IMAGE FUNCTIONS ==========
-
-      // Update product images with slider and thumbnails
-      function updateProductImages(product) {
-        const productSlider = document.getElementById("product-image-slider");
-        productSlider.innerHTML = "";
-
-        // Get product images array
-        productImages = product.image || [];
-        if (!Array.isArray(productImages)) {
-          productImages = [productImages];
-        }
-
-        // If no images, use default
-        if (productImages.length === 0) {
-          productImages.push("img/product-1.jpg");
-        }
-
-        // Create zoom container and main image
-        createZoomImageSlider(product, productImages);
-
-        // Create thumbnails if multiple images
-        if (productImages.length > 1) {
-          createThumbnailsForSlider(product, productImages);
-        }
-      }
-
-      // Create zoom container and main image
-      function createZoomImageSlider(product, images) {
-        // Create zoom container
-        const zoomContainer = document.createElement("div");
-        zoomContainer.className = "zoom-container";
-        zoomContainer.id = "zoomContainer";
-
-        // Create main product image
-        const mainImg = document.createElement("img");
-        mainImg.id = "mainProductImage";
-        mainImg.src = getImageUrl(images[0]);
-        mainImg.alt = `${product.name} - Main Image`;
-        mainImg.onerror = function () {
-          this.src = "img/product-1.jpg";
-          // Re-initialize zoom with fallback image
-          setTimeout(() => initZoomFeature(), 100);
-        };
-
-        // Add navigation buttons if multiple images
-        if (images.length > 1) {
-          const prevBtn = document.createElement("button");
-          prevBtn.innerHTML = '<i class="fa fa-chevron-left"></i>';
-          prevBtn.className = "slider-btn slider-prev";
-          prevBtn.addEventListener("click", () => changeSlide(-1));
-
-          const nextBtn = document.createElement("button");
-          nextBtn.innerHTML = '<i class="fa fa-chevron-right"></i>';
-          nextBtn.className = "slider-btn slider-next";
-          nextBtn.addEventListener("click", () => changeSlide(1));
-
-          zoomContainer.appendChild(prevBtn);
-          zoomContainer.appendChild(nextBtn);
-        }
-
-        zoomContainer.appendChild(mainImg);
-        document.getElementById("product-image-slider").appendChild(zoomContainer);
-
-        // Initialize zoom after image loads
-        mainImg.onload = function () {
-          console.log("Main product image loaded, initializing zoom...");
-          initZoomFeature();
-        };
-      }
-
-      // Change slide in image slider
-      function changeSlide(direction) {
-        if (productImages.length <= 1) return;
-
-        // Calculate new index
-        currentSlideIndex =
-          (currentSlideIndex + direction + productImages.length) % productImages.length;
-
-        // Update main image
-        const mainImg = document.getElementById("mainProductImage");
-        if (mainImg) {
-          mainImg.src = getImageUrl(productImages[currentSlideIndex]);
-          mainImg.alt = `${currentProduct.name} - Image ${currentSlideIndex + 1}`;
-
-          // Update zoom result image when main image changes
-          setTimeout(() => {
-            const resultImg = document.querySelector("#zoomResultImage");
-            if (resultImg) {
-              resultImg.src = mainImg.src;
-            }
-            // Re-initialize zoom for new image
-            initZoomFeature();
-          }, 50);
-        }
-
-        // Update active thumbnail
-        updateActiveThumbnail(currentSlideIndex);
-      }
-
-      // Create thumbnails for slider
-      function createThumbnailsForSlider(product, images) {
-        const thumbnailsContainer = document.createElement("div");
-        thumbnailsContainer.className = "product-thumbnails";
-
-        images.forEach((imageSrc, index) => {
-          const thumbnailDiv = document.createElement("div");
-          thumbnailDiv.className = "thumbnail-item";
-          thumbnailDiv.dataset.index = index;
-
-          // Add active class to first thumbnail
-          if (index === 0) {
-            thumbnailDiv.classList.add("active");
-          }
-
-          const thumbnailImg = document.createElement("img");
-          thumbnailImg.src = getImageUrl(imageSrc);
-          thumbnailImg.alt = `${product.name} - Thumbnail ${index + 1}`;
-          thumbnailImg.onerror = function () {
-            this.src = "img/product-1.jpg";
-          };
-
-          // Add click event to switch to this image
-          thumbnailDiv.addEventListener("click", () => {
-            switchToImage(index);
-          });
-
-          thumbnailDiv.appendChild(thumbnailImg);
-          thumbnailsContainer.appendChild(thumbnailDiv);
-        });
-
-        // Add thumbnails to the slider container
-        const sliderContainer = document.querySelector(".product-slider-single");
-        if (sliderContainer) {
-          sliderContainer.appendChild(thumbnailsContainer);
-        }
-      }
-
-      // Switch to specific image
-      function switchToImage(index) {
-        if (index < 0 || index >= productImages.length) return;
-
-        // Update current slide index
-        currentSlideIndex = index;
-
-        // Update main image
-        const mainImg = document.getElementById("mainProductImage");
-        if (mainImg) {
-          mainImg.src = getImageUrl(productImages[index]);
-          mainImg.alt = `${currentProduct.name} - Image ${index + 1}`;
-
-          // Update zoom result image
-          setTimeout(() => {
-            const resultImg = document.querySelector("#zoomResultImage");
-            if (resultImg) {
-              resultImg.src = mainImg.src;
-            }
-            // Re-initialize zoom for new image
-            initZoomFeature();
-          }, 50);
-        }
-
-        // Update active thumbnail
-        updateActiveThumbnail(index);
-      }
-
-      // Update active thumbnail
-      function updateActiveThumbnail(index) {
-        const thumbnails = document.querySelectorAll(".thumbnail-item");
-        thumbnails.forEach((thumb, thumbIndex) => {
-          if (thumbIndex === index) {
-            thumb.classList.add("active");
-          } else {
-            thumb.classList.remove("active");
-          }
-        });
-      }
-
-      // ========== PRODUCT DETAILS FUNCTIONS ==========
-
-      // Update product description in tabs
-      function updateProductDescription(product) {
-        // Update description tab
-        const descriptionElement = document.getElementById("product-description");
-        descriptionElement.textContent =
-          product.description || "No description available for this product.";
-
-        // Update specification tab
-        const specElement = document.getElementById("product-specifications");
-        specElement.innerHTML = "";
-
-        // Add specifications if available
-        const specifications = [
-          `Category: ${
-            product.category?.name || product.category || "Not specified"
-          }`,
-          `Brand: ${product.brand || "Not specified"}`,
-          `Status: ${product.status || "active"}`,
-          `Availability: ${product.isAvailable ? "In Stock" : "Out of Stock"}`,
-        ];
-
-        specifications.forEach((spec) => {
-          const li = document.createElement("li");
-          li.textContent = spec;
-          specElement.appendChild(li);
-        });
-      }
-
-      // Update product rating stars
-      function updateProductRating(rating) {
-        const ratingContainer = document.getElementById("product-rating");
-        ratingContainer.innerHTML = "";
-
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 >= 0.5;
-
-        for (let i = 0; i < 5; i++) {
-          const star = document.createElement("i");
-          if (i < fullStars) {
-            star.className = "fa fa-star";
-          } else if (i === fullStars && hasHalfStar) {
-            star.className = "fa fa-star-half-alt";
-          } else {
-            star.className = "far fa-star";
-          }
-          ratingContainer.appendChild(star);
-        }
-      }
-
-      // Update size options
-      function updateSizeOptions(product) {
-        const sizeButtons = document.getElementById("size-buttons");
-
-        // Clear existing buttons
-        sizeButtons.innerHTML = "";
-
-        // Hide color section completely
-        const colorSection = document.querySelector(".p-color");
-        if (colorSection) {
-          colorSection.style.display = "none";
-        }
-
-        // Add size options
-        const sizes = ["S", "M", "L", "XL"];
-        sizes.forEach((size) => {
-          const button = document.createElement("button");
-          button.type = "button";
-          button.className = "btn";
-          button.textContent = size;
-          button.addEventListener("click", () => selectSize(size, button));
-          sizeButtons.appendChild(button);
-        });
-
-        // Auto-select first size
-        if (sizes.length > 0) {
-          setTimeout(() => {
-            const firstSizeBtn = sizeButtons.querySelector(".btn");
-            if (firstSizeBtn) {
-              selectSize(sizes[0], firstSizeBtn);
-            }
-          }, 100);
-        }
-      }
-
-      // Size selection
-      function selectSize(size, button) {
-        selectedSize = size;
-
-        // Remove active class from all size buttons
-        document.querySelectorAll("#size-buttons .btn").forEach((btn) => {
-          btn.classList.remove("active");
-        });
-
-        // Add active class to selected button
-        button.classList.add("active");
-
-        console.log("Selected size:", size);
-      }
-
-      // Update related products section
-      function updateRelatedProducts(product) {
-        const relatedTitle = document.getElementById("related-products-title");
-        const relatedContainer = document.getElementById("related-products");
-
-        // Update title based on product category
-        relatedTitle.textContent = `More ${
-          product.category ? product.category.name : "Related"
-        } Products`;
-
-        // For now, show a message
-        relatedContainer.innerHTML = `
-          <div class="col-12 text-center">
-            <p>Check back soon for related products!</p>
-            <a href="product-list.html?category=${
-              product.category ? product.category._id : ""
-            }" class="btn btn-primary">
-              Browse ${
-                product.category ? product.category.name : "More"
-              } Products
+    }
+
+    const activeClass = index === 0 ? "active" : "";
+
+    productsHTML += `
+      <div class="carousel-item ${activeClass}">
+        <div class="product-item">
+          <div class="product-title">
+            <a href="product-detail.html?id=${productId}">${productName}</a>
+            <div class="ratting">
+              ${ratingStars}
+            </div>
+          </div>
+          <div class="product-image">
+            <a href="product-detail.html?id=${productId}">
+              <img src="${productImage}" alt="${productName}" 
+                   onerror="this.onerror=null; this.src='img/product-${Math.floor(Math.random() * 10) + 1}.jpg'">
             </a>
           </div>
-        `;
-      }
-
-      // Quantity controls
-      function setupQuantityControls() {
-        const minusBtn = document.querySelector(".btn-minus");
-        const plusBtn = document.querySelector(".btn-plus");
-        const quantityInput = document.getElementById("quantity-input");
-
-        // Set initial quantity
-        currentQuantity = 1;
-        if (quantityInput) quantityInput.value = currentQuantity;
-
-        if (minusBtn) {
-          minusBtn.addEventListener("click", function () {
-            if (currentQuantity > 1) {
-              currentQuantity = currentQuantity - 1;
-              quantityInput.value = currentQuantity;
-              updatePriceDisplay();
-            }
-          });
-        }
-
-        if (plusBtn) {
-          plusBtn.addEventListener("click", function () {
-            currentQuantity = currentQuantity + 1;
-            quantityInput.value = currentQuantity;
-            updatePriceDisplay();
-          });
-        }
-
-        // Update on direct input with validation
-        if (quantityInput) {
-          quantityInput.addEventListener("change", function () {
-            let value = parseInt(this.value);
-            if (isNaN(value) || value < 1) {
-              value = 1;
-              this.value = 1;
-            }
-            currentQuantity = value;
-            updatePriceDisplay();
-          });
-
-          // Prevent non-numeric input
-          quantityInput.addEventListener("keypress", function (e) {
-            if (e.key < "0" || e.key > "9") {
-              e.preventDefault();
-            }
-          });
-        }
-      }
-
-      // ========== CART FUNCTIONS ==========
-
-      // Function to handle Add to Cart with login check
-      function handleAddToCart(event, isBuyNow = false) {
-        event.preventDefault(); // Prevent default link behavior
-
-        console.log("Add to Cart clicked, Buy Now:", isBuyNow);
-
-        if (!isUserAuthenticated()) {
-          // User is not logged in - redirect to login
-          const message = isBuyNow
-            ? "Please login to proceed with purchase"
-            : "Please login to add items to cart";
-
-          if (confirm(message + ". Click OK to go to login page.")) {
-            // Store the current product details for later
-            if (currentProduct) {
-              sessionStorage.setItem("pendingCartItem", JSON.stringify({
-                productId: currentProduct._id,
-                quantity: currentQuantity,
-                size: selectedSize,
-                isBuyNow: isBuyNow
-              }));
-            }
-            window.location.href = "login.html";
-          }
-          return false;
-        }
-
-        // User is logged in, proceed with add to cart logic
-        if (isBuyNow) {
-          handleBuyNow();
-        } else {
-          addToCartToBackend();
-        }
-        return true;
-      }
-
-      // Add to cart directly to backend (for logged-in users)
-      async function addToCartToBackend() {
-        // Validate selections
-        if (!selectedSize) {
-          alert("Please select a size");
-          return null;
-        }
-
-        const productId = getProductIdFromURL();
-        const token = localStorage.getItem("token");
-
-        if (!productId || !currentProduct) {
-          alert("Product information not available");
-          return null;
-        }
-
-        if (!token) {
-          alert("Please login to add items to cart");
-          window.location.href = "login.html";
-          return null;
-        }
-
-        try {
-          console.log("Adding to backend cart:", {
-            productId: productId,
-            quantity: currentQuantity,
-            size: selectedSize,
-          });
-
-          // Call backend API to add to cart - Use relative URL
-          const response = await fetch("/api/user/cart/addtocart", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              productId: productId,
-              quantity: currentQuantity,
-              size: selectedSize,
-            }),
-          });
-
-          const data = await response.json();
-          console.log("Add to cart response:", data);
-
-          if (!response.ok) {
-            if (response.status === 401) {
-              // Token expired or invalid
-              localStorage.removeItem("token");
-              localStorage.removeItem("isLoggedIn");
-              localStorage.removeItem("userId");
-              alert("Session expired. Please login again.");
-              window.location.href = "login.html";
-              return null;
-            }
-            throw new Error(data.message || `HTTP error! status: ${response.status}`);
-          }
-
-          if (!data.success) {
-            throw new Error(data.message || "Failed to add to cart");
-          }
-
-          // Update cart count from backend response
-          if (data.cart && data.cart.totalItems !== undefined) {
-            localStorage.setItem("cartCount", data.cart.totalItems.toString());
-            updateCartCountDisplay();
-          } else if (data.totalItems !== undefined) {
-            localStorage.setItem("cartCount", data.totalItems.toString());
-            updateCartCountDisplay();
-          }
-
-          // Show success message
-          alert(
-            `✓ Added ${currentQuantity} ${currentProduct.name} (${selectedSize}) to cart!`
-          );
-          console.log("Successfully added to cart:", data);
-
-          return data;
-        } catch (error) {
-          console.error("Error adding to backend cart:", error);
-          alert("Error adding product to cart: " + error.message);
-          return null;
-        }
-      }
-
-      // Handle Buy Now functionality
-      async function handleBuyNow() {
-        // First add to cart
-        const result = await addToCartToBackend();
-
-        if (result && result.success) {
-          // Then redirect to checkout page after a short delay
-          setTimeout(() => {
-            const cartCount = localStorage.getItem("cartCount") || "0";
-            if (parseInt(cartCount) > 0) {
-              window.location.href = "checkout.html";
-            } else {
-              alert("Your cart is empty. Please add items to cart first.");
-            }
-          }, 500);
-        }
-      }
-
-      // Setup cart buttons - Improved version
-      function setupAddToCart() {
-        const addToCartBtn = document.getElementById("add-to-cart-btn");
-        const buyNowBtn = document.getElementById("buy-now-btn");
-
-        // Remove existing event listeners by replacing the elements
-        if (addToCartBtn) {
-          const newAddToCartBtn = addToCartBtn.cloneNode(true);
-          addToCartBtn.parentNode.replaceChild(newAddToCartBtn, addToCartBtn);
-          
-          // Add event listener to new button
-          newAddToCartBtn.addEventListener("click", function(e) {
-            handleAddToCart(e, false);
-          });
-        }
-
-        if (buyNowBtn) {
-          const newBuyNowBtn = buyNowBtn.cloneNode(true);
-          buyNowBtn.parentNode.replaceChild(newBuyNowBtn, buyNowBtn);
-          
-          // Add event listener to new button
-          newBuyNowBtn.addEventListener("click", function(e) {
-            handleAddToCart(e, true);
-          });
-        }
-
-        console.log("Cart buttons setup complete");
-      }
-
-      // Update cart count display
-      function updateCartCountDisplay() {
-        try {
-          // First check localStorage
-          let cartCount = localStorage.getItem("cartCount");
-          
-          // If no cart count in localStorage, try to fetch from API if user is logged in
-          if (isUserAuthenticated() && (!cartCount || cartCount === "0")) {
-            fetchCartFromBackend();
-          } else {
-            const cartCountElement = document.getElementById("cart-count");
-            if (cartCountElement) {
-              cartCountElement.textContent = `(${cartCount || "0"})`;
-            }
-          }
-        } catch (error) {
-          console.error("Error updating cart count display:", error);
-          const cartCountElement = document.getElementById("cart-count");
-          if (cartCountElement) {
-            cartCountElement.textContent = "(0)";
-          }
-        }
-      }
-
-      // Fetch cart from backend to update count
-      async function fetchCartFromBackend() {
-        try {
-          const token = localStorage.getItem("token");
-          if (!token) return;
-
-          const response = await fetch("/api/user/cart", {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            if (data.success && data.cart) {
-              const cartCount = data.cart.totalItems || data.cart.items?.length || 0;
-              localStorage.setItem("cartCount", cartCount.toString());
-              
-              const cartCountElement = document.getElementById("cart-count");
-              if (cartCountElement) {
-                cartCountElement.textContent = `(${cartCount})`;
-              }
-            }
-          }
-        } catch (error) {
-          console.error("Error fetching cart from backend:", error);
-        }
-      }
-
-      // ========== SIDEBAR FUNCTIONS ==========
-
-      // Load sidebar data (categories and products)
-      async function loadSidebarData() {
-        try {
-          console.log("Loading sidebar data...");
-
-          // Load categories
-          await loadCategories();
-
-          // Load sidebar products
-          await loadSidebarProducts();
-        } catch (error) {
-          console.error("Error loading sidebar data:", error);
-          showFallbackCategories();
-        }
-      }
-
-      async function loadCategories() {
-        try {
-          const categoriesResponse = await fetch("/api/user/category/all");
-
-          if (categoriesResponse.ok) {
-            const categoriesData = await categoriesResponse.json();
-            console.log("Categories API response:", categoriesData);
-
-            if (categoriesData.success && categoriesData.data) {
-              renderCategories(categoriesData.data);
-            } else {
-              console.error("Categories data format error:", categoriesData);
-              showFallbackCategories();
-            }
-          } else {
-            console.error("Categories API error:", categoriesResponse.status);
-            showFallbackCategories();
-          }
-        } catch (error) {
-          console.error("Error loading categories:", error);
-          showFallbackCategories();
-        }
-      }
-
-      function renderCategories(categories) {
-        const categoryList = document.getElementById("category-list");
-
-        if (!categories || categories.length === 0) {
-          categoryList.innerHTML =
-            '<li class="nav-item text-center"><p class="text-muted">No categories available</p></li>';
-          return;
-        }
-
-        // Map icons for categories
-        const iconMap = {
-          Fashion: "fa-female",
-          Electronics: "fa-microchip",
-          Clothing: "fa-tshirt",
-          Kids: "fa-child",
-          Beauty: "fa-spa",
-          Accessories: "fa-glasses",
-          Sports: "fa-running",
-          Home: "fa-home",
-          Books: "fa-book",
-          Toys: "fa-gamepad",
-          Food: "fa-utensils",
-          Health: "fa-heartbeat",
-          Automotive: "fa-car",
-          Jewelry: "fa-gem",
-          Shoes: "fa-shoe-prints",
-          Bags: "fa-shopping-bag",
-          Watches: "fa-clock",
-          Furniture: "fa-couch",
-          Kitchen: "fa-utensil-spoon",
-        };
-
-        let categoriesHTML = "";
-        categories.forEach((category) => {
-          const iconClass = iconMap[category.name] || "fa-tag";
-          const categoryId = category._id || category.id || "";
-          const categoryName = category.name || "Unnamed Category";
-
-          categoriesHTML += `
-            <li class="nav-item">
-              <a class="nav-link" href="product-list.html?category=${categoryId}">
-                <i class="fa ${iconClass} mr-2"></i>${categoryName}
-              </a>
-            </li>
-          `;
-        });
-
-        categoryList.innerHTML = categoriesHTML;
-        console.log(`Rendered ${categories.length} categories`);
-      }
-
-      // Fallback function if API fails
-      function showFallbackCategories() {
-        console.log("Showing fallback categories");
-
-        const fallbackCategories = [
-          { _id: "1", name: "Electronics" },
-          { _id: "2", name: "Fashion" },
-          { _id: "3", name: "Home & Garden" },
-          { _id: "4", name: "Sports" },
-          { _id: "5", name: "Beauty" },
-          { _id: "6", name: "Books" },
-        ];
-
-        renderCategories(fallbackCategories);
-      }
-
-      // Load products for sidebar
-      async function loadSidebarProducts() {
-        try {
-          let products = [];
-
-          // Try to get products from API
-          try {
-            // Try featured products first
-            const featuredResponse = await fetch(
-              "/api/user/products?featured=true&limit=5"
-            );
-            if (featuredResponse.ok) {
-              const featuredData = await featuredResponse.json();
-              if (
-                featuredData.success &&
-                featuredData.products &&
-                featuredData.products.length > 0
-              ) {
-                products = featuredData.products;
-                console.log(
-                  "Loaded featured products for sidebar slider:",
-                  products.length
-                );
-              }
-            }
-          } catch (error) {
-            console.log("Featured products endpoint failed");
-          }
-
-          // If no featured products, try latest products
-          if (products.length === 0) {
-            const latestResponse = await fetch(
-              "/api/user/products?limit=5&sort=-createdAt"
-            );
-            if (latestResponse.ok) {
-              const latestData = await latestResponse.json();
-              if (latestData.success && latestData.products) {
-                products = latestData.products;
-                console.log(
-                  "Loaded latest products for sidebar slider:",
-                  products.length
-                );
-              }
-            }
-          }
-
-          // If still no products, use fallback
-          if (products.length === 0) {
-            console.log("No products found from API, using fallback");
-            products = getFallbackProducts();
-          }
-
-          // Render the products in sidebar slider
-          renderSidebarSlider(products);
-        } catch (error) {
-          console.error("Error loading sidebar products:", error);
-          // Use fallback products on error
-          const fallbackProducts = getFallbackProducts();
-          renderSidebarSlider(fallbackProducts);
-        }
-      }
-
-      function renderSidebarSlider(products) {
-        const sliderContainer = document.getElementById("sidebar-products-slider");
-
-        if (!sliderContainer) {
-          console.error("Sidebar slider container not found");
-          return;
-        }
-
-        if (!products || products.length === 0) {
-          sliderContainer.innerHTML = `
-            <div class="text-center p-4">
-              <i class="fa fa-exclamation-circle fa-2x text-muted"></i>
-              <p class="mt-2 text-muted">No products available</p>
-            </div>
-          `;
-          return;
-        }
-
-        let productsHTML = "";
-        let slideIndicatorsHTML = "";
-
-        // Create product slides
-        products.forEach((product, index) => {
-          const productId = product._id || product.id || "";
-          const productName = product.name || "Product Name";
-          const productPrice = parseFloat(product.price) || 0;
-          const productImage = getProductImageForSidebar(
-            product.image || product.images || ""
-          );
-          const productRating = product.rating || 0;
-
-          // Create rating stars
-          let ratingStars = "";
-          const fullStars = Math.floor(productRating);
-          const hasHalfStar = productRating % 1 >= 0.5;
-
-          for (let i = 0; i < 5; i++) {
-            if (i < fullStars) {
-              ratingStars += '<i class="fa fa-star"></i>';
-            } else if (i === fullStars && hasHalfStar) {
-              ratingStars += '<i class="fa fa-star-half-alt"></i>';
-            } else {
-              ratingStars += '<i class="far fa-star"></i>';
-            }
-          }
-
-          const activeClass = index === 0 ? "active" : "";
-
-          productsHTML += `
-            <div class="carousel-item ${activeClass}">
-              <div class="product-item">
-                <div class="product-title">
-                  <a href="product-detail.html?id=${productId}">${productName}</a>
-                  <div class="ratting">
-                    ${ratingStars}
-                  </div>
-                </div>
-                <div class="product-image">
-                  <a href="product-detail.html?id=${productId}">
-                    <img src="${productImage}" alt="${productName}" 
-                         onerror="this.onerror=null; this.src='img/product-${
-                           Math.floor(Math.random() * 10) + 1
-                         }.jpg'">
-                  </a>
-                  <div class="product-action">
-                    <a href="#" class="add-to-cart-sidebar" data-product-id="${productId}">
-                      <i class="fa fa-cart-plus"></i>
-                    </a>
-                    <a href="#"><i class="fa fa-heart"></i></a>
-                    <a href="product-detail.html?id=${productId}">
-                      <i class="fa fa-search"></i>
-                    </a>
-                  </div>
-                </div>
-                <div class="product-price">
-                  <h3><span>$</span>${productPrice.toFixed(2)}</h3>
-                  <a class="btn add-to-cart-sidebar" href="#" data-product-id="${productId}">
-                    <i class="fa fa-shopping-cart"></i>Add to Cart
-                  </a>
-                </div>
-              </div>
-            </div>
-          `;
-
-          // Create indicator
-          const indicatorActiveClass = index === 0 ? "active" : "";
-          slideIndicatorsHTML += `
-            <li data-target="#sidebarCarousel" data-slide-to="${index}" class="${indicatorActiveClass}"></li>
-          `;
-        });
-
-        // Build the complete slider HTML
-        const completeSliderHTML = `
-          <div id="sidebarCarousel" class="carousel slide" data-ride="carousel">
-            <!-- Indicators -->
-            <ol class="carousel-indicators">
-              ${slideIndicatorsHTML}
-            </ol>
-            
-            <!-- Slides -->
-            <div class="carousel-inner">
-              ${productsHTML}
-            </div>
-            
-            <!-- Controls -->
-            <a class="carousel-control-prev" href="#sidebarCarousel" role="button" data-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#sidebarCarousel" role="button" data-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="sr-only">Next</span>
-            </a>
+          <div class="product-price">
+            <h3><span>$</span>${productPrice.toFixed(2)}</h3>
           </div>
-        `;
+        </div>
+      </div>
+    `;
 
-        sliderContainer.innerHTML = completeSliderHTML;
-        console.log(`Rendered ${products.length} products in sidebar slider`);
+    // Create indicator
+    const indicatorActiveClass = index === 0 ? "active" : "";
+    slideIndicatorsHTML += `
+      <li data-target="#sidebarCarousel" data-slide-to="${index}" class="${indicatorActiveClass}"></li>
+    `;
+  });
 
-        // Initialize the carousel
-        initSidebarCarousel();
+  // Build the complete slider HTML
+  const completeSliderHTML = `
+    <div id="sidebarCarousel" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        ${slideIndicatorsHTML}
+      </ol>
+      
+      <!-- Slides -->
+      <div class="carousel-inner">
+        ${productsHTML}
+      </div>
+      
+      <!-- Controls -->
+      <a class="carousel-control-prev" href="#sidebarCarousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#sidebarCarousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+  `;
 
-        // Setup sidebar cart buttons
-        setupSidebarCartButtons();
-      }
+  sliderContainer.innerHTML = completeSliderHTML;
 
-      function initSidebarCarousel() {
-        // Initialize Bootstrap carousel
-        $("#sidebarCarousel").carousel({
-          interval: 2000,
-          pause: "hover",
-          wrap: true,
-          keyboard: true,
-        });
+  // Initialize the carousel
+  initSidebarCarousel();
+}
 
-        console.log("Sidebar carousel initialized");
-      }
+function initSidebarCarousel() {
+  // Initialize Bootstrap carousel
+  $('#sidebarCarousel').carousel({
+    interval: 2000,
+    pause: "hover",
+    wrap: true,
+    keyboard: true,
+  });
 
-      function getProductImageForSidebar(imageSrc) {
-        if (!imageSrc) return "img/product-7.jpg";
+  console.log("Sidebar carousel initialized");
+}
 
-        // Handle array of images
-        if (Array.isArray(imageSrc)) {
-          imageSrc = imageSrc[0] || "img/product-7.jpg";
-        }
+function getProductImageForSidebar(imageSrc) {
+  if (!imageSrc) return "img/product-7.jpg";
 
-        // If imageSrc already has a full path, use it
-        if (imageSrc.startsWith("http") || imageSrc.startsWith("/")) {
-          return imageSrc;
-        }
+  // Handle array of images
+  if (Array.isArray(imageSrc)) {
+    imageSrc = imageSrc[0] || "img/product-7.jpg";
+  }
 
-        // Remove duplicate "uploads/" if present
-        if (imageSrc.startsWith("uploads/")) {
-          imageSrc = imageSrc.replace("uploads/", "");
-        }
+  // If imageSrc already has a full path, use it
+  if (imageSrc.startsWith("http") || imageSrc.startsWith("/")) {
+    return imageSrc;
+  }
 
-        // Otherwise, prepend the uploads path correctly
-        return `/uploads/${imageSrc}`;
-      }
+  // Remove duplicate "uploads/" if present
+  if (imageSrc.startsWith("uploads/")) {
+    imageSrc = imageSrc.replace("uploads/", "");
+  }
 
-      function getFallbackProducts() {
-        return [
-          {
-            _id: "1",
-            name: "Wireless Headphones",
-            price: 99.99,
-            image: "img/product-7.jpg",
-            rating: 4.5,
-          },
-          {
-            _id: "2",
-            name: "Smart Watch",
-            price: 199.99,
-            image: "img/product-8.jpg",
-            rating: 4.2,
-          },
-          {
-            _id: "3",
-            name: "Running Shoes",
-            price: 79.99,
-            image: "img/product-9.jpg",
-            rating: 4.7,
-          },
-          {
-            _id: "4",
-            name: "Laptop Backpack",
-            price: 49.99,
-            image: "img/product-10.jpg",
-            rating: 4.3,
-          },
-          {
-            _id: "5",
-            name: "Fitness Tracker",
-            price: 89.99,
-            image: "img/product-11.jpg",
-            rating: 4.0,
-          },
-        ];
-      }
+  // Otherwise, prepend the uploads path correctly
+  return `/uploads/${imageSrc}`;
+}
 
-      // Setup sidebar cart buttons using event delegation
-      function setupSidebarCartButtons() {
-        // Use event delegation to handle dynamically created buttons
-        document.addEventListener("click", async function(e) {
-          // Check if the clicked element or its parent is a sidebar cart button
-          let target = e.target;
-          
-          // Traverse up to find the button with add-to-cart-sidebar class
-          while (target && !target.classList.contains("add-to-cart-sidebar")) {
-            target = target.parentElement;
-          }
-          
-          if (!target || !target.classList.contains("add-to-cart-sidebar")) {
-            return;
-          }
-          
-          e.preventDefault();
-          
-          const productId = target.getAttribute("data-product-id");
-          if (!productId) return;
+function getFallbackProducts() {
+  return [
+    {
+      _id: "1",
+      name: "Wireless Headphones",
+      price: 99.99,
+      image: "img/product-7.jpg",
+      rating: 4.5,
+    },
+    {
+      _id: "2",
+      name: "Smart Watch",
+      price: 199.99,
+      image: "img/product-8.jpg",
+      rating: 4.2,
+    },
+    {
+      _id: "3",
+      name: "Running Shoes",
+      price: 79.99,
+      image: "img/product-9.jpg",
+      rating: 4.7,
+    },
+    {
+      _id: "4",
+      name: "Laptop Backpack",
+      price: 49.99,
+      image: "img/product-10.jpg",
+      rating: 4.3,
+    },
+    {
+      _id: "5",
+      name: "Fitness Tracker",
+      price: 89.99,
+      image: "img/product-11.jpg",
+      rating: 4.0,
+    },
+  ];
+}
 
-          // Check authentication
-          if (!isUserAuthenticated()) {
-            if (confirm("Please login to add items to cart. Click OK to go to login page.")) {
-              // Store product info for later
-              sessionStorage.setItem("pendingCartItem", JSON.stringify({
-                productId: productId,
-                quantity: 1,
-                size: "M", // Default size for sidebar
-                isBuyNow: false
-              }));
-              window.location.href = "login.html";
-            }
-            return;
-          }
+// ========== UI STATE FUNCTIONS ==========
+function showLoading() {
+  document.getElementById("loading-indicator").style.display = "flex";
+  document.getElementById("product-detail-content").style.display = "none";
+  document.getElementById("error-message").style.display = "none";
+}
 
-          try {
-            // Get product details
-            const response = await fetch(`/api/user/products/${productId}`);
-            if (!response.ok) throw new Error("Product not found");
+function showError() {
+  document.getElementById("loading-indicator").style.display = "none";
+  document.getElementById("product-detail-content").style.display = "none";
+  document.getElementById("error-message").style.display = "block";
+}
 
-            const data = await response.json();
-            if (!data.success || !data.product) {
-              throw new Error(data.message || "Product not found");
-            }
-
-            const product = data.product;
-            const token = localStorage.getItem("token");
-
-            // Add to backend cart
-            const addResponse = await fetch("/api/user/cart/addtocart", {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                productId: productId,
-                quantity: 1,
-                size: "M", // Default size
-              }),
-            });
-
-            const addData = await addResponse.json();
-
-            if (!addResponse.ok || !addData.success) {
-              if (addResponse.status === 401) {
-                localStorage.removeItem("token");
-                localStorage.removeItem("isLoggedIn");
-                localStorage.removeItem("userId");
-                alert("Session expired. Please login again.");
-                window.location.href = "login.html";
-                return;
-              }
-              throw new Error(addData.message || "Failed to add to cart");
-            }
-
-            // Update cart count
-            if (addData.cart && addData.cart.totalItems !== undefined) {
-              localStorage.setItem("cartCount", addData.cart.totalItems.toString());
-              updateCartCountDisplay();
-            } else if (addData.totalItems !== undefined) {
-              localStorage.setItem("cartCount", addData.totalItems.toString());
-              updateCartCountDisplay();
-            }
-
-            // Show success message
-            alert(`✓ Added ${product.name} to cart!`);
-            
-          } catch (error) {
-            console.error("Error adding product to cart from sidebar:", error);
-            alert("Error adding product to cart: " + error.message);
-          }
-        });
-      }
-
-      // ========== AUTHENTICATION FUNCTIONS ==========
-
-      // Authentication handling
-      function setupAuth() {
-        const token = localStorage.getItem("token");
-        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-        const userId = localStorage.getItem("userId");
-        const loginDropdown = document.getElementById("loginDropdown");
-        const userAccountDropdown = document.getElementById("userAccountDropdown");
-
-        if (token && isLoggedIn && userId) {
-          // User is logged in
-          if (loginDropdown) loginDropdown.style.display = "none";
-          if (userAccountDropdown) userAccountDropdown.style.display = "block";
-        } else {
-          // User is not logged in
-          if (loginDropdown) loginDropdown.style.display = "block";
-          if (userAccountDropdown) userAccountDropdown.style.display = "none";
-          
-          // Clear any invalid authentication data
-          localStorage.removeItem("token");
-          localStorage.removeItem("isLoggedIn");
-          localStorage.removeItem("userId");
-        }
-
-        // Logout - Fixed
-        const logoutBtn = document.getElementById("logoutBtn");
-        if (logoutBtn) {
-          // Remove existing event listener
-          const newLogoutBtn = logoutBtn.cloneNode(true);
-          logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
-          
-          // Add new event listener
-          newLogoutBtn.addEventListener("click", function(e) {
-            e.preventDefault();
-            if (confirm("Are you sure you want to logout?")) {
-              localStorage.removeItem("token");
-              localStorage.removeItem("isLoggedIn");
-              localStorage.removeItem("userId");
-              localStorage.removeItem("cartCount");
-              sessionStorage.clear();
-              window.location.reload();
-            }
-          });
-        }
-      }
-
-      // Check for pending cart items after login
-      function checkPendingCartItem() {
-        const pendingItem = sessionStorage.getItem("pendingCartItem");
-        if (pendingItem && isUserAuthenticated()) {
-          try {
-            const item = JSON.parse(pendingItem);
-            sessionStorage.removeItem("pendingCartItem");
-            
-            // Show notification that we can now add the item
-            console.log("Found pending cart item:", item);
-            
-            // You can implement automatic addition here if needed
-            // For now, just notify the user
-            if (confirm("You have a pending item in your cart. Would you like to add it now?")) {
-              // You can implement the addition logic here
-            }
-          } catch (error) {
-            console.error("Error processing pending cart item:", error);
-          }
-        }
-      }
-
-      // ========== INITIALIZATION ==========
-
-      // Initialize everything when page loads
-      document.addEventListener("DOMContentLoaded", function() {
-        // Check for pending cart items from login redirect
-        checkPendingCartItem();
-        
-        initializeCartCount();
-        setupAuth();
-        loadProductDetails();
-        setupQuantityControls();
-        setupSidebarCartButtons(); // Initialize sidebar cart buttons
-        
-        // Note: setupAddToCart() is called inside displayProductDetails()
-        // after product data is loaded
-      });
-
-      // Initialize cart count on page load
-      function initializeCartCount() {
-        updateCartCountDisplay();
-      }
-    </script>
+function showContent() {
+  document.getElementById("loading-indicator").style.display = "none";
+  document.getElementById("error-message").style.display = "none";
+  document.getElementById("product-detail-content").style.display = "block";
+}
+</script>
   </body>
 </html>

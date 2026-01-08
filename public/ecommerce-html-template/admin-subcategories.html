@@ -249,71 +249,60 @@
             color: #bdc3c7;
         }
 
-        /* Subcategories Grid */
-        .subcategories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+        /* Table Styles for Subcategories */
+        .subcategories-table-container {
+            overflow-x: auto;
             margin-top: 20px;
-        }
-
-        .subcategory-card {
-            background: white;
-            border: 1px solid #e0e0e0;
             border-radius: 8px;
-            padding: 20px;
-            transition: all 0.3s;
-            position: relative;
+            border: 1px solid #e0e0e0;
+            background: white;
         }
 
-        .subcategory-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-color: #3498db;
+        .subcategories-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .subcategory-card h3 {
+        .subcategories-table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
             color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 18px;
+            border-bottom: 2px solid #e0e0e0;
         }
 
-        .subcategory-card p {
-            color: #7f8c8d;
-            font-size: 14px;
-            margin-bottom: 15px;
-            line-height: 1.5;
+        .subcategories-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
         }
 
-        .subcategory-meta {
+        .subcategories-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .subcategories-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-actions {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #f0f0f0;
+            gap: 8px;
+            flex-wrap: nowrap;
         }
 
-        .subcategory-status {
+        .table-badge {
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: bold;
+            display: inline-block;
         }
 
-        .status-active {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-inactive {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .subcategory-actions {
-            display: flex;
-            gap: 8px;
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
         }
 
         /* Action Buttons */
@@ -413,7 +402,7 @@
         .text-success { color: #27ae60; }
         .text-warning { color: #f39c12; }
 
-        /* Loading and Error States */
+        /* Loading categories...and Error States */
         .loading {
             text-align: center;
             padding: 40px;
@@ -474,10 +463,6 @@
                 flex-wrap: wrap;
             }
 
-            .subcategories-grid {
-                grid-template-columns: 1fr;
-            }
-
             .stats-cards {
                 grid-template-columns: 1fr;
             }
@@ -490,6 +475,17 @@
             .logout-btn, .addSubcategory-btn, .viewAll-btn {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .subcategories-table th, 
+            .subcategories-table td {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .table-actions {
+                flex-direction: column;
+                gap: 5px;
             }
         }
 
@@ -577,6 +573,14 @@
             background-size: 16px;
             padding-right: 40px;
         }
+
+        /* Category description in table */
+        .category-description {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -592,7 +596,7 @@
                 <li><a href="admin-orders.html"><i class="fas fa-shopping-cart"></i> <span>Orders</span></a></li>
                 <li><a href="admin-products.html"><i class="fas fa-box"></i> <span>Products</span></a></li>
                 <li><a href="admin-categories.html"><i class="fas fa-tags"></i> <span>Categories</span></a></li>
-                <!-- <li><a href="admin-subcategories.html" class="active"><i class="fas fa-sitemap"></i> <span>Subcategories</span></a></li> -->
+                <li><a href="admin-subcategories.html" class="active"><i class="fas fa-sitemap"></i> <span>Subcategories</span></a></li>
                 <li><a href="admin-inventory.html"><i class="fas fa-warehouse"></i> <span>Inventory</span></a></li>
                 <li><a href="admin-reports.html"><i class="fas fa-chart-bar"></i> <span>Reports</span></a></li>
                 <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
@@ -604,12 +608,12 @@
             <div class="admin-header">
                 <h1 id="pageTitle">Subcategories Management</h1>
                 <div class="admin-user">
-                    <button class="viewAll-btn" id="viewAllBtn">
+                    <!-- <button class="viewAll-btn" id="viewAllBtn">
                         <i class="fas fa-list"></i> View All Subcategories
-                    </button>
-                    <button class="addSubcategory-btn" id="addSubcategoryBtn">
+                    </button> -->
+                    <!-- <button class="addSubcategory-btn" id="addSubcategoryBtn">
                         <i class="fas fa-plus"></i> Add Subcategory
-                    </button>
+                    </button> -->
                     <button class="logout-btn" id="logoutBtnHeader">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
@@ -633,23 +637,23 @@
                         </div>
                         <i class="fas fa-sitemap text-success"></i>
                     </div>
-                    <div class="stat-card card-warning">
+                    <!-- <div class="stat-card card-warning">
                         <div>
                             <h3 id="activeSubcategories">0</h3>
                             <p>Active Subcategories</p>
                         </div>
                         <i class="fas fa-check-circle text-warning"></i>
-                    </div>
+                    </div> -->
                 </div>
 
                 <!-- Categories Tabs -->
-                <div class="categories-container">
+                <!-- <div class="categories-container">
                     <div class="category-tabs" id="categoryTabs">
-                        <!-- Category tabs will be loaded here -->
-                        <div class="loading">
+                        <Category tabs will be loaded here -->
+                        <!-- <div class="loading">
                             <i class="fas fa-spinner fa-spin"></i> Loading categories...
-                        </div>
-                    </div>
+                        </div> 
+                    </div> -->
 
                     <!-- Subcategories Content -->
                     <div id="subcategoriesContent">
@@ -773,41 +777,57 @@
         currentCategoryId = categoryId;
         loadSubcategoriesByCategory(categoryId);
         
-        // Also load categories for stats and dropdown
+        // Also load categories for stats and tabs
         loadCategoriesForStats();
     }
 
     // Load categories for tabs (when not coming from categories page)
+     // Load categories for tabs (when not coming from categories page)
     async function loadCategoriesForTabs() {
+        console.log('loadCategoriesForTabs called');
         try {
             const token = localStorage.getItem('adminToken');
+            console.log('Token exists:', !!token);
+            
             const response = await fetch('/api/admin/category/all', {
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
             });
 
-            if (!response.ok) throw new Error('Failed to load categories');
+            console.log('Response status:', response.status, response.statusText);
+            
+            if (!response.ok) {
+                console.error('Response not OK:', response);
+                throw new Error('Failed to load categories');
+            }
             
             const result = await response.json();
+            console.log('API Response:', result);
             
             if (result.success) {
-                categories = result.categories || result.data || [];
+                console.log('Success! Categories data:', result.data || result.categories);
+                // This endpoint returns categories with subcategory counts
+                categories = result.data || result.categories || [];
+                console.log('Categories array:', categories);
                 displayCategoryTabs();
-                loadAllSubcategories();
+                loadAllSubcategoriesForStats();
+            } else {
+                console.error('API returned success: false', result);
+                document.getElementById('categoryTabs').innerHTML = 
+                    '<div class="error">API Error: ' + (result.message || 'Failed to load categories') + '</div>';
             }
         } catch (error) {
             console.error('Error loading categories:', error);
             document.getElementById('categoryTabs').innerHTML = 
-                '<div class="error">Failed to load categories</div>';
+                '<div class="error">Error: ' + error.message + '</div>';
         }
     }
-
     // Load categories for stats and dropdown
     async function loadCategoriesForStats() {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch('/api/admin/category/all', {
+            const response = await fetch('/api/admin/category/all/subcategory', {
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
@@ -818,8 +838,8 @@
             const result = await response.json();
             
             if (result.success) {
-                categories = result.categories || result.data || [];
-                loadAllSubcategories();
+                categories = result.data || result.categories || [];
+                loadAllSubcategoriesForStats();
             }
         } catch (error) {
             console.error('Error loading categories:', error);
@@ -827,33 +847,47 @@
     }
 
     // Load all subcategories for stats
-    async function loadAllSubcategories() {
+    async function loadAllSubcategoriesForStats() {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch('/api/admin/category/subcategories', {
+            const response = await fetch('/api/admin/category/all/subcategory', {
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
             });
 
-            if (!response.ok) throw new Error('Failed to load subcategories');
+            if (!response.ok) throw new Error('Failed to load categories data');
             
             const result = await response.json();
             
             if (result.success) {
-                allSubcategories = result.subcategories || [];
-                updateStats();
+                // Calculate total subcategories from categories data
+                const categoriesData = result.data || result.categories || [];
+                const totalSubcategories = categoriesData.reduce((total, category) => {
+                    return total + (category.subcategoriesCount || 0);
+                }, 0);
+                
+                // Update stats
+                updateStats(categoriesData, totalSubcategories);
             }
         } catch (error) {
-            console.error('Error loading subcategories:', error);
+            console.error('Error loading categories for stats:', error);
         }
     }
 
-    // Display category tabs horizontally
+    // Display category tabs horizontally with subcategory counts
+      // Display category tabs horizontally with subcategory counts
     function displayCategoryTabs() {
+        console.log('displayCategoryTabs called with categories:', categories);
         const tabsContainer = document.getElementById('categoryTabs');
         
+        if (!tabsContainer) {
+            console.error('categoryTabs element not found!');
+            return;
+        }
+        
         if (categories.length === 0) {
+            console.log('No categories found, showing no-data message');
             tabsContainer.innerHTML = '<div class="no-data">No categories found</div>';
             return;
         }
@@ -861,9 +895,10 @@
         // Clear loading message
         tabsContainer.innerHTML = '';
         
-        // Add tabs dynamically
+        // Add tabs dynamically with subcategory counts
         categories.forEach(category => {
-            const subcategoryCount = allSubcategories.filter(sub => sub.category === category._id).length;
+            console.log('Processing category:', category);
+            const subcategoryCount = category.subcategoriesCount || 0;
             const tab = document.createElement('div');
             tab.className = 'category-tab';
             tab.dataset.categoryId = category._id;
@@ -872,11 +907,23 @@
                 <span class="count-badge">${subcategoryCount}</span>
             `;
             
-            tab.addEventListener('click', () => selectCategory(category._id));
+            tab.addEventListener('click', () => {
+                console.log('Category tab clicked:', category._id, category.name);
+                selectCategory(category._id);
+            });
             tabsContainer.appendChild(tab);
         });
+        
+        console.log('Created', categories.length, 'tabs');
+        
+        // Auto-select first category if none selected
+        if (categories.length > 0 && !currentCategoryId) {
+            console.log('Auto-selecting first category:', categories[0]._id);
+            setTimeout(() => {
+                selectCategory(categories[0]._id);
+            }, 100);
+        }
     }
-
     // Select a category and load its subcategories
     async function selectCategory(categoryId) {
         // Update active tab
@@ -904,7 +951,7 @@
             if (!response.ok) throw new Error('Failed to load subcategories');
             
             const result = await response.json();
-            displaySubcategories(result.subcategories || []);
+            displaySubcategoriesTable(result.subcategories || []);
             
         } catch (error) {
             console.error('Error loading subcategories:', error);
@@ -912,8 +959,8 @@
         }
     }
 
-    // Display subcategories for selected category
-    function displaySubcategories(subcategories) {
+    // Display subcategories in TABLE format
+    function displaySubcategoriesTable(subcategories) {
         const container = document.getElementById('subcategoriesContainer');
         const category = categories.find(c => c._id === currentCategoryId);
         
@@ -942,28 +989,37 @@
             return;
         }
 
-        let subcategoriesHtml = `
+        let tableHtml = `
             <div class="subcategories-section active">
                 <div class="category-header">
-                    <h2><i class="fas fa-tags"></i> ${category ? escapeHtml(category.name) : 'Category'} - Subcategories</h2>
+                    <h2><i class="fas fa-tags"></i> ${category ? escapeHtml(category.name) : 'Category'} - Subcategories (${subcategories.length})</h2>
                     <button class="btn btn-success" onclick="openAddModal('${currentCategoryId}')">
                         <i class="fas fa-plus"></i> Add Subcategory
                     </button>
                 </div>
-                <div class="subcategories-grid">
+                <div class="subcategories-table-container">
+                    <table class="subcategories-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
         `;
 
-        subcategories.forEach(subcategory => {
-            const statusClass = subcategory.isActive ? 'status-active' : 'status-inactive';
-            const statusText = subcategory.isActive ? 'Active' : 'Inactive';
-            
-            subcategoriesHtml += `
-                <div class="subcategory-card" data-subcategory-id="${subcategory._id}">
-                    <h3>${escapeHtml(subcategory.name)}</h3>
-                    <p>${escapeHtml(subcategory.description || 'No description available')}</p>
-                    <div class="subcategory-meta">
-                        <span class="subcategory-status ${statusClass}">${statusText}</span>
-                        <div class="subcategory-actions">
+        subcategories.forEach((subcategory, index) => {
+            tableHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><strong>${escapeHtml(subcategory.name)}</strong></td>
+                    <td class="category-description" title="${escapeHtml(subcategory.description || 'No description')}">
+                        ${escapeHtml(subcategory.description || 'No description')}
+                    </td>
+                    <td>
+                        <div class="table-actions">
                             <button class="btn btn-sm btn-warning" onclick="editSubcategory('${subcategory._id}')">
                                 <i class="fas fa-edit"></i> Edit
                             </button>
@@ -971,33 +1027,52 @@
                                 <i class="fas fa-trash"></i> Delete
                             </button>
                         </div>
-                    </div>
-                </div>
+                    </td>
+                </tr>
             `;
         });
 
-        subcategoriesHtml += `
+        tableHtml += `
+                        </tbody>
+                    </table>
                 </div>
             </div>
         `;
 
-        container.innerHTML = subcategoriesHtml;
+        container.innerHTML = tableHtml;
     }
 
-    // View all subcategories
+    // View all subcategories in TABLE format
     async function viewAllSubcategories() {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch('/api/admin/category/subcategories', {
+            
+            // First, we need to get all categories to map subcategories to their parent categories
+            const categoriesResponse = await fetch('/api/admin/category/all/subcategory', {
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
             });
 
-            if (!response.ok) throw new Error('Failed to load subcategories');
+            if (!categoriesResponse.ok) throw new Error('Failed to load categories');
             
-            const result = await response.json();
-            displayAllSubcategories(result.subcategories || []);
+            const categoriesResult = await categoriesResponse.json();
+            const allCategories = categoriesResult.data || categoriesResult.categories || [];
+            
+            // Build a map of category IDs to names
+            const categoriesMap = {};
+            allCategories.forEach(cat => {
+                categoriesMap[cat._id] = cat.name;
+            });
+            
+            // Now get all subcategories
+            // Note: You need an endpoint that returns ALL subcategories, not categories with counts
+            // For now, we'll aggregate from individual category requests
+            // OR create a new endpoint: router.get("/subcategories/all", authenticate, getAllSubcategories);
+            
+            // Since we don't have a direct endpoint for all subcategories,
+            // we'll show a message and suggest implementing the endpoint
+            displayAllSubcategoriesTable([], categoriesMap);
             
         } catch (error) {
             console.error('Error loading all subcategories:', error);
@@ -1005,91 +1080,34 @@
         }
     }
 
-    // Display all subcategories
-    function displayAllSubcategories(subcategories) {
+    // Display all subcategories in TABLE format
+    function displayAllSubcategoriesTable(subcategories, categoriesMap) {
         const container = document.getElementById('subcategoriesContainer');
         
         // Hide initial state
         document.getElementById('initialState').style.display = 'none';
         
-        if (subcategories.length === 0) {
-            container.innerHTML = `
-                <div class="subcategories-section active">
-                    <div class="category-header">
-                        <h2><i class="fas fa-list"></i> All Subcategories</h2>
-                    </div>
-                    <div class="empty-state">
-                        <i class="fas fa-folder-open"></i>
-                        <h3>No Subcategories Found</h3>
-                        <p>No subcategories have been created yet.</p>
-                    </div>
-                </div>
-            `;
-            return;
-        }
-
-        // Get categories for grouping
-        const categoriesMap = {};
-        categories.forEach(cat => {
-            categoriesMap[cat._id] = cat.name;
-        });
-
-        // Group subcategories by category
-        const grouped = {};
-        subcategories.forEach(sub => {
-            const categoryName = categoriesMap[sub.category] || 'Unknown Category';
-            if (!grouped[categoryName]) grouped[categoryName] = [];
-            grouped[categoryName].push(sub);
-        });
-
-        let allSubcategoriesHtml = `
+        // Since we don't have a direct endpoint for all subcategories,
+        // show a helpful message
+        container.innerHTML = `
             <div class="subcategories-section active">
                 <div class="category-header">
-                    <h2><i class="fas fa-list"></i> All Subcategories (${subcategories.length})</h2>
+                    <h2><i class="fas fa-list"></i> All Subcategories</h2>
                 </div>
+                <div class="empty-state">
+                    <i class="fas fa-info-circle"></i>
+                    <h3>Endpoint Required</h3>
+                    <p>To view all subcategories in one table, you need to create a backend endpoint:</p>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0; text-align: left;">
+                        <code style="color: #e74c3c;">
+                            router.get("/subcategories/all", authenticate, getAllSubcategories);
+                        </code>
+                    </div>
+                    <p>This endpoint should return all subcategories with their parent category information.</p>
+                    <p>For now, use the category tabs above to view subcategories by category.</p>
+                </div>
+            </div>
         `;
-
-        // Display each category's subcategories
-        for (const [categoryName, categorySubs] of Object.entries(grouped)) {
-            allSubcategoriesHtml += `
-                <div class="category-group" style="margin-bottom: 30px;">
-                    <h3 style="color: #2c3e50; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
-                        <i class="fas fa-folder"></i> ${escapeHtml(categoryName)}
-                    </h3>
-                    <div class="subcategories-grid">
-            `;
-
-            categorySubs.forEach(subcategory => {
-                const statusClass = subcategory.isActive ? 'status-active' : 'status-inactive';
-                const statusText = subcategory.isActive ? 'Active' : 'Inactive';
-                
-                allSubcategoriesHtml += `
-                    <div class="subcategory-card" data-subcategory-id="${subcategory._id}">
-                        <h3>${escapeHtml(subcategory.name)}</h3>
-                        <p>${escapeHtml(subcategory.description || 'No description available')}</p>
-                        <div class="subcategory-meta">
-                            <span class="subcategory-status ${statusClass}">${statusText}</span>
-                            <div class="subcategory-actions">
-                                <button class="btn btn-sm btn-info" onclick="selectCategory('${subcategory.category}')">
-                                    <i class="fas fa-eye"></i> View Category
-                                </button>
-                                <button class="btn btn-sm btn-warning" onclick="editSubcategory('${subcategory._id}')">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            allSubcategoriesHtml += `
-                    </div>
-                </div>
-            `;
-        }
-
-        allSubcategoriesHtml += `</div>`;
-        container.innerHTML = allSubcategoriesHtml;
     }
 
     // Open add subcategory modal
@@ -1120,7 +1138,7 @@
     async function loadCategoriesForModal() {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch('/api/admin/category/all', {
+            const response = await fetch('/api/admin/category/all/subcategory', {
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
@@ -1131,7 +1149,7 @@
             const result = await response.json();
             
             if (result.success) {
-                categories = result.categories || result.data || [];
+                categories = result.data || result.categories || [];
             }
         } catch (error) {
             console.error('Error loading categories:', error);
@@ -1157,46 +1175,61 @@
     // Open edit subcategory modal
     async function editSubcategory(subcategoryId) {
         try {
+            // Since we don't have a direct endpoint for single subcategory,
+            // we need to find it from the current category's subcategories
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`/api/admin/category/subcategories/${subcategoryId}`, {
-                headers: {
-                    'Authorization': 'Bearer ' + token
-                }
-            });
-
-            if (!response.ok) throw new Error('Failed to load subcategory');
             
-            const result = await response.json();
+            // Try to fetch subcategory details from the server
+            // This requires a new endpoint: router.get("/subcategory/:id", authenticate, getSubcategoryById);
             
-            if (result.success && result.subcategory) {
-                const subcategory = result.subcategory;
-                isEditMode = true;
-                currentEditId = subcategoryId;
-                
-                document.getElementById('modalTitle').textContent = 'Edit Subcategory';
-                document.getElementById('subcategoryName').value = subcategory.name;
-                document.getElementById('subcategoryDescription').value = subcategory.description || '';
-                
-                // Load categories if not already loaded
-                if (categories.length === 0) {
-                    await loadCategoriesForModal();
-                }
-                
-                // Populate category dropdown
-                const categorySelect = document.getElementById('subcategoryCategory');
-                categorySelect.innerHTML = '<option value="">Select Category</option>';
-                categories.forEach(category => {
-                    const option = document.createElement('option');
-                    option.value = category._id;
-                    option.textContent = category.name;
-                    if (category._id === subcategory.category) {
-                        option.selected = true;
+            alert('Edit functionality requires a new endpoint: GET /api/admin/category/subcategory/:id');
+            
+            // Temporary workaround: We'll load the current category's subcategories and find the one we want
+            if (currentCategoryId) {
+                const response = await fetch(`/api/admin/category/subcategories/${currentCategoryId}`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + token
                     }
-                    categorySelect.appendChild(option);
                 });
-                
-                document.getElementById('subcategoryModal').style.display = 'flex';
+
+                if (response.ok) {
+                    const result = await response.json();
+                    const subcategory = result.subcategories?.find(sub => sub._id === subcategoryId);
+                    
+                    if (subcategory) {
+                        isEditMode = true;
+                        currentEditId = subcategoryId;
+                        
+                        document.getElementById('modalTitle').textContent = 'Edit Subcategory';
+                        document.getElementById('subcategoryName').value = subcategory.name;
+                        document.getElementById('subcategoryDescription').value = subcategory.description || '';
+                        
+                        // Load categories if not already loaded
+                        if (categories.length === 0) {
+                            await loadCategoriesForModal();
+                        }
+                        
+                        // Populate category dropdown
+                        const categorySelect = document.getElementById('subcategoryCategory');
+                        categorySelect.innerHTML = '<option value="">Select Category</option>';
+                        categories.forEach(category => {
+                            const option = document.createElement('option');
+                            option.value = category._id;
+                            option.textContent = category.name;
+                            if (category._id === subcategory.category) {
+                                option.selected = true;
+                            }
+                            categorySelect.appendChild(option);
+                        });
+                        
+                        document.getElementById('subcategoryModal').style.display = 'flex';
+                        return;
+                    }
+                }
             }
+            
+            showError('Could not load subcategory for editing');
+            
         } catch (error) {
             console.error('Error loading subcategory:', error);
             showError('Failed to load subcategory');
@@ -1216,11 +1249,21 @@
 
         try {
             const token = localStorage.getItem('adminToken');
-            const url = isEditMode 
-                ? `/api/admin/category/subcategories/${currentEditId}`
-                : '/api/admin/category/subcategories';
-            
-            const method = isEditMode ? 'PUT' : 'POST';
+            const url = '/api/admin/category/subcategories';
+            const method = 'POST';
+            const bodyData = {
+                name,
+                description,
+                categoryId
+            };
+
+            // If editing, you need an update endpoint
+            if (isEditMode) {
+                // Note: You need a PUT route for updating subcategories
+                // Currently your routes don't have one
+                alert('Edit functionality requires a PUT endpoint: PUT /api/admin/category/subcategories/:id');
+                return;
+            }
             
             const response = await fetch(url, {
                 method: method,
@@ -1228,11 +1271,7 @@
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token
                 },
-                body: JSON.stringify({
-                    name,
-                    description,
-                    categoryId
-                })
+                body: JSON.stringify(bodyData)
             });
 
             const result = await response.json();
@@ -1246,8 +1285,8 @@
                     loadSubcategoriesByCategory(currentCategoryId);
                 }
                 
-                // Reload all subcategories for stats
-                await loadAllSubcategories();
+                // Reload categories for stats and tabs
+                await loadCategoriesForStats();
                 
                 // Update category tabs if showing tabs view
                 if (document.getElementById('categoryTabs').children.length > 0) {
@@ -1268,33 +1307,12 @@
 
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`/api/admin/category/subcategories/${subcategoryId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': 'Bearer ' + token
-                }
-            });
-
-            const result = await response.json();
+            // Note: You need a DELETE route for subcategories
+            // Currently your routes don't have one
+            alert('Delete functionality requires a DELETE endpoint: DELETE /api/admin/category/subcategories/:id');
             
-            if (result.success) {
-                alert('Subcategory deleted successfully!');
-                
-                // Reload data
-                if (currentCategoryId) {
-                    loadSubcategoriesByCategory(currentCategoryId);
-                }
-                
-                // Reload all subcategories for stats
-                await loadAllSubcategories();
-                
-                // Update category tabs if showing tabs view
-                if (document.getElementById('categoryTabs').children.length > 0) {
-                    await loadCategoriesForTabs();
-                }
-            } else {
-                alert('Error: ' + (result.message || 'Deletion failed'));
-            }
+            // If you add the DELETE route, implement the fetch call here
+            
         } catch (error) {
             console.error('Error deleting subcategory:', error);
             alert('Error deleting subcategory: ' + error.message);
@@ -1307,14 +1325,30 @@
         document.getElementById('subcategoryForm').reset();
     }
 
-    // Update statistics
-    function updateStats() {
-        const totalSubcategories = allSubcategories.length;
-        const activeSubcategories = allSubcategories.filter(sub => sub.isActive).length;
+    // Update statistics - Similar to categories page
+      // Update statistics - Similar to categories page
+    function updateStats(categoriesData, totalSubcategories) {
+        if (!categoriesData || !Array.isArray(categoriesData)) {
+            console.error('Invalid categories data:', categoriesData);
+            categoriesData = [];
+            totalSubcategories = 0;
+        }
         
-        document.getElementById('totalCategories').textContent = categories.length;
-        document.getElementById('totalSubcategories').textContent = totalSubcategories;
-        document.getElementById('activeSubcategories').textContent = activeSubcategories;
+        const totalCategories = categoriesData.length;
+        
+        // Update stats that exist
+        const totalCategoriesElement = document.getElementById('totalCategories');
+        const totalSubcategoriesElement = document.getElementById('totalSubcategories');
+        
+        if (totalCategoriesElement) {
+            totalCategoriesElement.textContent = totalCategories;
+        }
+        
+        if (totalSubcategoriesElement) {
+            totalSubcategoriesElement.textContent = totalSubcategories || 0;
+        }
+        
+        // Note: activeSubcategories card is commented out in HTML
     }
 
     // Helper function to escape HTML

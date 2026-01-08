@@ -21,6 +21,68 @@
 
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
+        <style>
+            /* Checkbox styles for cart - positioned with product info */
+            .product-checkbox-container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                z-index: 10;
+                padding: 5px;
+            }
+
+            .product-checkbox {
+                width: 18px !important;
+                height: 18px !important;
+                cursor: pointer !important;
+                margin: 0 !important;
+                position: relative !important;
+                z-index: 11 !important;
+                -webkit-appearance: none !important;
+                -moz-appearance: none !important;
+                appearance: none !important;
+                border: 2px solid #666 !important;
+                border-radius: 3px !important;
+                background-color: white !important;
+            }
+
+            .product-checkbox:checked {
+                background-color: #ff6a00 !important;
+                border-color: #ff6a00 !important;
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e") !important;
+                background-repeat: no-repeat !important;
+                background-position: center !important;
+                background-size: 12px 12px !important;
+            }
+
+            .product-checkbox:focus {
+                border-color: #ff6a00 !important;
+                box-shadow: 0 0 0 0.2rem rgba(255, 106, 0, 0.25) !important;
+                outline: none !important;
+            }
+
+            /* Make the product container relative for positioning */
+            .img.d-flex.align-items-start {
+                position: relative !important;
+                padding-left: 25px !important;
+            }
+
+            /* Adjust product image container */
+            .img.d-flex.align-items-start a {
+                position: relative;
+                z-index: 1;
+            }
+
+            /* Remove any checkbox column styling */
+            .table td:first-child,
+            .table th:first-child {
+                width: auto !important;
+                min-width: auto !important;
+                max-width: auto !important;
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+            }
+        </style>
     </head>
 
     <body>
@@ -198,8 +260,9 @@
                                     <div class="cart-summary">
                                         <div class="cart-content">
                                             <h1>Cart Summary</h1>
+                                            <p>Items<span id="itemCount">0</span></p>
                                             <p>Sub Total<span id="subTotal">$0</span></p>
-                                            <p>Shipping Cost<span>$1</span></p>
+                                            <p>Shipping Cost<span>$5</span></p>
                                             <h2>Grand Total<span id="grandTotal">$1</span></h2>
                                         </div>
                                         <div class="cart-btn">
@@ -321,7 +384,7 @@
         // Debug function to check localStorage
         function debugLocalStorage() {
             console.log('=== LOCALSTORAGE DEBUG ===');
-            console.log('cart:', localStorage.getItem('cart'));
+            console.log('cart:', localStorage.getItem('cartId'));
             console.log('cartCount:', localStorage.getItem('cartCount'));
             console.log('token:', localStorage.getItem('token'));
             console.log('==========================');
@@ -357,79 +420,86 @@
                 localStorage.removeItem("token");
                 localStorage.removeItem("cart");
                 localStorage.removeItem("cartCount");
+                localStorage.removeItem('selectedCheckoutItems');
+                localStorage.removeItem('cartId');
                 window.location.reload();
             });
         }
 
         // ========== FIXED FETCH CART FROM BACKEND ==========
-        async function fetchCartFromBackend() {
-            try {
-                console.log('Fetching cart from backend with token:', token);
-                
-                const response = await fetch('/api/user/cart/getAll', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                console.log('Response status:', response.status);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log('Backend cart data:', data);
-
-                // Handle different response structures
-                let cartData;
-                
-                if (data.cart && data.cart.items) {
-                    // Structure: { success: true, cart: { items: [], total: 0, totalItems: 0 } }
-                    cartData = data.cart;
-                } else if (data.items) {
-                    // Structure: { _id: '', user: '', items: [], createdAt: '', updatedAt: '' }
-                    cartData = {
-                        items: data.items || [],
-                        total: calculateCartTotal(data.items || []),
-                        totalItems: calculateTotalItems(data.items || [])
-                    };
-                } else if (data.success && data.data) {
-                    // Structure: { success: true, data: { items: [] } }
-                    cartData = {
-                        items: data.data.items || [],
-                        total: calculateCartTotal(data.data.items || []),
-                        totalItems: calculateTotalItems(data.data.items || [])
-                    };
-                } else if (data.success) {
-                    // Try to extract cart data from the response
-                    cartData = {
-                        items: data.cartItems || data.items || [],
-                        total: data.total || calculateCartTotal(data.cartItems || data.items || []),
-                        totalItems: data.totalItems || calculateTotalItems(data.cartItems || data.items || [])
-                    };
-                } else {
-                    console.error('Unknown cart structure:', data);
-                    throw new Error('Unknown cart structure');
-                }
-
-                console.log('Processed cart data for display:', cartData);
-                displayCart(cartData);
-                
-                // Update localStorage cart count
-                localStorage.setItem('cartCount', cartData.totalItems.toString());
-                updateCartCountDisplay();
-
-            } catch (error) {
-                console.error('Error fetching cart from backend:', error);
-                console.log('Falling back to localStorage cart');
-                fetchCartFromLocalStorage();
+     // ========== FIXED FETCH CART FROM BACKEND ==========
+async function fetchCartFromBackend() {
+    try {
+        console.log('Fetching cart from backend with token:', token);
+        
+        const response = await fetch('/api/user/cart/getAll', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
+        });
+
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // Helper functions for cart calculations
+        const data = await response.json();
+        console.log('Backend cart data:', data);
+
+        // Handle different response structures
+        let cartData;
+        let cartId = null;
+        
+        if (data.cart) {
+            cartData = data.cart;
+            cartId = data.cart._id; // Get cart ID
+        } else if (data.data && data.data._id) {
+            cartData = data.data;
+            cartId = data.data._id; // Get cart ID
+        } else if (data.success && data.data) {
+            cartData = {
+                items: data.data.items || [],
+                total: calculateCartTotal(data.data.items || []),
+                totalItems: calculateTotalItems(data.data.items || [])
+            };
+            cartId = data.data._id; // Get cart ID
+        } else if (data.success && data.cartItems) {
+            cartData = {
+                items: data.cartItems || data.items || [],
+                total: data.total || calculateCartTotal(data.cartItems || data.items || []),
+                totalItems: data.totalItems || calculateTotalItems(data.cartItems || data.items || [])
+            };
+            cartId = data._id || data.cartId; // Try to get cart ID
+        } else {
+            console.error('Unknown cart structure:', data);
+            throw new Error('Unknown cart structure');
+        }
+
+        console.log('Processed cart data for display:', cartData);
+        console.log('Cart ID found:', cartId);
+        
+        // Store cart ID in localStorage
+        if (cartId) {
+            localStorage.setItem('cartId', cartId);
+            console.log('Cart ID stored in localStorage:', cartId);
+        } else {
+            console.warn('No cart ID found in response');
+        }
+        
+        displayCart(cartData);
+        
+        localStorage.setItem('cartCount', cartData.totalItems.toString());
+        updateCartCountDisplay();
+
+    } catch (error) {
+        console.error('Error fetching cart from backend:', error);
+        console.log('Falling back to localStorage cart');
+        fetchCartFromLocalStorage();
+    }
+}
         function calculateCartTotal(items) {
             return items.reduce((sum, item) => {
                 const price = parseFloat(item.product?.price) || parseFloat(item.price) || 0;
@@ -451,12 +521,14 @@
                 if (cart.length === 0) {
                     showEmptyCart();
                 } else {
+                    const totalItems = calculateTotalItems(cart);
                     const cartData = {
                         items: cart,
                         total: calculateCartTotal(cart),
-                        totalItems: calculateTotalItems(cart)
+                        totalItems: totalItems
                     };
                     console.log('Processed cart data:', cartData);
+                    updateItemCountDisplay(totalItems);
                     displayCart(cartData);
                 }
                 
@@ -467,7 +539,6 @@
             }
         }
 
-        // ========== FIXED IMAGE HANDLER FUNCTION ==========
         function getProductImageUrl(imageArray) {
             const defaultImage = 'img/product-1.jpg';
             
@@ -481,25 +552,20 @@
                 return defaultImage;
             }
             
-            // If it's already a full URL, use it as-is
             if (firstImage.startsWith('http') || firstImage.startsWith('//')) {
                 return firstImage;
             }
             
-            // If it starts with /uploads/, use it as-is
             if (firstImage.startsWith('/uploads/')) {
                 return firstImage;
             }
             
-            // If it contains uploads/ anywhere, clean it
             let cleanImage = firstImage.trim();
             
-            // Remove duplicate uploads/ only if it's at the beginning
             if (cleanImage.startsWith('uploads/uploads/')) {
                 cleanImage = cleanImage.replace('uploads/uploads/', 'uploads/');
             }
             
-            // Add /uploads/ prefix only if it doesn't already have it
             if (!cleanImage.startsWith('/') && !cleanImage.startsWith('uploads/')) {
                 cleanImage = 'uploads/' + cleanImage;
             } else if (cleanImage.startsWith('uploads/') && !cleanImage.startsWith('/uploads/')) {
@@ -511,91 +577,144 @@
         }
 
         // ========== FIXED DISPLAY CART ==========
-        function displayCart(cart) {
-            console.log('Displaying cart data:', cart);
+    function displayCart(cart) {
+    console.log('Displaying cart data:', cart);
+    
+    if (!cart || !cart.items || cart.items.length === 0) {
+        showEmptyCart();
+        return;
+    }
+
+    if (emptyCartMessage) emptyCartMessage.style.display = 'none';
+    if (loginMessage) loginMessage.style.display = 'none';
+
+    cartItemsContainer.innerHTML = cart.items.map(item => {
+        console.log('Cart item details:', item);
+        
+        const product = item.product || item || {};
+        const productId = product._id || item._id || 'unknown';
+        const itemId = item._id || productId;
+        const productName = product.name || product.productName || 'Product Name';
+        const productPrice = parseFloat(product.price) || parseFloat(item.price) || 0;
+        const productImage = getProductImageUrl(product.image || product.images || item.image);
+        const quantity = parseInt(item.quantity) || 1;
+        const size = item.size || product.size || 'N/A';
+
+        return `
+            <tr>
+                <td>
+                    <div class="img d-flex align-items-start">
+                        <div class="product-checkbox-container">
+                            <input type="checkbox" 
+                                   class="product-checkbox" 
+                                   data-product-id="${productId}"
+                                   data-item-id="${itemId}"
+                                   data-size="${size}"
+                                   data-price="${productPrice}"
+                                   data-quantity="${quantity}"
+                                   data-name="${productName}"
+                                   data-image="${productImage}"
+                                   onchange="updateSelectedItems()"
+                                   checked>
+                        </div>
+                        <a href="product-detail.html?id=${productId}" class="mr-3">
+                            <img src="${productImage}" 
+                                 alt="${productName}"
+                                 style="width: 120px; height: 120px; object-fit: cover;"
+                                 onerror="this.onerror=null; this.src='img/product-1.jpg'">
+                        </a>
+                        <div class="product-info">
+                            <p class="mb-1"><strong>${productName}</strong></p>
+                            <small class="text-muted">Size: ${size}</small>
+                        </div>
+                    </div>
+                </td>
+                <td class="align-middle">$${productPrice.toFixed(2)}</td>
+                <td class="align-middle">
+                    <div class="qty">
+                        <button class="btn-minus" onclick="updateQuantity('${productId}', '${itemId}', ${quantity - 1}, '${size}')">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <input type="text" value="${quantity}" readonly>
+                        <button class="btn-plus" onclick="updateQuantity('${productId}', '${itemId}', ${quantity + 1}, '${size}')">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </td>
+                <td class="align-middle">$${(productPrice * quantity).toFixed(2)}</td>
+                <td class="align-middle">
+                    <button class="btn btn-danger btn-sm" onclick="removeItem('${productId}', '${itemId}', '${size}')">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    // Initialize selected items
+    initializeSelectedItems(cart.items);
+    updateSelectedItems();
+}
+
+        // Function to initialize all items as selected by default
+        function initializeSelectedItems(items) {
+            // Store selected items in a global variable
+            window.selectedItems = items.map(item => {
+                const product = item.product || item;
+                return {
+                    productId: product._id || item._id,
+                    itemId: item._id,
+                    size: item.size || product.size || 'N/A',
+                    price: parseFloat(product.price) || parseFloat(item.price) || 0,
+                    quantity: parseInt(item.quantity) || 1,
+                    name: product.name || product.productName || 'Product Name',
+                    image:product.image[0]
+                };
+            });
+        }
+
+        // Function to update selected items and recalculate totals
+        window.updateSelectedItems = function() {
+            const checkboxes = document.querySelectorAll('.product-checkbox:checked');
+            const selectedItems = [];
             
-            if (!cart || !cart.items || cart.items.length === 0) {
-                showEmptyCart();
-                return;
-            }
+            checkboxes.forEach(checkbox => {
+                selectedItems.push({
+                    productId: checkbox.dataset.productId,
+                    itemId: checkbox.dataset.itemId,
+                    size: checkbox.dataset.size,
+                    price: parseFloat(checkbox.dataset.price),
+                    quantity: parseInt(checkbox.dataset.quantity),
+                    totalPrice: parseFloat(checkbox.dataset.price) * parseInt(checkbox.dataset.quantity),
+                    image: checkbox.dataset.image
+                });
+            });
 
-            // Hide messages
-            if (emptyCartMessage) emptyCartMessage.style.display = 'none';
-            if (loginMessage) loginMessage.style.display = 'none';
-
-            // Update cart items table
-            cartItemsContainer.innerHTML = cart.items.map(item => {
-                console.log('Cart item details:', item);
-                
-                // Handle different item structures
-                const product = item.product || item || {};
-                const productId = product._id || item._id || 'unknown';
-                const itemId = item._id || productId; // Use cart item ID if available
-                const productName = product.name || product.productName || 'Product Name';
-                const productPrice = parseFloat(product.price) || parseFloat(item.price) || 0;
-                
-                // Get image using the fixed handler function
-                const productImage = getProductImageUrl(product.image || product.images || item.image);
-                
-                const quantity = parseInt(item.quantity) || 1;
-                const size = item.size || product.size || 'N/A';
-
-                return `
-                    <tr>
-                        <td>
-                            <div class="img d-flex align-items-start">
-                                <a href="product-detail.html?id=${productId}" class="mr-3">
-                                    <img src="${productImage}" 
-                                         alt="${productName}"
-                                         style="width: 120px; height: 120px; object-fit: cover;"
-                                         onerror="this.onerror=null; this.src='img/product-1.jpg'">
-                                </a>
-                                <div class="product-info">
-                                    <p class="mb-1"><strong>${productName}</strong></p><br>
-                                    <small class="text-muted">Size: ${size}</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="align-middle">$${productPrice.toFixed(2)}</td>
-                        <td class="align-middle">
-                            <div class="qty">
-                                <button class="btn-minus" onclick="updateQuantity('${itemId}', ${quantity - 1}, '${size}')">
-                                    <i class="fa fa-minus"></i>
-                                </button>
-                                <input type="text" value="${quantity}" readonly>
-                                <button class="btn-plus" onclick="updateQuantity('${itemId}', ${quantity + 1}, '${size}')">
-                                    <i class="fa fa-plus"></i>
-                                </button>
-                            </div>
-                        </td>
-                        <td class="align-middle">$${(productPrice * quantity).toFixed(2)}</td>
-                        <td class="align-middle">
-                            <button class="btn btn-danger btn-sm" onclick="removeItem('${itemId}', '${size}')">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-
-            // Update totals
-            const shippingCost = 1;
-            const subTotal = cart.total || calculateCartTotal(cart.items);
+            // Calculate totals based on selected items only
+            const totalItems = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
+            const subTotal = selectedItems.reduce((sum, item) => sum + item.totalPrice, 0);
+            const shippingCost = selectedItems.length > 0 ? 5 : 0;
             const grandTotal = subTotal + shippingCost;
-            
+
+            // Update displays
+            updateItemCountDisplay(totalItems);
             if (subTotalElement) subTotalElement.textContent = `$${subTotal.toFixed(2)}`;
             if (grandTotalElement) grandTotalElement.textContent = `$${grandTotal.toFixed(2)}`;
-            
-            // Update cart count
-            updateCartCountDisplay();
-        }
+
+            // Store selected items for checkout
+            window.selectedItemsForCheckout = selectedItems;
+        };
 
         function showEmptyCart() {
             if (emptyCartMessage) emptyCartMessage.style.display = 'table-row';
             if (loginMessage) loginMessage.style.display = 'none';
             if (subTotalElement) subTotalElement.textContent = '$0';
             if (grandTotalElement) grandTotalElement.textContent = '$1';
+            updateItemCountDisplay(0);
             updateCartCountDisplay();
+            
+            // Clear selected items
+            window.selectedItemsForCheckout = [];
         }
 
         // ========== UPDATE CART COUNT ==========
@@ -615,27 +734,37 @@
             }
         }
 
-        // ========== QUANTITY UPDATE FUNCTIONS ==========
-        window.updateQuantity = async function(itemId, newQuantity, size) {
+        // ========== UPDATE ITEM COUNT IN SUMMARY ==========
+        function updateItemCountDisplay(totalItems) {
+            const itemCountElement = document.getElementById('itemCount');
+            if (itemCountElement) {
+                itemCountElement.textContent = totalItems;
+            }
+        }
+
+        // ========== FIXED: QUANTITY UPDATE FUNCTIONS ==========
+        // Now accepts both productId and itemId
+        window.updateQuantity = async function(productId, itemId, newQuantity, size) {
             if (newQuantity < 1) {
-                // If quantity becomes 0, remove item
-                removeItem(itemId, size);
+                removeItem(productId, itemId, size);
                 return;
             }
 
             const token = localStorage.getItem('token');
             
             if (token) {
-                await updateBackendQuantity(itemId, newQuantity, size);
+                await updateBackendQuantity(productId, newQuantity, size);
             } else {
                 updateLocalStorageQuantity(itemId, newQuantity, size);
             }
         };
 
-        // Update quantity in backend
-        async function updateBackendQuantity(itemId, newQuantity, size) {
+        // FIXED: Update quantity in backend - use productId not itemId
+        async function updateBackendQuantity(productId, newQuantity, size) {
             try {
-                const response = await fetch(`/api/user/cart/updateCart/${itemId}`, {
+                console.log('Updating backend quantity for product:', productId, 'quantity:', newQuantity, 'size:', size);
+                
+                const response = await fetch(`/api/user/cart/updateCart/${productId}`, {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -648,6 +777,7 @@
                 });
 
                 const data = await response.json();
+                console.log('Update response:', data);
 
                 if (data.success) {
                     fetchCartFromBackend();
@@ -660,12 +790,12 @@
             }
         }
 
-        // Update quantity in localStorage
-        function updateLocalStorageQuantity(productId, newQuantity, size) {
+        // Update quantity in localStorage - use itemId
+        function updateLocalStorageQuantity(itemId, newQuantity, size) {
             try {
                 let cart = JSON.parse(localStorage.getItem('cart') || '[]');
                 const itemIndex = cart.findIndex(item => 
-                    (item._id === productId || item.product?._id === productId) && item.size === size
+                    (item._id === itemId || item.product?._id === itemId) && item.size === size
                 );
 
                 if (itemIndex > -1) {
@@ -674,8 +804,17 @@
                         cart[itemIndex].totalPrice = cart[itemIndex].product.price * newQuantity;
                     }
                     localStorage.setItem('cart', JSON.stringify(cart));
+                    
+                    // Update the checkbox data attribute
+                    const checkboxes = document.querySelectorAll('.product-checkbox');
+                    checkboxes.forEach(checkbox => {
+                        if (checkbox.dataset.itemId === itemId && checkbox.dataset.size === size) {
+                            checkbox.dataset.quantity = newQuantity;
+                        }
+                    });
+                    
+                    updateSelectedItems();
                     updateCartCountDisplay();
-                    fetchCartFromLocalStorage();
                 }
             } catch (error) {
                 console.error('Error updating localStorage quantity:', error);
@@ -683,23 +822,27 @@
             }
         }
 
-        // ========== REMOVE ITEM FUNCTIONS ==========
-        window.removeItem = async function(itemId, size) {
+        // ========== FIXED: REMOVE ITEM FUNCTIONS ==========
+        // Now accepts both productId and itemId
+        window.removeItem = async function(productId, itemId, size) {
             if (!confirm('Are you sure you want to remove this item from your cart?')) return;
 
             const token = localStorage.getItem('token');
             
             if (token) {
-                await removeFromBackend(itemId, size);
+                await removeFromBackend(productId, size);
             } else {
                 removeFromLocalStorage(itemId, size);
             }
         };
 
-        // Remove from backend
-        async function removeFromBackend(itemId, size) {
+        // FIXED: Remove from backend - use productId with size query parameter
+        async function removeFromBackend(productId, size) {
             try {
-                const response = await fetch(`/api/user/cart/removeCartItem/${itemId}?size=${size}`, {
+                console.log('Removing from backend product:', productId, 'size:', size);
+                
+                // Backend expects DELETE with productId in URL and size as query parameter
+                const response = await fetch(`/api/user/cart/removeCartItem/${productId}?size=${encodeURIComponent(size)}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -708,6 +851,7 @@
                 });
 
                 const data = await response.json();
+                console.log('Remove response:', data);
 
                 if (data.success) {
                     fetchCartFromBackend();
@@ -720,7 +864,7 @@
             }
         }
 
-        // Remove from localStorage
+        // Remove from localStorage - use itemId
         function removeFromLocalStorage(itemId, size) {
             try {
                 let cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -728,6 +872,7 @@
                     (item._id === itemId || item.product?._id === itemId) && item.size === size
                 ));
                 localStorage.setItem('cart', JSON.stringify(cart));
+                updateSelectedItems();
                 updateCartCountDisplay();
                 fetchCartFromLocalStorage();
             } catch (error) {
@@ -774,7 +919,9 @@
 
         function clearLocalStorageCart() {
             localStorage.removeItem('cart');
+            localStorage.removeItem('cartId');
             localStorage.setItem('cartCount', '0');
+            updateItemCountDisplay(0);
             updateCartCountDisplay();
             fetchCartFromLocalStorage();
         }
@@ -783,13 +930,10 @@
         window.checkout = function() {
             const token = localStorage.getItem('token');
             
-            // Check if cart is empty by looking at the current display
-            const cartRows = cartItemsContainer.querySelectorAll('tr');
-            const isEmpty = cartRows.length === 0 || 
-                          (emptyCartMessage && emptyCartMessage.style.display !== 'none');
+            const selectedItems = window.selectedItemsForCheckout || [];
             
-            if (isEmpty) {
-                alert('Your cart is empty!');
+            if (selectedItems.length === 0) {
+                alert('Please select at least one item to checkout!');
                 return;
             }
             
@@ -799,7 +943,9 @@
                 return;
             }
             
-            window.location.href = 'checkout.html';
+            // Store selected items for the checkout page
+            localStorage.setItem('selectedCheckoutItems', JSON.stringify(selectedItems));
+            window.location.href = 'address.html';
         };
 
         // Initialize cart count
