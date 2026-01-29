@@ -1,1574 +1,1958 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>My Orders - ShopStyle</title>
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
-        
-        <!-- Favicon -->
-        <link href="img/favicon.ico" rel="icon">
 
-        <!-- Google Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap" rel="stylesheet">
+<head>
+    <meta charset="utf-8">
+    <title>My Orders - ShopStyle</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-        <!-- CSS Libraries -->
-        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
 
-        <!-- Template Stylesheet -->
-        <link href="css/style.css" rel="stylesheet">
-        <style>
-            /* Order History Page Styles */
-            .order-history {
-                padding: 30px 0;
-                min-height: 70vh;
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS Libraries -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        /* Order History Page Styles - Clean Version */
+        .order-history {
+            padding: 25px 0;
+            min-height: 70vh;
+        }
+
+        /* Page Header - Smaller and Cleaner */
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-title {
+            color: #2c3e50;
+            font-weight: 600;
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .page-title:after {
+            display: none;
+            /* Remove the orange underline */
+        }
+
+        .page-subtitle {
+            color: #7f8c8d;
+            margin-top: 4px;
+            font-size: 14px;
+        }
+
+        /* Table Styles - Clean and Larger */
+        .orders-table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            border: 1px solid #eaeaea;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0;
+        }
+
+        /* Table Header - Clean without orange */
+        .orders-table thead {
+            background: #f8f9fa;
+            color: #495057;
+            border-bottom: 2px solid #eaeaea;
+        }
+
+        .orders-table th {
+            padding: 18px 20px;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: left;
+            border: none;
+        }
+
+        /* Table Body - Clean without hover effects */
+        .orders-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .orders-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .orders-table td {
+            padding: 20px;
+            vertical-align: middle;
+            border: none;
+            color: #333;
+            font-size: 14px;
+        }
+
+        /* Order ID Column */
+        .order-id-cell {
+            font-family: 'Source Code Pro', monospace;
+            font-weight: 600;
+            color: #3395ff;
+        }
+
+        .order-id-cell .small-text {
+            display: block;
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 4px;
+        }
+
+        /* Items Column */
+        .order-items-cell {
+            max-width: 250px;
+        }
+
+        .order-items-preview {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .item-image {
+            width: 90px;
+            height: 90px;
+            border-radius: 4px;
+            object-fit: cover;
+            border: 1px solid #eaeaea;
+            flex-shrink: 0;
+        }
+
+        .item-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .item-name {
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .item-meta {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .more-items {
+            font-size: 12px;
+            color: #3395ff;
+            margin-top: 5px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        /* Amount Column */
+        .order-amount {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 15px;
+        }
+
+        /* Status Column - Cleaner badges */
+        .order-status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+
+        .status-created {
+            background: #f3f4f6;
+            color: #4b5563;
+            border: 1px solid #e5e7eb;
+        }
+
+        .status-confirmed {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .status-shipped {
+            background: #e0e7ff;
+            color: #3730a3;
+            border: 1px solid #c7d2fe;
+        }
+
+        .status-out-for-delivery {
+            background: #f0f9ff;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+        }
+
+        .status-delivered {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-cancelled {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        /* Actions Column - Clean buttons */
+        .order-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e5e7eb;
+            background: white;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: #f8f9fa;
+            border-color: #d1d5db;
+            color: #374151;
+        }
+
+        .action-btn.view:hover {
+            background: #eff6ff;
+            border-color: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .action-btn.reorder:hover {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+            color: #15803d;
+        }
+
+        .action-btn.review:hover {
+            background: #fef3c7;
+            border-color: #fde68a;
+            color: #d97706;
+        }
+
+        .action-btn.invoice:hover {
+            background: #faf5ff;
+            border-color: #e9d5ff;
+            color: #7c3aed;
+        }
+
+        /* Review button styles */
+        .review-info {
+            max-width: 200px;
+        }
+
+        .add-review-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+            background: #ffc107;
+            border: none;
+            color: #000;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .add-review-btn:hover {
+            background: #ff9800;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            color: #000;
+            text-decoration: none;
+        }
+
+        .add-review-btn i {
+            font-size: 10px;
+            margin-right: 5px;
+        }
+
+        .review-added-message {
+            font-size: 12px;
+            color: #28a745;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .review-added-message i {
+            margin-right: 5px;
+        }
+
+        .not-delivered-message {
+            font-size: 12px;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+        }
+
+        .not-delivered-message i {
+            margin-right: 5px;
+        }
+
+        /* Empty State */
+        .empty-orders {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #eaeaea;
+            margin-top: 20px;
+        }
+
+        .empty-orders-icon {
+            font-size: 60px;
+            color: #e5e7eb;
+            margin-bottom: 20px;
+        }
+
+        .empty-orders h3 {
+            color: #4b5563;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 20px;
+        }
+
+        .empty-orders p {
+            color: #6b7280;
+            margin-bottom: 25px;
+            font-size: 15px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-primary-custom {
+            background: #3b82f6;
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary-custom:hover {
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
             }
-            
-            /* Payment Success Message */
-            .payment-success-message {
-                background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-                border: 1px solid #c3e6cb;
-                border-radius: 12px;
-                padding: 20px;
-                margin-bottom: 30px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-                animation: slideInDown 0.5s ease-out;
+
+            100% {
+                transform: rotate(360deg);
             }
-            
-            @keyframes slideInDown {
-                from {
-                    transform: translateY(-30px);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
+        }
+
+        /* Payment Success Message - Clean version */
+        .payment-success-message {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: slideInDown 0.5s ease-out;
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
             }
-            
-            .payment-success-content {
-                display: flex;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            
-            .payment-success-icon {
-                color: #155724;
-                font-size: 24px;
-                margin-top: 5px;
-            }
-            
-            .payment-success-text {
-                flex: 1;
-            }
-            
-            .payment-success-text h4 {
-                color: #155724;
-                margin-bottom: 5px;
-                font-weight: 600;
-            }
-            
-            .payment-success-text p {
-                color: #0c5460;
-                margin-bottom: 10px;
-                font-size: 15px;
-            }
-            
-            .payment-success-text .details {
-                color: #6c757d;
-                font-size: 14px;
-                margin-bottom: 0;
-            }
-            
-            .payment-success-close {
-                background: none;
-                border: none;
-                color: #155724;
-                font-size: 18px;
-                cursor: pointer;
-                padding: 0;
-                opacity: 0.7;
-                transition: opacity 0.2s;
-            }
-            
-            .payment-success-close:hover {
+
+            to {
+                transform: translateY(0);
                 opacity: 1;
             }
-            
-            /* Order Details Modal Styles */
-            .order-details-modal .modal-dialog {
-                max-width: 800px;
+        }
+
+        .payment-success-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .payment-success-icon {
+            color: #15803d;
+            font-size: 20px;
+        }
+
+        .payment-success-text {
+            flex: 1;
+        }
+
+        .payment-success-text h5 {
+            color: #15803d;
+            margin-bottom: 3px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .payment-success-text p {
+            color: #166534;
+            margin-bottom: 0;
+            font-size: 14px;
+        }
+
+        .payment-success-close {
+            background: none;
+            border: none;
+            color: #15803d;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .payment-success-close:hover {
+            opacity: 1;
+        }
+
+        /* Review Success Message */
+        .review-success-message {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: slideInDown 0.5s ease-out;
+        }
+
+        .review-success-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .review-success-icon {
+            color: #059669;
+            font-size: 20px;
+        }
+
+        .review-success-text h5 {
+            color: #059669;
+            margin-bottom: 3px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .review-success-text p {
+            color: #047857;
+            margin-bottom: 0;
+            font-size: 14px;
+        }
+
+        .review-success-close {
+            background: none;
+            border: none;
+            color: #059669;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .review-success-close:hover {
+            opacity: 1;
+        }
+
+        /* Remove hover effect for entire row */
+        .order-row::before {
+            display: none;
+        }
+
+        /* Table row styling for better readability */
+        .orders-table tbody tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        /* Improved button styles */
+        .btn {
+            transition: all 0.2s ease;
+        }
+
+        .btn:focus {
+            box-shadow: none;
+        }
+
+        /* Modal header styling - remove orange gradient */
+        .modal-header {
+            background: #f8f9fa;
+            color: #333;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .modal-header .close {
+            color: #6c757d;
+        }
+
+        /* Card styling in modals */
+        .card {
+            border: 1px solid #eaeaea;
+            box-shadow: none;
+        }
+
+        .card-title.text-muted {
+            color: #6b7280 !important;
+            font-weight: 500;
+        }
+        
+        /* Fixed Star Rating Styles */
+        .star-rating {
+            display: flex;
+            gap: 8px;
+            font-size: 32px;
+            cursor: pointer;
+        }
+
+        .star-rating .star {
+            color: #ddd;
+            transition: all 0.2s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .star-rating .star i {
+            transition: all 0.2s ease;
+        }
+
+        .star-rating .star.selected i {
+            color: #FFD700; /* Golden yellow for selected stars */
+        }
+
+        .star-rating .star:hover i {
+            color: #FFA500; /* Orange on hover */
+        }
+
+        .star-rating .star:hover ~ .star i {
+            color: #ddd; /* Reset stars after hovered one */
+        }
+
+        /* Rating labels */
+        .rating-labels {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .rating-labels small {
+            flex: 1;
+            text-align: center;
+        }
+
+        .rating-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            min-height: 24px;
+            margin-top: 10px;
+        }
+
+        /* Star icon shine effect */
+        @keyframes starShine {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .star-rating .star.selected i {
+            animation: starShine 0.5s ease;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .orders-table-container {
+                overflow-x: auto;
             }
-            
-            .order-details-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 15px;
-                margin: 20px 0;
+
+            .orders-table {
+                min-width: 850px;
             }
-            
-            .order-detail-card {
-                background: #f8f9fa;
-                border-radius: 8px;
-                padding: 15px;
-                border: 1px solid #dee2e6;
-            }
-            
-            .detail-label {
-                font-size: 12px;
-                color: #666;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                margin-bottom: 5px;
-            }
-            
-            .detail-value {
-                font-size: 16px;
-                font-weight: 600;
-                color: #333;
-            }
-            
-            .detail-value.order-id {
-                color: #3395ff;
-                font-family: 'Source Code Pro', monospace;
-            }
-            
-            .timeline {
-                position: relative;
-                margin: 30px 0;
-                padding-left: 30px;
-            }
-            
-            .timeline::before {
-                content: '';
-                position: absolute;
-                left: 10px;
-                top: 0;
-                bottom: 0;
-                width: 2px;
-                background: #dee2e6;
-            }
-            
-            .timeline-step {
-                position: relative;
-                margin-bottom: 25px;
-            }
-            
-            .timeline-step:last-child {
-                margin-bottom: 0;
-            }
-            
-            .timeline-step::before {
-                content: '';
-                position: absolute;
-                left: -34px;
-                top: 5px;
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                background: white;
-                border: 2px solid #dee2e6;
-                z-index: 1;
-            }
-            
-            .timeline-step.active::before {
-                background: #28a745;
-                border-color: #28a745;
-            }
-            
-            .timeline-step.completed::before {
-                background: #28a745;
-                border-color: #28a745;
-            }
-            
-            .timeline-step.completed::after {
-                content: '✓';
-                position: absolute;
-                left: -31px;
-                top: 2px;
-                color: white;
-                font-size: 12px;
-                z-index: 2;
-            }
-            
-            .timeline-content {
-                padding-left: 15px;
-            }
-            
-            .timeline-date {
-                font-size: 12px;
-                color: #666;
-                margin-bottom: 5px;
-            }
-            
-            .timeline-title {
-                font-weight: 600;
-                margin-bottom: 5px;
-                font-size: 15px;
-            }
-            
-            .timeline-description {
-                color: #666;
-                font-size: 13px;
-            }
-            
-            .order-card {
-                background: white;
-                border-radius: 12px;
-                margin-bottom: 25px;
-                padding: 25px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-                border: 1px solid #eaeaea;
-                transition: transform 0.3s, box-shadow 0.3s;
-            }
-            
-            .order-card:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-            }
-            
-            .order-header {
-                display: flex;
-                justify-content: space-between;
+
+            .page-header {
+                flex-direction: column;
                 align-items: flex-start;
-                padding-bottom: 15px;
-                margin-bottom: 20px;
-                border-bottom: 2px solid #f5f5f5;
-            }
-            
-            .order-info {
-                flex: 1;
-            }
-            
-            .order-id {
-                font-size: 18px;
-                font-weight: 700;
-                color: #2c3e50;
-                margin-bottom: 5px;
-            }
-            
-            .order-date {
-                color: #7f8c8d;
-                font-size: 14px;
-            }
-            
-            .order-status {
-                padding: 6px 18px;
-                border-radius: 20px;
-                font-weight: 600;
-                font-size: 13px;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-            
-            .status-pending { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
-            .status-confirmed { background: #cce5ff; color: #004085; border: 1px solid #b8daff; }
-            .status-shipped { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-            .status-delivered { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-            .status-cancelled { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-            .status-created { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-            
-            .order-meta {
-                display: flex;
-                flex-wrap: wrap;
                 gap: 10px;
-                margin-bottom: 20px;
             }
-            
-            .meta-badge {
-                padding: 8px 15px;
-                background: #f8f9fa;
-                border-radius: 8px;
-                font-size: 14px;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-            
-            .meta-badge i {
-                color: #FF6F61;
-            }
-            
-            .product-section {
-                margin: 20px 0;
-            }
-            
-            .product-item {
-                display: flex;
-                padding: 15px;
-                border-radius: 10px;
-                background-color: #f9fafb;
-                margin-bottom: 12px;
-                align-items: center;
-                transition: background-color 0.2s;
-            }
-            
-            .product-item:hover {
-                background-color: #f1f5f9;
-            }
-            
-            .product-image {
-                width: 80px;
-                height: 80px;
-                border-radius: 8px;
-                object-fit: cover;
-                margin-right: 20px;
-                border: 1px solid #e5e7eb;
-                background-color: white;
-            }
-            
-            .product-details {
-                flex: 1;
-            }
-            
-            .product-name {
-                font-weight: 600;
-                color: #1f2937;
-                margin-bottom: 8px;
-                font-size: 16px;
-                line-height: 1.4;
-            }
-            
-            .product-variant {
-                color: #6b7280;
-                font-size: 14px;
-                margin-bottom: 5px;
-            }
-            
-            .product-qty {
-                color: #374151;
-                font-size: 14px;
-                font-weight: 500;
-            }
-            
-            .product-price {
-                font-weight: 700;
-                color: #FF6F61;
-                font-size: 16px;
-                min-width: 100px;
-                text-align: right;
-            }
-            
-            .order-footer {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-top: 25px;
-                padding-top: 20px;
-                border-top: 2px solid #f5f5f5;
-            }
-            
-            .order-total {
-                font-size: 22px;
-                font-weight: 700;
-                color: #2c3e50;
-            }
-            
-            .order-total .amount {
-                color: #FF6F61;
-                font-size: 24px;
-            }
-            
+
             .order-actions {
-                display: flex;
-                gap: 12px;
+                flex-direction: column;
+                gap: 6px;
             }
-            
-            .btn-order-action {
-                padding: 10px 22px;
-                border-radius: 8px;
-                font-weight: 600;
-                font-size: 14px;
-                transition: all 0.3s;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                border: none;
-                cursor: pointer;
+
+            .action-btn {
+                width: 34px;
+                height: 34px;
             }
-            
-            .btn-view {
-                background-color: #e0f2fe;
-                color: #0369a1;
-                border: 1px solid #bae6fd;
-            }
-            
-            .btn-view:hover {
-                background-color: #bae6fd;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(3, 105, 161, 0.15);
-            }
-            
-            .btn-reorder {
-                background-color: #10b981;
-                color: white;
-                border: 1px solid #10b981;
-            }
-            
-            .btn-reorder:hover {
-                background-color: #059669;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-            }
-            
-            .btn-invoice {
-                background-color: #8b5cf6;
-                color: white;
-                border: 1px solid #8b5cf6;
-            }
-            
-            .btn-invoice:hover {
-                background-color: #7c3aed;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
-            }
-            
-            .empty-orders {
-                text-align: center;
-                padding: 60px 20px;
-                background: white;
-                border-radius: 12px;
-                border: 2px dashed #e0e0e0;
-                margin-top: 20px;
-            }
-            
-            .empty-orders i {
-                font-size: 70px;
-                color: #ddd;
-                margin-bottom: 25px;
-            }
-            
-            .empty-orders h3 {
-                color: #555;
-                margin-bottom: 15px;
-                font-weight: 600;
-            }
-            
-            .empty-orders p {
-                color: #888;
-                margin-bottom: 25px;
-                font-size: 16px;
-                max-width: 400px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            
-            .loading {
-                text-align: center;
-                padding: 60px 20px;
-                color: #666;
-            }
-            
-            .loading-spinner {
-                width: 50px;
-                height: 50px;
-                border: 4px solid #f3f3f3;
-                border-top: 4px solid #FF6F61;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-                margin: 0 auto 25px;
-            }
-            
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-            
+
             .page-title {
-                color: #2c3e50;
-                font-weight: 700;
-                margin-bottom: 10px;
-                position: relative;
-                padding-bottom: 15px;
+                font-size: 22px;
             }
             
-            .page-title:after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 60px;
-                height: 3px;
-                background: #FF6F61;
-                border-radius: 2px;
+            .star-rating {
+                font-size: 28px;
+                gap: 6px;
             }
-            
-            .refresh-btn {
-                padding: 10px 25px;
-                border-radius: 8px;
-                font-weight: 600;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border: none;
-                transition: all 0.3s;
-            }
-            
-            .refresh-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
-            }
-            
-            /* Responsive adjustments */
-            @media (max-width: 768px) {
-                .order-header {
-                    flex-direction: column;
-                    gap: 15px;
-                }
-                
-                .order-status {
-                    align-self: flex-start;
-                }
-                
-                .order-footer {
-                    flex-direction: column;
-                    gap: 15px;
-                    align-items: stretch;
-                }
-                
-                .order-actions {
-                    justify-content: center;
-                }
-                
-                .product-item {
-                    flex-direction: column;
-                    text-align: center;
-                }
-                
-                .product-image {
-                    margin-right: 0;
-                    margin-bottom: 15px;
-                }
-                
-                .product-price {
-                    text-align: center;
-                    margin-top: 10px;
-                }
-                
-                .order-details-grid {
-                    grid-template-columns: 1fr;
-                }
-                
-                .payment-success-content {
-                    flex-direction: column;
-                    gap: 10px;
-                }
-                
-                .payment-success-close {
-                    align-self: flex-end;
-                }
-            }
-        </style>
-    </head>
+        }
+    </style>
+</head>
 
-    <body>
-        <!-- Top bar Start -->
-        <div class="top-bar">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <i class="fa fa-envelope"></i>
-                        support@shopstyle.com
-                    </div>
-                    <div class="col-sm-6">
-                        <i class="fa fa-phone-alt"></i>
-                        +91-98765-43210
-                    </div>
+<body>
+    <!-- Top bar Start -->
+    <div class="top-bar">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-6">
+                    <i class="fa fa-envelope"></i>
+                    support@shopstyle.com
+                </div>
+                <div class="col-sm-6">
+                    <i class="fa fa-phone-alt"></i>
+                    +91-98765-43210
                 </div>
             </div>
         </div>
-        <!-- Top bar End -->
-        
-        <!-- Nav Bar Start -->
-        <div class="nav">
-            <div class="container-fluid">
-                <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-                    <a href="#" class="navbar-brand">MENU</a>
-                    <button
-                        type="button"
-                        class="navbar-toggler"
-                        data-toggle="collapse"
-                        data-target="#navbarCollapse"
-                    >
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
+    </div>
+    <!-- Top bar End -->
 
-                    <div
-                        class="collapse navbar-collapse justify-content-between"
-                        id="navbarCollapse"
-                    >
-                        <div class="navbar-nav mr-auto">
-                            <a href="index.html" class="nav-item nav-link">Home</a>
-                            <a href="product-list.html" class="nav-item nav-link">Products</a>
-                            <a href="cart.html" class="nav-item nav-link">Cart</a>
-                            <a href="checkout.html" class="nav-item nav-link">Checkout</a>
-                            <a href="order-history.html" class="nav-item nav-link active">My Orders</a>
-                        </div>
-                        <div class="navbar-nav ml-auto align-items-center">
-                            <!-- User Account dropdown -->
-                            <div class="nav-item dropdown user-account" id="userAccountDropdown" style="display: none;">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fa fa-user-circle"></i> My Account
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a href="order-history.html" class="dropdown-item"><i class="fas fa-box"></i> My Orders</a>
-                                    <a href="profile.html" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                                </div>
+    <!-- Nav Bar Start -->
+    <div class="nav">
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+                <a href="#" class="navbar-brand">MENU</a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                    <div class="navbar-nav mr-auto">
+                        <a href="index.html" class="nav-item nav-link">Home</a>
+                        <a href="product-list.html" class="nav-item nav-link">Products</a>
+                        <a href="cart.html" class="nav-item nav-link">Cart</a>
+                        <a href="wishlist.html" class="nav-item nav-link">Wishlist</a>
+                        <a href="checkout.html" class="nav-item nav-link">Checkout</a>
+                        <a href="order-history.html" class="nav-item nav-link active">My Orders</a>
+                    </div>
+                    <div class="navbar-nav ml-auto align-items-center">
+                        <!-- User Account dropdown -->
+                        <div class="nav-item dropdown user-account" id="userAccountDropdown" style="display: none;">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-user-circle"></i> My Account
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a href="my-account.html" class="dropdown-item">Dashboard</a>
+                                <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i>
+                                    Logout</a>
                             </div>
+                        </div>
 
-                            <!-- Login dropdown (only visible before login) -->
-                            <div class="nav-item dropdown" id="loginDropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Login</a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a href="login.html" class="dropdown-item">Login</a>
-                                    <a href="register.html" class="dropdown-item">Register</a>
-                                </div>
+                        <!-- Login dropdown (only visible before login) -->
+                        <div class="nav-item dropdown" id="loginDropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Login</a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a href="login.html" class="dropdown-item">Login</a>
+                                <a href="register.html" class="dropdown-item">Register</a>
                             </div>
                         </div>
                     </div>
-                </nav>
-            </div>
-        </div>
-        <!-- Nav Bar End -->
-        
-        <!-- Bottom Bar Start -->
-        <div class="bottom-bar">
-            <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-md-3">
-                        <div class="logo">
-                            <a href="index.html">
-                                <img src="img/logo.png" alt="ShopStyle Logo">
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="search">
-                            <input type="text" placeholder="Search for products...">
-                            <button><i class="fa fa-search"></i></button>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="user">
-                            <a href="wishlist.html" class="btn wishlist">
-                                <i class="fa fa-heart"></i>
-                                <span>(0)</span>
-                            </a>
-                            <a href="cart.html" class="btn cart">
-                                <i class="fa fa-shopping-cart"></i>
-                                <span>(0)</span>
-                            </a>
-                        </div>
-                    </div>
                 </div>
-            </div>
+            </nav>
         </div>
-        <!-- Bottom Bar End -->
-        
-        <!-- Breadcrumb Start -->
-        <div class="breadcrumb-wrap">
-            <div class="container-fluid">
-                <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <li class="breadcrumb-item"><a href="profile.html">My Account</a></li>
-                    <li class="breadcrumb-item active">My Orders</li>
-                </ul>
-            </div>
-        </div>
-        <!-- Breadcrumb End -->
-        
-        <!-- Order History Start -->
-        <div class="order-history">
-            <div class="container-fluid">
-                <h1 class="page-title">My Orders</h1>
-                <p class="text-muted mb-4">View and manage all your past orders</p>
-                
-                <!-- Payment Success Message (will be shown after successful payment) -->
-                <div id="paymentConfirmationMessage"></div>
-                
-                <!-- Refresh Button -->
-                <div style="margin-bottom: 30px;">
-                    <button class="btn refresh-btn" onclick="loadOrders()">
-                        <i class="fas fa-sync-alt"></i> Refresh Orders
-                    </button>
-                </div>
-                
-                <!-- Orders List -->
-                <div id="ordersContainer">
-                    <!-- Loading message -->
-                    <div class="loading" id="loadingMessage">
-                        <div class="loading-spinner"></div>
-                        <p>Loading your orders...</p>
-                    </div>
-                    
-                    <!-- Empty message (hidden by default) -->
-                    <div class="empty-orders" id="emptyOrdersMessage" style="display: none;">
-                        <i class="fas fa-box-open"></i>
-                        <h3>No Orders Yet</h3>
-                        <p>You haven't placed any orders yet. Start shopping to see your orders here.</p>
-                        <a href="product-list.html" class="btn btn-primary" style="padding: 12px 30px;">
-                            <i class="fas fa-shopping-bag"></i> Start Shopping
+    </div>
+    <!-- Nav Bar End -->
+
+    <!-- Bottom Bar Start -->
+    <div class="bottom-bar">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <div class="logo">
+                        <a href="index.html">
+                            <img src="img/logo.png" alt="ShopStyle Logo">
                         </a>
                     </div>
-                    
-                    <!-- Orders will be loaded here -->
+                </div>
+                <div class="col-md-6">
+                    <div class="search">
+                        <input type="text" placeholder="Search for products...">
+                        <button><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="user">
+                        <a href="wishlist.html" class="btn wishlist">
+                            <i class="fa fa-heart"></i>
+                            <span>(0)</span>
+                        </a>
+                        <a href="cart.html" class="btn cart">
+                            <i class="fa fa-shopping-cart"></i>
+                            <span>(0)</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- Order History End -->
-        
-        <!-- Footer Start -->
-        <div class="footer">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-widget">
-                            <h2>Get in Touch</h2>
-                            <div class="contact-info">
-                                <p><i class="fa fa-map-marker"></i>123 Fashion Street, Mumbai, India</p>
-                                <p><i class="fa fa-envelope"></i>support@shopstyle.com</p>
-                                <p><i class="fa fa-phone"></i>+91-98765-43210</p>
+    </div>
+    <!-- Bottom Bar End -->
+
+    <!-- Breadcrumb Start -->
+    <div class="breadcrumb-wrap">
+        <div class="container-fluid">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">My Orders</li>
+            </ul>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Order History Start -->
+    <div class="order-history">
+        <div class="container-fluid">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">My Orders</h1>
+                <p class="page-subtitle" id="ordersCount">Loading...</p>
+            </div>
+
+            <!-- Payment Success Message -->
+            <div id="paymentConfirmationMessage"></div>
+
+            <!-- Review Success Message -->
+            <div id="reviewConfirmationMessage"></div>
+
+            <!-- Orders Table -->
+            <div id="ordersContainer">
+                <!-- Loading State -->
+                <div class="loading-state" id="loadingMessage">
+                    <div class="loading-spinner"></div>
+                    <p>Loading your orders...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-orders" id="emptyOrdersMessage" style="display: none;">
+                    <div class="empty-orders-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h3>No Orders Yet</h3>
+                    <p>You haven't placed any orders yet. Start shopping to see your orders here.</p>
+                    <a href="product-list.html" class="btn btn-primary-custom">
+                        <i class="fas fa-shopping-bag"></i> Start Shopping
+                    </a>
+                </div>
+
+                <!-- Orders Table (will be loaded dynamically) -->
+            </div>
+        </div>
+    </div>
+    <!-- Order History End -->
+
+    <!-- Footer Start -->
+    <div class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-widget">
+                        <h2>Get in Touch</h2>
+                        <div class="contact-info">
+                            <p><i class="fa fa-map-marker"></i>123 Fashion Street, Mumbai, India</p>
+                            <p><i class="fa fa-envelope"></i>support@shopstyle.com</p>
+                            <p><i class="fa fa-phone"></i>+91-98765-43210</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-widget">
+                        <h2>Follow Us</h2>
+                        <div class="contact-info">
+                            <div class="social">
+                                <a href=""><i class="fab fa-twitter"></i></a>
+                                <a href=""><i class="fab fa-facebook-f"></i></a>
+                                <a href=""><i class="fab fa-linkedin-in"></i></a>
+                                <a href=""><i class="fab fa-instagram"></i></a>
+                                <a href=""><i class="fab fa-youtube"></i></a>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-widget">
-                            <h2>Follow Us</h2>
-                            <div class="contact-info">
-                                <div class="social">
-                                    <a href=""><i class="fab fa-twitter"></i></a>
-                                    <a href=""><i class="fab fa-facebook-f"></i></a>
-                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
-                                    <a href=""><i class="fab fa-instagram"></i></a>
-                                    <a href=""><i class="fab fa-youtube"></i></a>
-                                </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-widget">
+                        <h2>Company Info</h2>
+                        <ul>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Terms & Condition</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-widget">
+                        <h2>Purchase Info</h2>
+                        <ul>
+                            <li><a href="#">Payment Policy</a></li>
+                            <li><a href="#">Shipping Policy</a></li>
+                            <li><a href="#">Return Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row payment align-items-center">
+                <div class="col-md-6">
+                    <div class="payment-method">
+                        <h2>We Accept:</h2>
+                        <img src="img/payment-method.png" alt="Payment Methods" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="payment-security">
+                        <h2>Secured By:</h2>
+                        <img src="img/godaddy.svg" alt="GoDaddy Security" />
+                        <img src="img/norton.svg" alt="Norton Security" />
+                        <img src="img/ssl.svg" alt="SSL Security" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Footer Bottom Start -->
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 copyright">
+                    <p>Copyright &copy; <a href="#">ShopStyle</a>. All Rights Reserved</p>
+                </div>
+
+                <div class="col-md-6 template-by">
+                    <p>Designed By <a href="https://htmlcodex.com">HTML Codex</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer Bottom End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    // When page loads
+    document.addEventListener("DOMContentLoaded", function () {
+        // 1. Check if user is logged in
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            // If not logged in, redirect to login page
+            alert("Please login to view your orders");
+            window.location.href = "login.html";
+            return;
+        }
+
+        // 2. Show user dropdown (hide login dropdown)
+        const loginDropdown = document.getElementById("loginDropdown");
+        const userAccountDropdown = document.getElementById("userAccountDropdown");
+
+        if (loginDropdown) loginDropdown.style.display = "none";
+        if (userAccountDropdown) userAccountDropdown.style.display = "block";
+
+        // 3. Show payment confirmation message if applicable
+        showPaymentConfirmation();
+
+        // 4. Show review success message if applicable
+        showReviewConfirmation();
+
+        // 5. Update cart count if needed
+        updateCartCount();
+
+        // 6. Load orders
+        loadOrders();
+
+        // 7. Logout button
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", function (e) {
+                e.preventDefault();
+                localStorage.removeItem("token");
+                localStorage.removeItem("latestOrderId");
+                localStorage.removeItem("paymentSuccess");
+                localStorage.removeItem("reviewSuccess");
+                localStorage.removeItem("userReviews"); // Also clear reviews on logout
+                alert("You have been logged out successfully.");
+                window.location.href = "index.html";
+            });
+        }
+    });
+
+    // Function to show payment confirmation message
+    function showPaymentConfirmation() {
+        // Check URL for payment success parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const paymentSuccess = urlParams.get('payment') === 'success';
+        const orderId = urlParams.get('orderId');
+        const paymentId = urlParams.get('paymentId');
+
+        // Check localStorage for payment confirmation
+        const storedPaymentSuccess = localStorage.getItem('paymentSuccess');
+        const storedOrderId = localStorage.getItem('latestOrderId');
+
+        // Determine which order ID to use
+        const confirmedOrderId = orderId || storedOrderId;
+
+        // Show message if payment was successful
+        if (paymentSuccess || storedPaymentSuccess === 'true') {
+            const messageContainer = document.getElementById('paymentConfirmationMessage');
+
+            let messageHTML = `
+                    <div class="payment-success-message">
+                        <div class="payment-success-content">
+                            <div class="payment-success-icon">
+                                <i class="fas fa-check-circle"></i>
                             </div>
+                            <div class="payment-success-text">
+                                <h5>Payment Successful!</h5>
+                                <p>Thank you for your order! Your payment has been confirmed${confirmedOrderId ? ` for Order #${confirmedOrderId}` : ''}.</p>
+                            </div>
+                            <button class="payment-success-close" onclick="closePaymentMessage()">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     </div>
+                `;
 
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-widget">
-                            <h2>Company Info</h2>
-                            <ul>
-                                <li><a href="#">About Us</a></li>
-                                <li><a href="#">Privacy Policy</a></li>
-                                <li><a href="#">Terms & Condition</a></li>
-                            </ul>
-                        </div>
-                    </div>
+            messageContainer.innerHTML = messageHTML;
 
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-widget">
-                            <h2>Purchase Info</h2>
-                            <ul>
-                                <li><a href="#">Payment Policy</a></li>
-                                <li><a href="#">Shipping Policy</a></li>
-                                <li><a href="#">Return Policy</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row payment align-items-center">
-                    <div class="col-md-6">
-                        <div class="payment-method">
-                            <h2>We Accept:</h2>
-                            <img src="img/payment-method.png" alt="Payment Methods" />
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="payment-security">
-                            <h2>Secured By:</h2>
-                            <img src="img/godaddy.svg" alt="GoDaddy Security" />
-                            <img src="img/norton.svg" alt="Norton Security" />
-                            <img src="img/ssl.svg" alt="SSL Security" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Footer End -->
-        
-        <!-- Footer Bottom Start -->
-        <div class="footer-bottom">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 copyright">
-                        <p>Copyright &copy; <a href="#">ShopStyle</a>. All Rights Reserved</p>
-                    </div>
+            // Clean URL without reload (if payment success is in URL)
+            if (paymentSuccess && window.history.replaceState) {
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+            }
 
-                    <div class="col-md-6 template-by">				
-                        <p>Designed By <a href="https://htmlcodex.com">HTML Codex</a></p>
+            // Remove the flags from localStorage after displaying
+            setTimeout(function () {
+                localStorage.removeItem('paymentSuccess');
+                localStorage.removeItem('latestOrderId');
+            }, 10000); // Remove after 10 seconds
+        }
+    }
+
+    // Function to show review confirmation message
+    function showReviewConfirmation() {
+        // Check localStorage for review confirmation
+        const reviewSuccess = localStorage.getItem('reviewSuccess');
+        const reviewedProduct = localStorage.getItem('reviewedProduct');
+
+        if (reviewSuccess === 'true') {
+            const messageContainer = document.getElementById('reviewConfirmationMessage');
+
+            let messageHTML = `
+                    <div class="review-success-message">
+                        <div class="review-success-content">
+                            <div class="review-success-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="review-success-text">
+                                <h5>Review Submitted Successfully!</h5>
+                                <p>Thank you for your review${reviewedProduct ? ` for "${reviewedProduct}"` : ''}.</p>
+                            </div>
+                            <button class="review-success-close" onclick="closeReviewMessage()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <!-- Footer Bottom End -->
-        
-        <!-- Back to Top -->
-        <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
-        
-        <!-- JavaScript Libraries -->
-        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-        
-        <script>
-            // When page loads
-            document.addEventListener("DOMContentLoaded", function() {
-                // 1. Check if user is logged in
-                const token = localStorage.getItem("token");
-                
-                if (!token) {
-                    // If not logged in, redirect to login page
-                    alert("Please login to view your orders");
-                    window.location.href = "login.html";
-                    return;
+                `;
+
+            messageContainer.innerHTML = messageHTML;
+
+            // Remove the flags from localStorage after 10 seconds
+            setTimeout(function () {
+                localStorage.removeItem('reviewSuccess');
+                localStorage.removeItem('reviewedProduct');
+                document.getElementById('reviewConfirmationMessage').innerHTML = '';
+            }, 10000);
+        }
+    }
+
+    // Function to close payment message
+    function closePaymentMessage() {
+        const messageContainer = document.getElementById('paymentConfirmationMessage');
+        messageContainer.innerHTML = '';
+        localStorage.removeItem('paymentSuccess');
+        localStorage.removeItem('latestOrderId');
+    }
+
+    // Function to close review message
+    function closeReviewMessage() {
+        const messageContainer = document.getElementById('reviewConfirmationMessage');
+        messageContainer.innerHTML = '';
+        localStorage.removeItem('reviewSuccess');
+        localStorage.removeItem('reviewedProduct');
+    }
+
+    // Function to create a simple image placeholder
+    function createImagePlaceholder(text = "No Image", width = 40, height = 40) {
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#f0f0f0';
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.strokeStyle = '#ddd';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(0.5, 0.5, width - 1, height - 1);
+
+        ctx.fillStyle = '#999';
+        ctx.font = '8px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        const words = text.split(' ');
+        let lines = [];
+        let currentLine = words[0];
+
+        for (let i = 1; i < words.length; i++) {
+            const testLine = currentLine + ' ' + words[i];
+            const metrics = ctx.measureText(testLine);
+            if (metrics.width < width - 6) {
+                currentLine = testLine;
+            } else {
+                lines.push(currentLine);
+                currentLine = words[i];
+            }
+        }
+        lines.push(currentLine);
+
+        const lineHeight = 10;
+        const startY = (height - (lines.length * lineHeight)) / 2;
+
+        lines.forEach((line, index) => {
+            ctx.fillText(line, width / 2, startY + (index * lineHeight));
+        });
+
+        return canvas.toDataURL();
+    }
+
+    // Pre-create placeholders
+    const productPlaceholder = createImagePlaceholder("Product", 40, 40);
+
+    // Function to update cart count
+    function updateCartCount() {
+        const token = localStorage.getItem("token");
+        if (token) {
+            fetch('/api/user/cart/getAll', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
-                
-                // 2. Show user dropdown (hide login dropdown)
-                const loginDropdown = document.getElementById("loginDropdown");
-                const userAccountDropdown = document.getElementById("userAccountDropdown");
-                
-                if (loginDropdown) loginDropdown.style.display = "none";
-                if (userAccountDropdown) userAccountDropdown.style.display = "block";
-                
-                // 3. Show payment confirmation message if applicable
-                showPaymentConfirmation();
-                
-                // 4. Update cart count if needed
-                updateCartCount();
-                
-                // 5. Load orders
-                loadOrders();
-                
-                // 6. Logout button
-                const logoutBtn = document.getElementById("logoutBtn");
-                if (logoutBtn) {
-                    logoutBtn.addEventListener("click", function(e) {
-                        e.preventDefault();
-                        localStorage.removeItem("token");
-                        localStorage.removeItem("latestOrderId");
-                        localStorage.removeItem("paymentSuccess");
-                        alert("You have been logged out successfully.");
-                        window.location.href = "index.html";
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Cart endpoint not found');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.items) {
+                        const itemCount = data.items.reduce((total, item) => total + (item.quantity || 0), 0);
+                        const cartCountElements = document.querySelectorAll('.cart span');
+                        cartCountElements.forEach(el => {
+                            el.textContent = `(${itemCount})`;
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.log('Error fetching cart count:', error);
+                    const cartCountElements = document.querySelectorAll('.cart span');
+                    cartCountElements.forEach(el => {
+                        el.textContent = '(0)';
                     });
+                });
+        }
+    }
+
+    // Function to load orders from server
+    async function loadOrders() {
+        const token = localStorage.getItem("token");
+        const ordersContainer = document.getElementById("ordersContainer");
+        const loadingMessage = document.getElementById("loadingMessage");
+        const ordersCount = document.getElementById("ordersCount");
+
+        try {
+            const response = await fetch("/api/user/cart/order/getAll", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                loadingMessage.style.display = "none";
+
+                // Debug: Check what data is returned
+                console.log("Orders API Response:", data);
+                if (data.orders && data.orders.length > 0) {
+                    console.log("First order:", data.orders[0]);
+                    console.log("Has _id field?", '_id' in data.orders[0]);
+                    console.log("_id value:", data.orders[0]._id);
+                }
+
+                if (data.orders && data.orders.length > 0) {
+                    ordersCount.textContent = `${data.orders.length} orders found`;
+                    displayOrdersTable(data.orders);
+                } else {
+                    showEmptyState();
+                }
+            } else {
+                throw new Error("Failed to fetch");
+            }
+        } catch (error) {
+            loadingMessage.style.display = "none";
+            ordersCount.textContent = "Error loading orders";
+            console.error("Order Load Error:", error);
+        }
+    }
+
+    // Function to display orders in table format - UPDATED
+    function displayOrdersTable(orders) {
+        const ordersContainer = document.getElementById("ordersContainer");
+        const submittedReviews = JSON.parse(localStorage.getItem('userReviews') || '[]');
+
+        let tableHTML = `
+            <div class="orders-table-container">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Items</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Product Reviews</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+        orders.forEach(order => {
+            const isDelivered = order.status && order.status.toLowerCase() === 'delivered';
+            const orderId = order._id; // MongoDB _id for database operations
+            const orderNumber = order.orderNumber || order.orderId; // For display
+            const items = order.items || [];
+            const firstItem = items[0] || {};
+            const orderDate = new Date(order.orderDate).toLocaleDateString('en-IN');
+            const productId = firstItem.productId || null;
+            const productName = firstItem.name || 'Product';
+
+            console.log("Order debugging:");
+            console.log("MongoDB _id:", orderId);
+            console.log("Order number:", orderNumber);
+            console.log("Product ID from item:", productId);
+            console.log("Order status:", order.status);
+            
+            // Check if this specific product in this order was reviewed
+            const hasReviewed = submittedReviews.some(r => 
+                r.productId === productId && 
+                (r.orderId === orderId || r.orderId === orderNumber)
+            );
+
+            console.log("Has Reviewed", hasReviewed);
+
+            tableHTML += `
+                <tr>
+                    <td class="order-id-cell">
+                        ${orderNumber || 'ORD-' + orderId.toString().slice(-6)}
+                        <span class="small-text">${orderDate}</span>
+                    </td>
+                    <td class="order-items-cell">
+                        <div class="order-items-preview">
+                            <img src="${firstItem.image || 'img/product-placeholder.png'}" class="item-image" onerror="this.src='img/product-placeholder.png'">
+                            <div class="item-details">
+                                <div class="item-name">${productName}</div>
+                                ${items.length > 1 ? `<div class="more-items">+${items.length - 1} more</div>` : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td><div class="order-amount">₹${order.summary?.total || order.total || '0.00'}</div></td>
+                    <td><span class="order-status-badge ${getStatusClass(order.status)}">${order.status}</span></td>
+                    <td>
+                        <div class="review-info">
+                            ${isDelivered ? 
+                                (hasReviewed ? 
+                                    `<div class="review-added-message">
+                                        <i class="fas fa-check-circle"></i> Review Added
+                                    </div>` :
+                                    `<button class="add-review-btn" onclick="openReviewModal('${productId}', '${orderId}', '${encodeURIComponent(productName)}')">
+                                        <i class="fas fa-star mr-1"></i> Add Review
+                                    </button>`
+                                ) :
+                                `<div class="not-delivered-message">
+                                    <i class="fas fa-clock"></i> Submit review after delivery
+                                </div>`
+                            }
+                        </div>
+                    </td>
+                    <td>
+                        <div class="order-actions">
+                            <button class="action-btn invoice" onclick="downloadInvoice('${orderId}')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+        });
+
+        tableHTML += `</tbody></table></div>`;
+        ordersContainer.innerHTML = tableHTML;
+    }
+
+    // Function to open review modal with FIXED star rating
+    function openReviewModal(productId, orderId, productName) {
+        // Decode product name
+        productName = decodeURIComponent(productName);
+        
+        // Remove existing modal if any
+        const existingModal = document.querySelector('#reviewModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        // Create modal HTML
+        const modalHTML = `
+            <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background: linear-gradient(135deg, #FF6F61 0%, #e6554f 100%); color: white;">
+                            <h5 class="modal-title" id="reviewModalLabel">
+                                <i class="fas fa-star mr-2"></i>Write a Review
+                            </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Product Info -->
+                            <div class="product-info-review mb-4">
+                                <h6>Product: <span class="text-primary">${productName}</span></h6>
+                                <small class="text-muted">Order: ${orderId}</small>
+                            </div>
+                            
+                            <!-- Rating Section -->
+                            <div class="rating-section mb-4">
+                                <label class="form-label">Rating <span class="text-danger">*</span></label>
+                                <div class="star-rating" id="starRatingContainer">
+                                    <span class="star" data-value="1" title="Very Bad">
+                                        <i class="fas fa-star"></i>
+                                    </span>
+                                    <span class="star" data-value="2" title="Bad">
+                                        <i class="fas fa-star"></i>
+                                    </span>
+                                    <span class="star" data-value="3" title="Average">
+                                        <i class="fas fa-star"></i>
+                                    </span>
+                                    <span class="star" data-value="4" title="Good">
+                                        <i class="fas fa-star"></i>
+                                    </span>
+                                    <span class="star" data-value="5" title="Excellent">
+                                        <i class="fas fa-star"></i>
+                                    </span>
+                                </div>
+                                <div class="rating-text mt-2" id="ratingTextModal">Select your rating</div>
+                                <div class="rating-labels mt-2 d-flex justify-content-between">
+                                    <small class="text-muted">Very Bad</small>
+                                    <small class="text-muted">Bad</small>
+                                    <small class="text-muted">Average</small>
+                                    <small class="text-muted">Good</small>
+                                    <small class="text-muted">Excellent</small>
+                                </div>
+                                <input type="hidden" id="selectedRating" value="0">
+                            </div>
+                            
+                            <!-- Comment Section -->
+                            <div class="form-group">
+                                <label for="reviewCommentModal" class="form-label">Your Review <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="reviewCommentModal" rows="4" 
+                                          placeholder="Share your experience with this product..." 
+                                          maxlength="500"></textarea>
+                                <small class="text-muted"><span id="charCount">0</span>/500 characters</small>
+                            </div>
+                            
+                            <!-- Error Message -->
+                            <div id="reviewError" class="alert alert-danger mt-3" style="display: none;"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="submitReview('${productId}', '${orderId}', '${encodeURIComponent(productName)}')">
+                                <i class="fas fa-paper-plane mr-2"></i> Submit Review
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add modal to body
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        // Initialize star rating after modal is added to DOM
+        setTimeout(() => {
+            initializeStarRating();
+        }, 100);
+
+        // Show modal
+        $('#reviewModal').modal('show');
+    }
+
+    // Initialize star rating system
+    function initializeStarRating() {
+        const stars = document.querySelectorAll('#starRatingContainer .star');
+        const ratingText = document.getElementById('ratingTextModal');
+        const selectedRatingInput = document.getElementById('selectedRating');
+        
+        if (!stars.length) return;
+        
+        // Rating descriptions
+        const ratingDescriptions = {
+            1: "Very Bad - Terrible experience",
+            2: "Bad - Below expectations",
+            3: "Average - Met basic expectations",
+            4: "Good - Happy with purchase",
+            5: "Excellent - Exceeded expectations"
+        };
+        
+        // Function to update stars based on rating value
+        function updateStars(ratingValue) {
+            stars.forEach(star => {
+                const starValue = parseInt(star.getAttribute('data-value'));
+                if (starValue <= ratingValue) {
+                    star.classList.add('selected');
+                } else {
+                    star.classList.remove('selected');
                 }
             });
             
-            // Function to show payment confirmation message
-            function showPaymentConfirmation() {
-                // Check URL for payment success parameters
-                const urlParams = new URLSearchParams(window.location.search);
-                const paymentSuccess = urlParams.get('payment') === 'success';
-                const orderId = urlParams.get('orderId');
-                const paymentId = urlParams.get('paymentId');
-                
-                // Check localStorage for payment confirmation
-                const storedPaymentSuccess = localStorage.getItem('paymentSuccess');
-                const storedOrderId = localStorage.getItem('latestOrderId');
-                
-                // Determine which order ID to use
-                const confirmedOrderId = orderId || storedOrderId;
-                
-                // Show message if payment was successful
-                if (paymentSuccess || storedPaymentSuccess === 'true') {
-                    const messageContainer = document.getElementById('paymentConfirmationMessage');
-                    
-                    let messageHTML = `
-                        <div class="payment-success-message">
-                            <div class="payment-success-content">
-                                <div class="payment-success-icon">
-                                    <i class="fas fa-check-circle"></i>
-                                </div>
-                                <div class="payment-success-text">
-                                    <h4>Payment Successful!</h4>
-                                    <p>Thank you for your order! Your payment has been confirmed${confirmedOrderId ? ` for Order #${confirmedOrderId}` : ''}.</p>
-                                    <p class="details">
-                                        <i class="fas fa-info-circle"></i> 
-                                        ${paymentId ? `Payment ID: ${paymentId} | ` : ''}
-                                        Order details are shown below. You will receive a confirmation email shortly.
-                                    </p>
-                                </div>
-                                <button class="payment-success-close" onclick="closePaymentMessage()">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    
-                    messageContainer.innerHTML = messageHTML;
-                    
-                    // Clean URL without reload (if payment success is in URL)
-                    if (paymentSuccess && window.history.replaceState) {
-                        const newUrl = window.location.pathname;
-                        window.history.replaceState({}, document.title, newUrl);
-                    }
-                    
-                    // Remove the flags from localStorage after displaying
-                    setTimeout(function() {
-                        localStorage.removeItem('paymentSuccess');
-                        localStorage.removeItem('latestOrderId');
-                    }, 10000); // Remove after 10 seconds
-                }
-            }
+            // Update text and hidden input
+            ratingText.textContent = ratingDescriptions[ratingValue] || "Select your rating";
+            selectedRatingInput.value = ratingValue;
+        }
+        
+        // Initialize with no selection
+        updateStars(0);
+        
+        // Add click event to each star
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const ratingValue = parseInt(this.getAttribute('data-value'));
+                console.log('Star clicked, value:', ratingValue); // Debug log
+                updateStars(ratingValue);
+            });
             
-            // Function to close payment message
-            function closePaymentMessage() {
-                const messageContainer = document.getElementById('paymentConfirmationMessage');
-                messageContainer.innerHTML = '';
-                localStorage.removeItem('paymentSuccess');
-                localStorage.removeItem('latestOrderId');
-            }
-            
-            // Function to create a simple image placeholder
-            function createImagePlaceholder(text = "No Image", width = 80, height = 80) {
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                
-                ctx.fillStyle = '#f0f0f0';
-                ctx.fillRect(0, 0, width, height);
-                
-                ctx.strokeStyle = '#ddd';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(0.5, 0.5, width - 1, height - 1);
-                
-                ctx.fillStyle = '#999';
-                ctx.font = '10px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                
-                const words = text.split(' ');
-                let lines = [];
-                let currentLine = words[0];
-                
-                for (let i = 1; i < words.length; i++) {
-                    const testLine = currentLine + ' ' + words[i];
-                    const metrics = ctx.measureText(testLine);
-                    if (metrics.width < width - 10) {
-                        currentLine = testLine;
+            // Add hover effect
+            star.addEventListener('mouseenter', function() {
+                const ratingValue = parseInt(this.getAttribute('data-value'));
+                stars.forEach(s => {
+                    const sValue = parseInt(s.getAttribute('data-value'));
+                    if (sValue <= ratingValue) {
+                        s.querySelector('i').style.color = '#FFA500';
                     } else {
-                        lines.push(currentLine);
-                        currentLine = words[i];
+                        s.querySelector('i').style.color = '#ddd';
                     }
-                }
-                lines.push(currentLine);
-                
-                const lineHeight = 12;
-                const startY = (height - (lines.length * lineHeight)) / 2;
-                
-                lines.forEach((line, index) => {
-                    ctx.fillText(line, width / 2, startY + (index * lineHeight));
                 });
-                
-                return canvas.toDataURL();
-            }
+            });
             
-            // Pre-create placeholders
-            const productPlaceholder = createImagePlaceholder("Product", 80, 80);
-            const noItemsPlaceholder = createImagePlaceholder("No Items", 80, 80);
-            
-            // Function to update cart count
-            function updateCartCount() {
-                const token = localStorage.getItem("token");
-                if (token) {
-                    fetch('/api/user/cart/getAll', {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Cart endpoint not found');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data && data.items) {
-                            const itemCount = data.items.reduce((total, item) => total + (item.quantity || 0), 0);
-                            const cartCountElements = document.querySelectorAll('.cart span');
-                            cartCountElements.forEach(el => {
-                                el.textContent = `(${itemCount})`;
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.log('Error fetching cart count:', error);
-                        const cartCountElements = document.querySelectorAll('.cart span');
-                        cartCountElements.forEach(el => {
-                            el.textContent = '(0)';
-                        });
-                    });
-                }
-            }
-            
-            // Function to load orders from server
-            async function loadOrders() {
-                const token = localStorage.getItem("token");
-                const ordersContainer = document.getElementById("ordersContainer");
-                const loadingMessage = document.getElementById("loadingMessage");
-                const emptyMessage = document.getElementById("emptyOrdersMessage");
-                
-                // Show loading
-                loadingMessage.style.display = "block";
-                emptyMessage.style.display = "none";
-                
-                try {
-                    const response = await fetch("/api/user/cart/order/getAll", {
-                        method: "GET",
-                        headers: {
-                            "Authorization": `Bearer ${token}`,
-                            "Content-Type": "application/json"
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log("order",data);
-                        // Hide loading
-                        loadingMessage.style.display = "none";
-                        
-                        if (data.orders && data.orders.length > 0) {
-                            // Show orders
-                            displayOrders(data.orders);
-                        } else {
-                            // Show empty message
-                            emptyMessage.style.display = "block";
-                            ordersContainer.innerHTML = `
-                                <div class="empty-orders">
-                                    <i class="fas fa-box-open"></i>
-                                    <h3>No Orders Yet</h3>
-                                    <p>You haven't placed any orders yet. Start shopping to see your orders here.</p>
-                                    <a href="product-list.html" class="btn btn-primary" style="padding: 12px 30px;">
-                                        <i class="fas fa-shopping-bag"></i> Start Shopping
-                                    </a>
-                                </div>`;
-                        }
+            star.addEventListener('mouseleave', function() {
+                const currentRating = parseInt(selectedRatingInput.value) || 0;
+                stars.forEach(s => {
+                    const sValue = parseInt(s.getAttribute('data-value'));
+                    const icon = s.querySelector('i');
+                    if (sValue <= currentRating) {
+                        icon.style.color = s.classList.contains('selected') ? '#FFD700' : '#ddd';
                     } else {
-                        loadingMessage.style.display = "none";
-                        emptyMessage.style.display = "block";
-                        console.error("Failed to load orders");
+                        icon.style.color = '#ddd';
                     }
-                    
-                } catch (error) {
-                    loadingMessage.style.display = "none";
-                    emptyMessage.style.display = "block";
-                    console.error("Error loading orders:", error);
-                }
-            }
-            
-            // Function to display orders
-            function displayOrders(orders) {
-                const ordersContainer = document.getElementById("ordersContainer");
-                let html = "";
-                
-                // Sort orders by date (newest first)
-                orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
-                
-                // Loop through each order and create HTML
-                orders.forEach(order => {
-                    // Format date
-                    const orderDate = new Date(order.orderDate).toLocaleDateString('en-IN', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                    
-                    // Get status class
-                    const statusClass = getStatusClass(order.status);
-                    const statusText = order.status || "CREATED";
-                    
-                    // Check if order has items array with data
-                    const items = order.items || [];
-                    const hasItems = items.length > 0;
-                    
-                    // Calculate item count
-                    const itemCount = order.summary?.itemCount || items.length || 0;
-                    
-                    // Get shipping address details
-                    const shippingAddress = order.shippingAddress || {};
-                    const addressLine = shippingAddress.city ? 
-                        `${shippingAddress.city}, ${shippingAddress.state}` : 
-                        "Address not available";
-                    
-                    // Get payment details
-                    const payment = order.payment || {};
-                    
-                    html += `
-                    <div class="order-card">
-                        <div class="order-header">
-                            <div class="order-info">
-                                <div class="order-id">${order.orderNumber || `Order #${order.orderId || "N/A"}`}</div>
-                                <div class="order-date">Date: ${orderDate}</div>
-                                ${itemCount > 0 ? `<div class="text-muted mt-1" style="font-size: 14px;">${itemCount} item${itemCount !== 1 ? 's' : ''}</div>` : ''}
-                            </div>
-                            <div class="order-status ${statusClass}">${statusText.toUpperCase()}</div>
-                        </div>
-                        
-                        <div class="order-meta">
-                            <div class="meta-badge">
-                                <i class="fas fa-credit-card"></i>
-                                <span>${payment.method || "ONLINE"} - ${payment.status || "N/A"}</span>
-                            </div>
-                            <div class="meta-badge">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>${addressLine}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="product-section">
-                            ${hasItems ? items.map(item => {
-                                // Extract product details with fallbacks
-                                const productName = item.name || item.productName || "Product";
-                                const productPrice = item.price || item.total || "0.00";
-                                const productQty = item.quantity || 1;
-                                
-                                // Build variant info
-                                let variantInfo = '';
-                                if (item.variant) {
-                                    variantInfo = item.variant;
-                                } else if (item.size || item.color) {
-                                    variantInfo = `${item.size ? 'Size: ' + item.size : ''}${item.size && item.color ? ' | ' : ''}${item.color ? 'Color: ' + item.color : ''}`;
-                                }
-                                
-                                // Use canvas placeholder for images
-                                const productImageSrc = (item.image !== '') 
-                    ? item.image 
-                    : productPlaceholder;
-                                
-                                return `
-                                <div class="product-item">
-                                    <img src="${productImageSrc}" 
-                                         alt="${productName}" 
-                                         class="product-image"
-                                         onerror="this.src='${productPlaceholder}'">
-                                    <div class="product-details">
-                                        <div class="product-name">${productName}</div>
-                                        ${variantInfo ? `<div class="product-variant">${variantInfo}</div>` : ''}
-                                        <div class="product-qty">Quantity: ${productQty}</div>
-                                    </div>
-                                    <div class="product-price">₹${productPrice}</div>
-                                </div>
-                                `;
-                            }).join('') : `
-                            <div class="product-item">
-                                <img src="${noItemsPlaceholder}" 
-                                     alt="No items in this order" 
-                                     class="product-image">
-                                <div class="product-details">
-                                    <div class="product-name">Order details not loaded</div>
-                                    <div class="product-variant">Item information is not available for this order</div>
-                                    <div class="product-qty">Please check order details for more information</div>
-                                </div>
-                                <div class="product-price">₹${order.summary?.total || order.total || "0.00"}</div>
-                            </div>
-                            `}
-                        </div>
-                        
-                        <div class="order-footer">
-                            <div class="order-total">
-                                Order Total: <span class="amount">₹${order.summary?.total || order.total || "0.00"}</span>
-                            </div>
-                            <div class="order-actions">
-                                <button class="btn-order-action btn-view" onclick="viewOrderDetails('${order.orderId || order._id}')">
-                                    <i class="fas fa-eye"></i> View Details
-                                </button>
-                                ${hasItems ? `
-                                <button class="btn-order-action btn-reorder" onclick="reorderItems('${order.orderId || order._id}')">
-                                    <i class="fas fa-redo"></i> Buy Again
-                                </button>
-                                ` : ''}
-                                <button class="btn-order-action btn-invoice" onclick="downloadInvoice('${order.orderId || order._id}')">
-                                    <i class="fas fa-download"></i> Invoice
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    `;
                 });
+            });
+        });
+        
+        // Character count for review comment
+        const reviewComment = document.getElementById('reviewCommentModal');
+        const charCount = document.getElementById('charCount');
+        
+        if (reviewComment && charCount) {
+            reviewComment.addEventListener('input', function() {
+                const length = this.value.length;
+                charCount.textContent = length;
                 
-                ordersContainer.innerHTML = html;
-            }
-            
-            // Helper function to get CSS class for status
-            function getStatusClass(status) {
-                if (!status) return 'status-created';
-                status = status.toLowerCase();
-                if (status.includes('pending')) return 'status-pending';
-                if (status.includes('confirm')) return 'status-confirmed';
-                if (status.includes('ship')) return 'status-shipped';
-                if (status.includes('deliver')) return 'status-delivered';
-                if (status.includes('cancel')) return 'status-cancelled';
-                if (status.includes('create')) return 'status-created';
-                return 'status-created';
-            }
-            
-            // Function to view order details
-            async function viewOrderDetails(orderId) {
-                const token = localStorage.getItem("token");
-                
-                try {
-                    // Try to fetch detailed order information
-                    const response = await fetch(`/api/user/cart/order/${orderId}`, {
-                        method: "GET",
-                        headers: {
-                            "Authorization": `Bearer ${token}`,
-                            "Content-Type": "application/json"
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        const orderDetails = await response.json();
-                        showOrderDetailsModal(orderDetails);
-                    } else {
-                        showBasicOrderInfo(orderId);
-                    }
-                } catch (error) {
-                    console.error("Error fetching order details:", error);
-                    showBasicOrderInfo(orderId);
+                if (length > 450) {
+                    charCount.classList.add('text-danger');
+                } else {
+                    charCount.classList.remove('text-danger');
                 }
-            }
+            });
+        }
+    }
+
+    // Function to submit review
+    async function submitReview(productId, orderId, productName) {
+        // Check if user is logged in
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Session expired. Please login again.");
+            window.location.href = "login.html?redirect=order-history.html";
+            return;
+        }
+        
+        // Decode product name
+        productName = decodeURIComponent(productName);
+        
+        // Hide any previous error
+        const errorDiv = document.getElementById('reviewError');
+        if (errorDiv) {
+            errorDiv.style.display = 'none';
+        }
+        
+        // Get rating from the hidden input
+        const ratingValue = parseInt(document.getElementById('selectedRating').value);
+        console.log('Selected rating value:', ratingValue); // Debug log
+        
+        if (!ratingValue || ratingValue === 0) {
+            showReviewError('Please select a rating by clicking on the stars.');
+            return;
+        }
+        
+        // Get comment
+        const comment = document.getElementById('reviewCommentModal').value.trim();
+        if (!comment) {
+            showReviewError('Please write a review before submitting.');
+            return;
+        }
+        
+        if (comment.length < 10) {
+            showReviewError('Please write a more detailed review (at least 10 characters).');
+            return;
+        }
+        
+        // Prepare review data - send rating as 1-5 where 5 is Excellent
+        const reviewData = {
+            productId: productId,
+            orderId: orderId,
+            rating: ratingValue, // This will be 5 for Excellent, 1 for Very Bad
+            comment: comment
+        };
+        
+        console.log("Submitting review data:", reviewData);
+        
+        // Show loading state
+        const submitBtn = document.querySelector('#reviewModal .btn-primary');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
+        submitBtn.disabled = true;
+        
+        try {
+            // Note: Using your backend endpoint /api/user/reviews/add
+            const response = await fetch("/api/user/cart/order/reviews/add", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(reviewData)
+            });
             
-            // Function to show order details in a modal with enhanced features
-            function showOrderDetailsModal(orderDetails) {
-                // Format addresses
-                const shippingAddress = formatAddressForModal(orderDetails.shippingAddress);
-                const billingAddress = formatAddressForModal(orderDetails.billingAddress || orderDetails.shippingAddress);
+            const data = await response.json();
+            console.log("Review submission response:", data);
+            
+            if (response.ok && data.success) {
+                // Success
+                $('#reviewModal').modal('hide');
                 
-                // Create timeline based on status
-                const timelineHTML = createTimelineHTML(orderDetails.status, orderDetails.orderDate);
+                // Store in localStorage to track reviewed items
+                const submittedReviews = JSON.parse(localStorage.getItem('userReviews') || '[]');
+                submittedReviews.push({
+                    productId: productId,
+                    orderId: orderId,
+                    reviewedAt: new Date().toISOString(),
+                    productName: productName,
+                    rating: ratingValue
+                });
+                localStorage.setItem('userReviews', JSON.stringify(submittedReviews));
                 
-                // Create modal HTML with integrated features
-                const modalHTML = `
-                <div class="modal fade order-details-modal" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header" style="background: linear-gradient(135deg, #28a745, #1e7e34); color: white;">
-                                <h5 class="modal-title" id="orderDetailsModalLabel">
-                                    <i class="fas fa-check-circle mr-2"></i>Order Confirmation
-                                </h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <!-- Order Summary -->
-                                <div class="alert alert-success">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-8">
-                                            <h5 class="mb-2">Order Summary</h5>
-                                            <p class="mb-0">Your order has been placed successfully</p>
-                                        </div>
-                                        <div class="col-md-4 text-right">
-                                            <span class="status-badge ${getStatusClass(orderDetails.status)}">
-                                                ${orderDetails.status || 'CONFIRMED'}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Order Details Grid -->
-                                <div class="order-details-grid">
-                                    <div class="order-detail-card">
-                                        <div class="detail-label">Order ID</div>
-                                        <div class="detail-value order-id">${orderDetails.orderNumber || orderDetails.orderId || orderDetails._id}</div>
-                                    </div>
-                                    <div class="order-detail-card">
-                                        <div class="detail-label">Order Date</div>
-                                        <div class="detail-value">${new Date(orderDetails.orderDate || orderDetails.createdAt).toLocaleDateString('en-IN', {
-                                            day: 'numeric',
-                                            month: 'short',
-                                            year: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                        })}</div>
-                                    </div>
-                                    <div class="order-detail-card">
-                                        <div class="detail-label">Payment Method</div>
-                                        <div class="detail-value">${orderDetails.payment?.method || 'Online'}</div>
-                                    </div>
-                                    <div class="order-detail-card">
-                                        <div class="detail-label">Total Amount</div>
-                                        <div class="detail-value">₹${orderDetails.summary?.total || orderDetails.total || "0.00"}</div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Order Timeline -->
-                                <h6 class="mt-4">Order Status Timeline</h6>
-                                ${timelineHTML}
-                                
-                                <!-- Shipping & Billing Info -->
-                                <div class="row mt-4">
-                                    <div class="col-md-6">
-                                        <div class="order-detail-card">
-                                            <h6>Shipping Address</h6>
-                                            ${shippingAddress}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="order-detail-card">
-                                            <h6>Billing Address</h6>
-                                            ${billingAddress}
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Order Items -->
-                                <h6 class="mt-4">Order Items</h6>
-                                <div class="order-items-list">
-                                    ${orderDetails.items && orderDetails.items.length > 0 ? 
-                                        orderDetails.items.map(item => {
-                                            const itemImage = item.image || item.productImage || productPlaceholder;
-                                            const itemName = item.name || item.productName || "Product";
-                                            const itemQuantity = item.quantity || 1;
-                                            const itemPrice = item.price || "0.00";
-                                            const itemTotal = item.total || (item.price * item.quantity) || "0.00";
-                                            
-                                            return `
-                                            <div class="d-flex align-items-center mb-3">
-                                                <img src="${itemImage}" 
-                                                     alt="${itemName}" 
-                                                     class="mr-3" 
-                                                     style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;"
-                                                     onerror="this.src='${productPlaceholder}'">
-                                                <div style="flex: 1;">
-                                                    <p class="mb-1"><strong>${itemName}</strong></p>
-                                                    <p class="mb-1 text-muted" style="font-size: 14px;">
-                                                        Qty: ${itemQuantity} × ₹${itemPrice}
-                                                    </p>
-                                                </div>
-                                                <div>₹${itemTotal}</div>
-                                            </div>
-                                            `;
-                                        }).join('') : 
-                                        '<p class="text-muted">No items found for this order</p>'
-                                    }
-                                </div>
-                                
-                                <!-- Order Summary -->
-                                <div class="mt-4 p-3" style="background: #f8f9fa; border-radius: 8px;">
-                                    <div class="text-right">
-                                        <p><strong>Subtotal:</strong> ₹${orderDetails.summary?.subtotal || "0.00"}</p>
-                                        <p><strong>Shipping:</strong> ₹${orderDetails.summary?.shipping || "0.00"}</p>
-                                        ${orderDetails.summary?.tax ? `<p><strong>Tax:</strong> ₹${orderDetails.summary.tax}</p>` : ''}
-                                        ${orderDetails.summary?.discount ? `<p><strong>Discount:</strong> -₹${orderDetails.summary.discount}</p>` : ''}
-                                        <h5 class="mt-3"><strong>Total:</strong> ₹${orderDetails.summary?.total || orderDetails.total || "0.00"}</h5>
-                                    </div>
-                                </div>
-                                
-                                <!-- Support Info -->
-                                <div class="alert alert-info mt-4" role="alert">
-                                    <h6><i class="fas fa-info-circle mr-2"></i>Need Help?</h6>
-                                    <p class="mb-1">
-                                        If you have any questions about your order, please contact our customer support.
-                                    </p>
-                                    <p class="mb-0">
-                                        <strong>Email:</strong> support@shopstyle.com | 
-                                        <strong>Phone:</strong> +91-98765-43210
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                ${orderDetails.items && orderDetails.items.length > 0 ? 
-                                    `<button type="button" class="btn btn-primary" onclick="reorderItems('${orderDetails.orderId || orderDetails._id}')">
-                                        <i class="fas fa-redo mr-1"></i> Buy Again
-                                    </button>` : 
-                                    ''
-                                }
-                                <button type="button" class="btn btn-success" onclick="downloadInvoice('${orderDetails.orderId || orderDetails._id}')">
-                                    <i class="fas fa-download mr-1"></i> Download Invoice
-                                </button>
-                            </div>
+                // Show success message
+                localStorage.setItem('reviewSuccess', 'true');
+                localStorage.setItem('reviewedProduct', productName);
+                
+                // Reload orders to update review status
+                loadOrders();
+                
+                // Show success message
+                showReviewConfirmation();
+                
+            } else {
+                // Error
+                showReviewError(data.message || 'Failed to submit review. Please try again.');
+            }
+        } catch (error) {
+            console.error('Review submission error:', error);
+            showReviewError('Network error. Please check your connection and try again.');
+        } finally {
+            // Reset button
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }    
+    
+    // Function to show error in review modal
+    function showReviewError(message) {
+        const errorDiv = document.getElementById('reviewError');
+        if (errorDiv) {
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            // Scroll to error
+            errorDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+            alert(message);
+        }
+    }
+
+    // Helper function to get CSS class for status
+    function getStatusClass(status) {
+        if (!status) return 'status-created';
+        status = status.toLowerCase();
+        if (status.includes('deliver')) return 'status-delivered';
+        if (status.includes('ship')) return 'status-shipped';
+        if (status.includes('cancel')) return 'status-cancelled';
+        return 'status-confirmed';
+    }
+
+    // Function to view order details (modal)
+    async function viewOrderDetails(orderId) {
+        const token = localStorage.getItem("token");
+
+        try {
+            // Try to fetch detailed order information
+            const response = await fetch(`/api/user/cart/order/${orderId}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (response.ok) {
+                const orderDetails = await response.json();
+                showOrderDetailsModal(orderDetails);
+            } else {
+                showBasicOrderInfo(orderId);
+            }
+        } catch (error) {
+            console.error("Error fetching order details:", error);
+            showBasicOrderInfo(orderId);
+        }
+    }
+
+    // Function to show order details in a modal - UPDATED to use _id
+    function showOrderDetailsModal(orderDetails) {
+        // Format date
+        const orderDate = new Date(orderDetails.orderDate || orderDetails.createdAt).toLocaleDateString('en-IN', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        // Get status class
+        const statusClass = getStatusClass(orderDetails.status);
+        const statusText = orderDetails.status || "CREATED";
+
+        // Check if order is delivered
+        const isDelivered = orderDetails.status && orderDetails.status.toLowerCase() === 'delivered';
+
+        // Create modal HTML
+        const modalHTML = `
+            <div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background: linear-gradient(135deg, #FF6F61 0%, #e6554f 100%); color: white;">
+                            <h5 class="modal-title" id="orderDetailsModalLabel">
+                                <i class="fas fa-box mr-2"></i>Order Details
+                            </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
-                    </div>
-                </div>
-                `;
-                
-                // Remove existing modal if any
-                const existingModal = document.querySelector('#orderDetailsModal');
-                if (existingModal) {
-                    existingModal.remove();
-                }
-                
-                // Add modal to body
-                document.body.insertAdjacentHTML('beforeend', modalHTML);
-                
-                // Show modal
-                $('#orderDetailsModal').modal('show');
-            }
-            
-            // Function to format address for modal
-            function formatAddressForModal(address) {
-                if (!address || Object.keys(address).length === 0) {
-                    return "<p class='text-muted'>Address details not available</p>";
-                }
-                
+                        <div class="modal-body">
+                            <!-- Order Header -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div>
+                                    <h5 class="mb-1">${orderDetails.orderNumber || `Order #${orderDetails.orderId || orderDetails._id}`}</h5>
+                                    <p class="text-muted mb-0">Placed on ${orderDate}</p>
+                                </div>
+                                <span class="order-status-badge ${statusClass}">${statusText.toUpperCase()}</span>
+                            </div>
+                            
+                            <!-- Order Summary -->
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-muted mb-3">SHIPPING ADDRESS</h6>
+                                            ${orderDetails.shippingAddress ? `
+                                                <p class="mb-1"><strong>${orderDetails.shippingAddress.name || ''}</strong></p>
+                                                <p class="mb-1">${orderDetails.shippingAddress.address || ''}</p>
+                                                <p class="mb-1">${orderDetails.shippingAddress.city || ''}, ${orderDetails.shippingAddress.state || ''}</p>
+                                                <p class="mb-1">${orderDetails.shippingAddress.country || 'India'} - ${orderDetails.shippingAddress.pincode || ''}</p>
+                                                <p class="mb-0"><i class="fas fa-phone mr-2"></i>${orderDetails.shippingAddress.phone || ''}</p>
+                                            ` : '<p class="text-muted">No shipping address available</p>'}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-muted mb-3">PAYMENT DETAILS</h6>
+                                            <p class="mb-2"><strong>Method:</strong> ${orderDetails.payment?.method || 'Online'}</p>
+                                            <p class="mb-2"><strong>Status:</strong> ${orderDetails.payment?.status || 'Paid'}</p>
+                                            ${orderDetails.payment?.paymentId ? `<p class="mb-0"><strong>Payment ID:</strong> ${orderDetails.payment.paymentId}</p>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Order Items -->
+                            <h6 class="mb-3">ORDER ITEMS</h6>
+                            <div class="table-responsive mb-4">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Total</th>
+                                            ${isDelivered ? '<th>Review</th>' : ''}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${orderDetails.items && orderDetails.items.length > 0 ?
+            orderDetails.items.map(item => {
+                const itemImage = item.image ? (Array.isArray(item.image) ? item.image[0] : item.image) : productPlaceholder;
+                const itemName = item.name || item.productName || "Product";
+                const itemPrice = item.price || "0.00";
+                const itemQuantity = item.quantity || 1;
+                const itemTotal = item.total || (item.price * item.quantity) || "0.00";
+                const productId = item.productId || item.product?._id;
+                const safeProductName = encodeURIComponent(itemName);
+
+                // Check if item has been reviewed
+                const submittedReviews = JSON.parse(localStorage.getItem('userReviews') || '[]');
+                const isReviewed = submittedReviews.some(r => 
+                    r.productId === productId && 
+                    r.orderId === orderDetails._id // Use MongoDB _id
+                );
+
                 return `
-                    <p><strong>${address.name || address.fullName || ''}</strong></p>
-                    <p>${address.address || address.house || ''}</p>
-                    ${address.street ? `<p>${address.street}</p>` : ''}
-                    <p>${address.city || ''}, ${address.state || ''} - ${address.pinCode || address.pincode || ''}</p>
-                    <p>${address.country || 'India'}</p>
-                    <p><i class="fas fa-phone mr-2"></i>${address.phone || ''}</p>
-                `;
-            }
-            
-            // Function to create timeline HTML based on order status
-            function createTimelineHTML(status, orderDate) {
-                const statusLower = (status || '').toLowerCase();
-                const orderDateTime = new Date(orderDate || new Date());
-                
-                const steps = [
-                    { id: 'placed', title: 'Order Placed', description: 'Your order has been received', date: orderDateTime },
-                    { id: 'confirmed', title: 'Confirmed', description: 'Order confirmation completed', date: addHours(orderDateTime, 1) },
-                    { id: 'processing', title: 'Processing', description: 'We\'re preparing your order', date: addHours(orderDateTime, 2) },
-                    { id: 'shipped', title: 'Shipped', description: 'Your order is on the way', date: null },
-                    { id: 'delivered', title: 'Delivered', description: 'Order delivered successfully', date: null }
-                ];
-                
-                // Determine which steps are completed/active based on status
-                let timelineHTML = '<div class="timeline">';
-                
-                steps.forEach((step, index) => {
-                    let stepClass = '';
-                    let dateText = '';
-                    
-                    if (statusLower.includes('deliver')) {
-                        // All steps completed
-                        stepClass = index <= 4 ? 'completed' : '';
-                        dateText = step.date ? step.date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '-';
-                    } else if (statusLower.includes('ship')) {
-                        // Up to shipped completed
-                        stepClass = index <= 3 ? 'completed' : '';
-                        dateText = step.date ? step.date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '-';
-                    } else if (statusLower.includes('process') || statusLower.includes('confirm')) {
-                        // Up to processing/confirmed completed
-                        stepClass = index <= 2 ? 'completed' : (index === 3 ? 'active' : '');
-                        dateText = step.date ? step.date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '-';
-                    } else {
-                        // Just placed
-                        stepClass = index === 0 ? 'completed' : (index === 1 ? 'active' : '');
-                        dateText = step.date ? step.date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '-';
-                    }
-                    
-                    timelineHTML += `
-                    <div class="timeline-step ${stepClass}">
-                        <div class="timeline-content">
-                            <div class="timeline-date">${dateText}</div>
-                            <div class="timeline-title">${step.title}</div>
-                            <div class="timeline-description">${step.description}</div>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="${itemImage}" 
+                                                             alt="${itemName}" 
+                                                             style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 10px;"
+                                                             onerror="this.src='${productPlaceholder}'">
+                                                        <div>
+                                                            <div class="font-weight-bold">${itemName}</div>
+                                                            <small class="text-muted">${item.size ? `Size: ${item.size}` : ''} ${item.color ? `Color: ${item.color}` : ''}</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>₹${itemPrice}</td>
+                                                <td>${itemQuantity}</td>
+                                                <td class="font-weight-bold">₹${itemTotal}</td>
+                                                ${isDelivered ? `
+                                                    <td>
+                                                        ${productId ? `
+                                                            ${isReviewed ? 
+                                                                '<span class="text-success"><i class="fas fa-check-circle"></i> Reviewed</span>' :
+                                                                `<button class="btn btn-sm btn-warning" onclick="openReviewModal('${productId}', '${orderDetails._id}', '${safeProductName}')">
+                                                                    <i class="fas fa-star"></i> Add Review
+                                                                </button>`
+                                                            }
+                                                        ` : '<span class="text-muted">N/A</span>'}
+                                                    </td>
+                                                ` : ''}
+                                            </tr>
+                                            `;
+            }).join('') :
+            '<tr><td colspan="5" class="text-center">No items found</td></tr>'
+        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Order Summary -->
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6>ORDER SUMMARY</h6>
+                                        </div>
+                                        <div class="col-md-6 text-right">
+                                            <p class="mb-2"><strong>Subtotal:</strong> ₹${orderDetails.summary?.subtotal || "0.00"}</p>
+                                            <p class="mb-2"><strong>Shipping:</strong> ₹${orderDetails.summary?.shipping || "0.00"}</p>
+                                            ${orderDetails.summary?.tax ? `<p class="mb-2"><strong>Tax:</strong> ₹${orderDetails.summary.tax}</p>` : ''}
+                                            ${orderDetails.summary?.discount ? `<p class="mb-2"><strong>Discount:</strong> -₹${orderDetails.summary.discount}</p>` : ''}
+                                            <hr class="my-2">
+                                            <h5 class="mb-0"><strong>Total:</strong> ₹${orderDetails.summary?.total || orderDetails.total || "0.00"}</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    `;
-                });
-                
-                timelineHTML += '</div>';
-                return timelineHTML;
-            }
-            
-            // Helper function to add hours to date
-            function addHours(date, hours) {
-                const newDate = new Date(date);
-                newDate.setHours(newDate.getHours() + hours);
-                return newDate;
-            }
-            
-            // Function to show basic order info (if details endpoint fails)
-            function showBasicOrderInfo(orderId) {
-                const modalHTML = `
-                <div class="modal fade" id="basicOrderInfoModal" tabindex="-1" role="dialog">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Order #${orderId}</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <p>Detailed order information is not available at the moment.</p>
-                                <p>Please contact customer support for more details about this order.</p>
-                                <p><strong>Support Email:</strong> support@shopstyle.com</p>
-                                <p><strong>Support Phone:</strong> +91-98765-43210</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            ${orderDetails.items && orderDetails.items.length > 0 ?
+            `<button type="button" class="btn btn-primary" onclick="reorderItems('${orderDetails._id}')">
+                                    <i class="fas fa-redo mr-1"></i> Buy Again
+                                </button>` :
+            ''
+        }
+                            <button type="button" class="btn btn-success" onclick="downloadInvoice('${orderDetails._id}')">
+                                <i class="fas fa-download mr-1"></i> Invoice
+                            </button>
                         </div>
                     </div>
                 </div>
-                `;
-                
-                // Remove existing modal if any
-                const existingModal = document.getElementById('basicOrderInfoModal');
-                if (existingModal) {
-                    existingModal.remove();
+            </div>
+            `;
+
+        // Remove existing modal if any
+        const existingModal = document.querySelector('#orderDetailsModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        // Add modal to body
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        // Show modal
+        $('#orderDetailsModal').modal('show');
+    }
+
+    // Function to show basic order info (if details endpoint fails)
+    function showBasicOrderInfo(orderId) {
+        const modalHTML = `
+            <div class="modal fade" id="basicOrderInfoModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Order #${orderId}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Detailed order information is not available at the moment.</p>
+                            <p>Please contact customer support for more details about this order.</p>
+                            <p><strong>Support Email:</strong> support@shopstyle.com</p>
+                            <p><strong>Support Phone:</strong> +91-98765-43210</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            `;
+
+        // Remove existing modal if any
+        const existingModal = document.getElementById('basicOrderInfoModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        // Add modal to body
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        // Show modal
+        $('#basicOrderInfoModal').modal('show');
+    }
+
+    // Function to reorder items
+    async function reorderItems(orderId) {
+        if (!confirm("Add all items from this order to your cart?")) return;
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Please login to add items to cart.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/user/cart/reorder/${orderId}`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
                 }
-                
-                // Add modal to body
-                document.body.insertAdjacentHTML('beforeend', modalHTML);
-                
-                // Show modal
-                $('#basicOrderInfoModal').modal('show');
-            }
-            
-            // Function to reorder items
-            async function reorderItems(orderId) {
-                if (!confirm("Add all items from this order to your cart?")) return;
-                
-                const token = localStorage.getItem("token");
-                if (!token) {
-                    alert("Please login to add items to cart.");
-                    window.location.href = "login.html";
-                    return;
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    alert("Items added to cart successfully!");
+                    updateCartCount();
+                    window.location.href = "cart.html";
+                } else {
+                    alert("Failed to add items to cart: " + (result.message || "Please try again."));
                 }
-                
-                try {
-                    const response = await fetch(`/api/user/cart/reorder/${orderId}`, {
-                        method: "POST",
-                        headers: {
-                            "Authorization": `Bearer ${token}`,
-                            "Content-Type": "application/json"
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        const result = await response.json();
-                        if (result.success) {
-                            alert("Items added to cart successfully!");
-                            updateCartCount();
-                            window.location.href = "cart.html";
-                        } else {
-                            alert("Failed to add items to cart: " + (result.message || "Please try again."));
-                        }
-                    } else {
-                        alert("Reorder feature is not available yet. Please add items manually.");
-                    }
-                } catch (error) {
-                    console.error("Reorder error:", error);
-                    alert("Failed to add items to cart. Please try again or contact support.");
-                }
+            } else {
+                alert("Reorder feature is not available yet. Please add items manually.");
             }
-            
-            // Function to download invoice
-            function downloadInvoice(orderId) {
-                // For now, show an alert. You can implement actual invoice download later.
-                alert(`Invoice for Order #${orderId} will be available soon!\n\nFor now, you can print this page or take a screenshot.`);
-                
-                // Optional: Implement actual PDF generation
-                // window.open(`/api/orders/${orderId}/invoice`, '_blank');
-            }
-        </script>
-    </body>
+        } catch (error) {
+            console.error("Reorder error:", error);
+            alert("Failed to add items to cart. Please try again or contact support.");
+        }
+    }
+
+   
+
+    // Function to show empty state
+    function showEmptyState() {
+        const ordersContainer = document.getElementById("ordersContainer");
+        ordersContainer.innerHTML = `
+            <div class="empty-orders">
+                <div class="empty-icon">
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <h3>No Orders Found</h3>
+                <p>You haven't placed any orders yet.</p>
+                <a href="product-list.html" class="btn btn-primary">
+                    <i class="fas fa-shopping-bag mr-2"></i> Start Shopping
+                </a>
+            </div>
+        `;
+    }
+
+    // Add this function to handle invoice download
+async function downloadInvoice(orderId) {
+    try {
+        const button = event.target.closest('button');
+        const originalHTML = button.innerHTML;
+        
+        // Show loading
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        button.disabled = true;
+        
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Please login to download invoice');
+            window.location.href = 'login.html';
+            return;
+        }
+        
+        // Download PDF
+        const response = await fetch(`/api/user/cart/order/${orderId}/invoice`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) throw new Error('Download failed');
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `invoice-${orderId}.pdf`;
+        link.click();
+        
+        // Cleanup
+        setTimeout(() => {
+            window.URL.revokeObjectURL(url);
+            button.innerHTML = originalHTML;
+            button.disabled = false;
+        }, 100);
+        
+    } catch (error) {
+        console.error('Download error:', error);
+        alert('Failed to download invoice');
+        const button = event.target.closest('button');
+        button.innerHTML = '<i class="fas fa-download"></i>';
+        button.disabled = false;
+    }
+}
+</script>
+</body>
+
 </html>

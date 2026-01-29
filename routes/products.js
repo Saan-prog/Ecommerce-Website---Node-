@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {listProducts, getProduct} = require("../Controller/productsController.js");
-
+const {listProducts, getProduct, getReviews} = require("../Controller/userProductController.js");
 
 
 /**
@@ -102,6 +101,7 @@ const {listProducts, getProduct} = require("../Controller/productsController.js"
 
 router.get("/", listProducts);
 router.get("/:id", getProduct);
+router.get("/:id/reviews", getReviews)
 
 
 module.exports = router;

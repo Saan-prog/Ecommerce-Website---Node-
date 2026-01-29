@@ -231,6 +231,203 @@
         font-size: 12px;
         font-weight: 600;
       }
+
+      /* Coupon Section Styles */
+      .coupon-section {
+        margin: 20px 0;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        border: 1px solid #dee2e6;
+      }
+
+      .coupon-input-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      .coupon-input-group input {
+        flex: 1;
+        padding: 10px 15px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .coupon-input-group button {
+        padding: 10px 20px;
+        background-color: #509ef1;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .coupon-input-group button:hover {
+        background-color: #0056b3;
+      }
+
+      .view-coupons-btn {
+        background: none;
+        border: none;
+        color: #007bff;
+        padding: 0;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+      .view-coupons-btn:hover {
+        color: #0056b3;
+      }
+
+      .applied-coupon {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        background-color: #e8f5e8;
+        border: 1px solid #28a745;
+        border-radius: 6px;
+        margin-top: 15px;
+      }
+
+      .applied-coupon-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .applied-coupon-info .coupon-code {
+        background-color: #28a745;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      .remove-coupon-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .remove-coupon-btn:hover {
+        background: #c82333;
+      }
+
+      .order-summary-item.discount {
+        color: #28a745;
+      }
+
+      /* Coupon Modal Styles */
+      .coupon-modal .modal-content {
+        border-radius: 10px;
+        border: none;
+      }
+
+      .coupon-modal .modal-header {
+        background-color: #007bff;
+        color: white;
+        border-radius: 10px 10px 0 0;
+        padding: 15px 20px;
+      }
+
+      .coupon-modal .modal-title {
+        font-weight: 600;
+      }
+
+      .coupon-modal .close {
+        color: white;
+        opacity: 0.8;
+      }
+
+      .coupon-modal .close:hover {
+        opacity: 1;
+      }
+
+      .coupon-item {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background-color: white;
+      }
+
+      .coupon-item:hover {
+        border-color: #007bff;
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+      }
+
+      .coupon-item.selected {
+        background-color: #e8f4ff;
+        border-color: #007bff;
+      }
+
+      .coupon-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .coupon-code {
+        background-color: #ffc107;
+        color: #212529;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .coupon-discount {
+        color: #28a745;
+        font-weight: 600;
+        font-size: 16px;
+      }
+
+      .coupon-description {
+        color: #495057;
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+
+      .coupon-details {
+        font-size: 12px;
+        color: #6c757d;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 8px;
+      }
+
+      .coupon-minimum {
+        background-color: #f8f9fa;
+        padding: 2px 8px;
+        border-radius: 3px;
+      }
+
+      .coupon-expiry {
+        color: #dc3545;
+      }
+
+      .modal-footer {
+        border-top: 1px solid #dee2e6;
+        padding: 15px 20px;
+      }
     </style>
   </head>
 
@@ -242,6 +439,35 @@
           <span class="sr-only">Loading...</span>
         </div>
         <p class="mt-3" id="loadingMessage">Processing your order...</p>
+      </div>
+    </div>
+
+    <!-- Coupon Modal -->
+    <div class="modal fade coupon-modal" id="couponModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Available Coupons</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true" style="color: white;">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div id="couponList">
+              <!-- Coupons will be loaded here dynamically -->
+              <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="sr-only">Loading coupons...</span>
+                </div>
+                <p class="mt-2">Loading available coupons...</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="applySelectedCouponBtn" disabled>Apply Selected Coupon</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -303,9 +529,9 @@
                   <i class="fa fa-user-circle"></i> My Account
                 </a>
                 <div class="dropdown-menu dropdown-menu-right">
-                  <a href="order-history.html" class="dropdown-item"><i class="fas fa-box"></i> My Orders</a>
-                  <a href="profile.html" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
-                  <div class="dropdown-divider"></div>
+                  <a href="my-account.html" class="dropdown-item"><i class="fas fa-box"></i> Dashboard</a>
+                  
+                  
                   <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
               </div>
@@ -592,6 +818,33 @@
                   </div>
                 </div>
 
+                <!-- Coupon Section -->
+                <div class="coupon-section">
+                  <h5>Apply Coupon</h5>
+                  <div class="coupon-input-group">
+                    <input type="text" id="couponCodeInput" placeholder="Enter coupon code" value="">
+                    <button id="applyCouponBtn" class="btn btn-primary">Apply Code</button>
+                  </div>
+                  <button class="view-coupons-btn" id="viewCouponsBtn">
+                    <i class="fa fa-tags mr-1"></i>View Available Coupons
+                  </button>
+                  
+                  <!-- Applied Coupon Display -->
+                  <div id="appliedCouponSection" style="display: none;">
+                    <div class="applied-coupon mt-3">
+                      <div class="applied-coupon-info">
+                        <strong>Coupon Applied:</strong> 
+                        <span class="coupon-code" id="appliedCouponCode"></span>
+                        <span id="appliedCouponDiscount"></span>
+                      </div>
+                      <button class="remove-coupon-btn" id="removeCouponBtn">
+                        <i class="fa fa-times"></i> Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Order Summary -->
                 <div id="orderSummary">
                   <div class="order-summary-item">
                     <span>Total Items:</span>
@@ -600,6 +853,10 @@
                   <div class="order-summary-item">
                     <span>Sub Total:</span>
                     <span id="subTotal">₹0.00</span>
+                  </div>
+                  <div class="order-summary-item" id="discountSection" style="display: none;">
+                    <span>Discount:</span>
+                    <span id="discountAmount" class="discount">-₹0.00</span>
                   </div>
                   <div class="order-summary-item">
                     <span>Shipping Cost:</span>
@@ -796,730 +1053,1255 @@
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
     <script>
-      // Your Razorpay Key ID
-      const RAZORPAY_KEY_ID = "rzp_test_S05mU7xZjuGxw5";
+  // Your Razorpay Key ID
+  const RAZORPAY_KEY_ID = "rzp_test_S05mU7xZjuGxw5";
 
-      document.addEventListener("DOMContentLoaded", function () {
-        const token = localStorage.getItem("token");
-        const loginDropdown = document.getElementById("loginDropdown");
-        const userAccountDropdown = document.getElementById("userAccountDropdown");
+  // Coupon variables
+  let selectedCoupon = null;
+  let appliedCoupon = null;
 
-        // Check authentication
-        if (token) {
-          loginDropdown.style.display = "none";
-          userAccountDropdown.style.display = "block";
-        } else {
-          loginDropdown.style.display = "block";
-          userAccountDropdown.style.display = "none";
-          showMessage("Please login to proceed to checkout", "warning");
-          setTimeout(() => {
-            window.location.href = "login.html?redirect=checkout.html";
-          }, 1500);
-          return;
+  document.addEventListener("DOMContentLoaded", function () {
+    const token = localStorage.getItem("token");
+    const loginDropdown = document.getElementById("loginDropdown");
+    const userAccountDropdown = document.getElementById("userAccountDropdown");
+
+    // Check authentication
+    if (token) {
+      loginDropdown.style.display = "none";
+      userAccountDropdown.style.display = "block";
+    } else {
+      loginDropdown.style.display = "block";
+      userAccountDropdown.style.display = "none";
+      showMessage("Please login to proceed to checkout", "warning");
+      setTimeout(() => {
+        window.location.href = "login.html?redirect=checkout.html";
+      }, 1500);
+      return;
+    }
+
+    // Load selected items and update UI
+    loadSelectedItems();
+
+    // Load selected address
+    loadSelectedAddress();
+
+    // Setup event listeners
+    setupEventListeners();
+
+    // Razorpay Pay Button Click Handler
+    document
+      .getElementById("razorpayPayBtn")
+      .addEventListener("click", processRazorpayPayment);
+
+    // Logout functionality
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", function () {
+        localStorage.clear();
+        window.location.href = "index.html";
+      });
+    }
+
+    // Load any previously applied coupon
+    loadAppliedCoupon();
+
+    // Setup coupon modal event listeners
+    document.getElementById("viewCouponsBtn").addEventListener("click", showCouponModal);
+    document.getElementById("applySelectedCouponBtn").addEventListener("click", applySelectedCoupon);
+  });
+
+  // Load selected items from localStorage
+  function loadSelectedItems() {
+    console.log("=== DEBUG: localStorage contents ===");
+    console.log("selectedCheckoutItems:", localStorage.getItem("selectedCheckoutItems"));
+    console.log("cartId:", localStorage.getItem("cartId"));
+    console.log("selectedAddressId:", localStorage.getItem("selectedAddressId"));
+    console.log("token exists:", !!localStorage.getItem("token"));
+    try {
+      const selectedCheckoutItems = JSON.parse(
+        localStorage.getItem("selectedCheckoutItems") || "[]"
+      );
+      console.log("Parsed selected items:", selectedCheckoutItems);
+      console.log("Number of items:", selectedCheckoutItems.length);
+      console.log("Selected checkout items:", selectedCheckoutItems);
+
+      if (selectedCheckoutItems.length === 0) {
+        showEmptyCheckout();
+        return;
+      }
+
+      displaySelectedItems(selectedCheckoutItems);
+      calculateAndDisplayTotals(selectedCheckoutItems);
+
+      // Fetch cart ID if not in localStorage
+      const cartId = localStorage.getItem("cartId");
+      if (!cartId) {
+        fetchCartId();
+      }
+    } catch (error) {
+      console.error("Error loading selected items:", error);
+      showEmptyCheckout();
+    }
+  }
+
+  // Fetch cart ID from server
+  async function fetchCartId() {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const response = await fetch("/api/user/cart/getAll", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const cartData = await response.json();
+        if (cartData._id) {
+          localStorage.setItem("cartId", cartData._id);
         }
+      }
+    } catch (error) {
+      console.error("Error fetching cart ID:", error);
+    }
+  }
 
-        // Load selected items and update UI
-        loadSelectedItems();
+  // Display selected items with images
+  function displaySelectedItems(items) {
+    const itemsList = document.getElementById("selectedItemsList");
+    const selectedItemsCount = document.getElementById("selectedItemsCount");
+    const selectedItemsBadge = document.getElementById("selectedItemsBadge");
 
-        // Load selected address
-        loadSelectedAddress();
+    if (!items || items.length === 0) {
+      showEmptyCheckout();
+      return;
+    }
 
-        // Setup event listeners
-        setupEventListeners();
+    let itemsHtml = "";
+    items.forEach((item, index) => {
+      const itemName = item.name || "Product";
+      const itemSize = item.size || "";
+      const itemPrice = item.price || 0;
+      const itemQuantity = item.quantity || 1;
+      const totalPrice = itemPrice * itemQuantity;
 
-        // Razorpay Pay Button Click Handler
-        document.getElementById("razorpayPayBtn").addEventListener("click", processRazorpayPayment);
+      // Get image URL - handle both single image and array
+      let imageUrl = "";
+      if (item.image) {
+        if (Array.isArray(item.image) && item.image.length > 0) {
+          imageUrl = item.image[0];
+        } else if (typeof item.image === "string") {
+          imageUrl = item.image;
+        }
+      }
 
-        // Logout functionality
-        const logoutBtn = document.getElementById("logoutBtn");
-        if (logoutBtn) {
-          logoutBtn.addEventListener("click", function () {
-            localStorage.clear();
-            window.location.href = "index.html";
-          });
+      // Also check for images field
+      if (
+        !imageUrl &&
+        item.images &&
+        Array.isArray(item.images) &&
+        item.images.length > 0
+      ) {
+        imageUrl = item.images[0];
+      }
+
+      // Ensure proper image URL format
+      if (imageUrl) {
+        if (
+          !imageUrl.startsWith("http") &&
+          !imageUrl.startsWith("/") &&
+          !imageUrl.startsWith("uploads/")
+        ) {
+          imageUrl = "/uploads/" + imageUrl;
+        } else if (imageUrl && imageUrl.startsWith("uploads/")) {
+          imageUrl = "/" + imageUrl;
+        }
+      }
+
+      console.log(`Item ${index + 1} image URL:`, imageUrl);
+
+      itemsHtml += `
+        <div class="selected-item" data-item-index="${index}">
+          <div class="item-image-container">
+            ${
+              imageUrl
+                ? `<img src="${imageUrl}" alt="${itemName}" class="item-image" onerror="handleImageError(this, '${itemName}')">`
+                : `<div class="item-image-placeholder" title="${itemName}"><i class="fas fa-image"></i></div>`
+            }
+          </div>
+          <div class="item-info">
+            <div class="item-name">${itemName}</div>
+            <div class="item-details">
+              ${itemSize ? `Size: ${itemSize}` : ""}
+            </div>
+            <div class="item-quantity">Quantity: ${itemQuantity}</div>
+            <div class="item-price-display" style="display: none;">₹${itemPrice.toFixed(
+              2
+            )} each</div>
+          </div>
+          <div class="item-price">₹${totalPrice.toFixed(2)}</div>
+        </div>
+      `;
+    });
+
+    itemsList.innerHTML = itemsHtml;
+    selectedItemsCount.textContent = items.length;
+    selectedItemsBadge.textContent = items.length;
+  }
+
+  // Image error handler
+  function handleImageError(img, itemName) {
+    console.log(`Image failed to load for: ${itemName}`, img.src);
+    img.style.display = "none";
+    img.parentElement.innerHTML = `<div class="item-image-placeholder" title="${itemName}"><i class="fas fa-image"></i></div>`;
+  }
+
+  // Show empty checkout message
+  function showEmptyCheckout() {
+    const itemsList = document.getElementById("selectedItemsList");
+    const selectedItemsCount = document.getElementById("selectedItemsCount");
+    const selectedItemsBadge = document.getElementById("selectedItemsBadge");
+    const placeOrderBtn = document.getElementById("placeOrderBtn");
+    const razorpayPayBtn = document.getElementById("razorpayPayBtn");
+
+    if (itemsList) {
+      itemsList.innerHTML = `
+        <div class="empty-cart-message">
+          <p>No items selected for checkout.</p>
+          <p>Please go back to your cart and select items to checkout.</p>
+          <a href="cart.html" class="btn btn-primary">Back to Cart</a>
+        </div>
+      `;
+    }
+
+    if (selectedItemsCount) selectedItemsCount.textContent = "0";
+    if (selectedItemsBadge) selectedItemsBadge.textContent = "0";
+    if (placeOrderBtn) {
+      placeOrderBtn.textContent = "No Items Selected";
+      placeOrderBtn.disabled = true;
+    }
+    if (razorpayPayBtn) {
+      razorpayPayBtn.disabled = true;
+      razorpayPayBtn.textContent = "No Items Selected";
+    }
+
+    document.getElementById("totalItemsCount").textContent = "0";
+    document.getElementById("subTotal").textContent = "₹0.00";
+    document.getElementById("shippingCost").textContent = "₹50.00";
+    document.getElementById("totalCost").textContent = "₹0.00";
+  }
+
+  // Calculate and display totals
+  function calculateAndDisplayTotals(items, coupon = null) {
+    if (!items || items.length === 0) {
+      showEmptyCheckout();
+      return;
+    }
+
+    const subtotal = items.reduce((total, item) => {
+      const itemPrice = parseFloat(item.price) || 0;
+      const itemQuantity = parseInt(item.quantity) || 1;
+      return total + (itemPrice * itemQuantity);
+    }, 0);
+
+    const totalItemsCount = items.reduce((total, item) => {
+      return total + (parseInt(item.quantity) || 1);
+    }, 0);
+
+    const shippingCost = 50.0;
+    
+    // Calculate discount if coupon is applied
+    let discountAmount = 0;
+    if (coupon && subtotal >= (coupon.minimumAmount || 0)) {
+      if (coupon.discountType === 'percentage') {
+        discountAmount = (subtotal * parseFloat(coupon.discountValue)) / 100;
+        // Ensure discount doesn't exceed max discount if specified
+        if (coupon.maxDiscount && discountAmount > coupon.maxDiscount) {
+          discountAmount = parseFloat(coupon.maxDiscount);
+        }
+      } else if (coupon.discountType === 'fixed') {
+        discountAmount = parseFloat(coupon.discountValue);
+      }
+    }
+    
+    const totalCost = subtotal + shippingCost - discountAmount;
+
+    // Update UI
+    document.getElementById("totalItemsCount").textContent = totalItemsCount;
+    document.getElementById("subTotal").textContent = `₹${subtotal.toFixed(2)}`;
+    document.getElementById("shippingCost").textContent = `₹${shippingCost.toFixed(2)}`;
+    document.getElementById("totalCost").textContent = `₹${totalCost.toFixed(2)}`;
+
+    // Show/hide discount section
+    const discountSection = document.getElementById("discountSection");
+    const discountAmountElement = document.getElementById("discountAmount");
+    
+    if (discountAmount > 0) {
+      discountSection.style.display = "flex";
+      discountAmountElement.textContent = `-₹${discountAmount.toFixed(2)}`;
+    } else {
+      discountSection.style.display = "none";
+    }
+
+    // Update buttons
+    const placeOrderBtn = document.getElementById("placeOrderBtn");
+    if (placeOrderBtn) {
+      placeOrderBtn.textContent = `Place Order - ₹${totalCost.toFixed(2)}`;
+      placeOrderBtn.disabled = false;
+    }
+
+    const razorpayPayBtn = document.getElementById("razorpayPayBtn");
+    if (razorpayPayBtn) {
+      razorpayPayBtn.textContent = `Pay ₹${totalCost.toFixed(2)} with Razorpay`;
+      razorpayPayBtn.disabled = false;
+    }
+
+    // Save to localStorage
+    localStorage.setItem("checkoutSubtotal", subtotal.toFixed(2));
+    localStorage.setItem("checkoutTotal", totalCost.toFixed(2));
+    localStorage.setItem("checkoutItemsCount", totalItemsCount.toString());
+    
+    // Store coupon data if applied
+    if (coupon) {
+      localStorage.setItem("appliedCoupon", JSON.stringify(coupon));
+      localStorage.setItem("discountAmount", discountAmount.toFixed(2));
+    } else {
+      localStorage.removeItem("appliedCoupon");
+      localStorage.removeItem("discountAmount");
+    }
+  }
+
+  // Load selected address
+  async function loadSelectedAddress() {
+    const token = localStorage.getItem("token");
+    const selectedAddressId = localStorage.getItem("selectedAddressId");
+
+    if (!token) {
+      console.log("No token, cannot load address");
+      return;
+    }
+
+    if (!selectedAddressId) {
+      console.log("⚠️ No address selected in localStorage");
+      showMessage(
+        "Please select an address from Manage Addresses page",
+        "warning"
+      );
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/user/addresses", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const addresses = data.addresses || data.data || [];
+        const selectedAddress = addresses.find(
+          (addr) => addr._id === selectedAddressId
+        );
+
+        if (selectedAddress) {
+          populateBillingForm(selectedAddress);
+        } else {
+          showMessage(
+            "Selected address not found. Please select a new address.",
+            "warning"
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Error loading addresses:", error);
+    }
+  }
+
+  // Populate billing form with address data
+  function populateBillingForm(address) {
+    if (address.fullName)
+      document.getElementById("billingFullName").value = address.fullName;
+    if (address.phone)
+      document.getElementById("billingPhone").value = address.phone;
+    if (address.house) document.getElementById("billingHouse").value = address.house;
+    if (address.street) document.getElementById("billingStreet").value = address.street;
+    if (address.city) document.getElementById("billingCity").value = address.city;
+    if (address.state) document.getElementById("billingState").value = address.state;
+    if (address.pinCode)
+      document.getElementById("billingPinCode").value = address.pinCode;
+
+    document.getElementById("sameAsBilling").checked = true;
+    copyBillingToShipping();
+  }
+
+  // Copy billing address to shipping address
+  function copyBillingToShipping() {
+    document.getElementById("shippingFullName").value =
+      document.getElementById("billingFullName").value;
+    document.getElementById("shippingPhone").value =
+      document.getElementById("billingPhone").value;
+    document.getElementById("shippingHouse").value =
+      document.getElementById("billingHouse").value;
+    document.getElementById("shippingStreet").value =
+      document.getElementById("billingStreet").value;
+    document.getElementById("shippingCity").value =
+      document.getElementById("billingCity").value;
+    document.getElementById("shippingState").value =
+      document.getElementById("billingState").value;
+    document.getElementById("shippingPinCode").value =
+      document.getElementById("billingPinCode").value;
+  }
+
+  // Setup event listeners
+  function setupEventListeners() {
+    const sameAsBilling = document.getElementById("sameAsBilling");
+    sameAsBilling.addEventListener("change", function () {
+      if (this.checked) {
+        copyBillingToShipping();
+      }
+    });
+
+    const placeOrderBtn = document.getElementById("placeOrderBtn");
+    placeOrderBtn.addEventListener("click", placeOrder);
+
+    const billingInputs = document.querySelectorAll("#billingForm input");
+    billingInputs.forEach((input) => {
+      input.addEventListener("input", function () {
+        if (sameAsBilling.checked) {
+          copyBillingToShipping();
+        }
+      });
+    });
+
+    const paymentOptions = document.querySelectorAll('input[name="payment"]');
+    paymentOptions.forEach((option) => {
+      option.addEventListener("change", function () {
+        console.log("Payment method changed to:", this.value);
+      });
+    });
+
+    // Coupon related event listeners
+    document.getElementById("applyCouponBtn").addEventListener("click", applyCouponFromInput);
+    document.getElementById("removeCouponBtn").addEventListener("click", removeCoupon);
+    
+    // Enter key in coupon input
+    document.getElementById("couponCodeInput").addEventListener("keypress", function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        applyCouponFromInput();
+      }
+    });
+  }
+
+  // Load applied coupon from localStorage
+  function loadAppliedCoupon() {
+    const savedCoupon = localStorage.getItem("appliedCoupon");
+    if (savedCoupon) {
+      try {
+        appliedCoupon = JSON.parse(savedCoupon);
+        console.log("Loaded coupon:", appliedCoupon);
+        displayAppliedCoupon(appliedCoupon);
+        
+        // Recalculate totals with the coupon
+        const selectedCheckoutItems = JSON.parse(
+          localStorage.getItem("selectedCheckoutItems") || "[]"
+        );
+        if (selectedCheckoutItems.length > 0) {
+          calculateAndDisplayTotals(selectedCheckoutItems, appliedCoupon);
+        }
+      } catch (error) {
+        console.error("Error parsing saved coupon:", error);
+        localStorage.removeItem("appliedCoupon");
+      }
+    }
+  }
+
+  // Display applied coupon
+  function displayAppliedCoupon(coupon) {
+    const appliedCouponSection = document.getElementById("appliedCouponSection");
+    const appliedCouponCode = document.getElementById("appliedCouponCode");
+    const appliedCouponDiscount = document.getElementById("appliedCouponDiscount");
+    
+    appliedCouponCode.textContent = coupon.code;
+    
+    if (coupon.discountType === 'percentage') {
+      appliedCouponDiscount.textContent = `${coupon.discountValue}% OFF`;
+    } else if (coupon.discountType === 'fixed') {
+      appliedCouponDiscount.textContent = `₹${coupon.discountValue} OFF`;
+    } else {
+      appliedCouponDiscount.textContent = "Discount Applied";
+    }
+    
+    appliedCouponSection.style.display = "block";
+  }
+
+  // Apply coupon from input field
+  async function applyCouponFromInput() {
+    const couponCode = document.getElementById("couponCodeInput").value.trim();
+    
+    if (!couponCode) {
+      showMessage("Please enter a coupon code", "warning");
+      return;
+    }
+
+    await validateAndApplyCoupon(couponCode);
+  }
+
+  // Show coupon modal
+  async function showCouponModal() {
+    $('#couponModal').modal('show');
+    await loadAvailableCoupons();
+  }
+
+  // Load available coupons
+  async function loadAvailableCoupons() {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      // Get subtotal to filter coupons
+      const selectedCheckoutItems = JSON.parse(
+        localStorage.getItem("selectedCheckoutItems") || "[]"
+      );
+      
+      if (selectedCheckoutItems.length === 0) {
+        document.getElementById("couponList").innerHTML = `
+          <div class="text-center py-4">
+            <p>No items in cart. Please add items to view coupons.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const subtotal = selectedCheckoutItems.reduce((total, item) => {
+        return total + (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1);
+      }, 0);
+
+      // Fetch coupons from backend API
+      await fetchAndDisplayCoupons(token, subtotal);
+      
+    } catch (error) {
+      console.error("Error loading coupons:", error);
+      document.getElementById("couponList").innerHTML = `
+        <div class="text-center py-4">
+          <p class="text-danger">Error loading coupons. Please try again.</p>
+        </div>
+      `;
+    }
+  }
+
+  // Fetch and display coupons from backend
+  async function fetchAndDisplayCoupons(token, subtotal) {
+    try {
+      // Try to fetch coupons from your backend API
+      const response = await fetch('/api/user/coupon/getAll', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
 
-      // Load selected items from localStorage
-      function loadSelectedItems() {
-        try {
-          const selectedCheckoutItems = JSON.parse(
-            localStorage.getItem("selectedCheckoutItems") || "[]"
-          );
+      let coupons = [];
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log("API Coupon response:", data); // Debug log
+        
+        // Handle the response structure from your backend
+        if (data.success && data.coupons && Array.isArray(data.coupons)) {
+          coupons = data.coupons;
+        } else {
+          console.error("Unexpected coupon response structure:", data);
+          coupons = getMockCoupons(); // Fallback to mock
+        }
+        
+      } else {
+        console.error("API failed, using mock coupons");
+        coupons = getMockCoupons();
+      }
 
-          console.log("Selected checkout items:", selectedCheckoutItems);
+      displayCouponsInModal(coupons, subtotal);
+      
+    } catch (error) {
+      console.error("Error fetching coupons:", error);
+      const coupons = getMockCoupons();
+      displayCouponsInModal(coupons, subtotal);
+    }
+  }
 
-          if (selectedCheckoutItems.length === 0) {
-            showEmptyCheckout();
-            return;
+  // Get mock coupons (for demonstration)
+  function getMockCoupons() {
+    return [
+      {
+        _id: "1",
+        code: "0E7QLW4J",
+        discountType: "fixed",
+        discountValue: 150,
+        minPurchaseAmount: 1500,
+        maxDiscountAmount: 150,
+        description: "₹150 off on orders above ₹1500",
+        expiryDate: "2026-01-29",
+        isActive: true
+      },
+      {
+        _id: "2",
+        code: "RY9R43EJ",
+        discountType: "percentage",
+        discountValue: 15,
+        minPurchaseAmount: 899,
+        maxDiscountAmount: null,
+        description: "15% off on orders above ₹899",
+        expiryDate: "2026-01-28",
+        isActive: true
+      },
+      {
+        _id: "3",
+        code: "WELCOME10",
+        discountType: "percentage",
+        discountValue: 10,
+        minPurchaseAmount: 500,
+        maxDiscountAmount: 200,
+        description: "Welcome discount for new customers",
+        expiryDate: "2024-12-31",
+        isActive: true
+      },
+      {
+        _id: "4",
+        code: "FLAT50",
+        discountType: "fixed",
+        discountValue: 50,
+        minPurchaseAmount: 300,
+        maxDiscountAmount: null,
+        description: "Flat ₹50 off on orders above ₹300",
+        expiryDate: "2024-12-31",
+        isActive: true
+      }
+    ];
+  }
+
+  // Display coupons in modal
+  function displayCouponsInModal(coupons, subtotal) {
+    const couponList = document.getElementById("couponList");
+    
+    if (!coupons || coupons.length === 0) {
+      couponList.innerHTML = `
+        <div class="text-center py-4">
+          <p>No coupons available at the moment.</p>
+        </div>
+      `;
+      return;
+    }
+
+    let couponsHtml = '';
+    
+    coupons.forEach(coupon => {
+      // Use minPurchaseAmount from your API response
+      const minAmount = coupon.minPurchaseAmount || 0;
+      const isApplicable = subtotal >= minAmount;
+      const expiryDate = new Date(coupon.expiryDate);
+      const today = new Date();
+      const isExpired = expiryDate < today;
+      const daysRemaining = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+      
+      let discountText = '';
+      if (coupon.discountType === 'percentage') {
+        discountText = `${coupon.discountValue}% OFF`;
+      } else if (coupon.discountType === 'fixed') {
+        discountText = `₹${coupon.discountValue} OFF`;
+      } else {
+        discountText = 'Discount Applied';
+      }
+
+      // Use description from API or generate one
+      const description = coupon.description || 
+        `${discountText}${minAmount > 0 ? ` on orders above ₹${minAmount}` : ''}`;
+
+      couponsHtml += `
+        <div class="coupon-item ${isApplicable && !isExpired ? '' : 'not-applicable'}" 
+             data-coupon='${JSON.stringify(coupon)}'
+             onclick="selectCouponInModal(this)">
+          <div class="coupon-header">
+            <span class="coupon-code">${coupon.code}</span>
+            <span class="coupon-discount">${discountText}</span>
+          </div>
+          <div class="coupon-description">${description}</div>
+          <div class="coupon-details">
+            ${minAmount > 0 ? `<span class="coupon-minimum">Min. order: ₹${minAmount}</span>` : ''}
+            ${coupon.maxDiscountAmount ? `<span class="coupon-max">Max discount: ₹${coupon.maxDiscountAmount}</span>` : ''}
+            <span class="coupon-expiry">Expires: ${expiryDate.toLocaleDateString()}</span>
+          </div>
+          ${isExpired ? 
+            '<div class="text-danger mt-2"><small><i class="fa fa-exclamation-circle"></i> This coupon has expired</small></div>' : 
+            !isApplicable ? 
+            `<div class="text-warning mt-2"><small><i class="fa fa-info-circle"></i> Add ₹${Math.max(0, (minAmount - subtotal)).toFixed(2)} more to apply</small></div>` :
+            `<div class="text-success mt-2"><small><i class="fa fa-check-circle"></i> You can apply this coupon (${daysRemaining} days remaining)</small></div>`
           }
+        </div>
+      `;
+    });
 
-          displaySelectedItems(selectedCheckoutItems);
-          calculateAndDisplayTotals(selectedCheckoutItems);
+    couponList.innerHTML = couponsHtml;
+  }
 
-          // Fetch cart ID if not in localStorage
-          const cartId = localStorage.getItem("cartId");
-          if (!cartId) {
-            fetchCartId();
+  // Select coupon in modal
+  function selectCouponInModal(element) {
+    const couponItem = element;
+    const couponData = JSON.parse(couponItem.getAttribute('data-coupon'));
+    
+    // Check if coupon is applicable
+    const selectedCheckoutItems = JSON.parse(
+      localStorage.getItem("selectedCheckoutItems") || "[]"
+    );
+    const subtotal = selectedCheckoutItems.reduce((total, item) => {
+      return total + (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1);
+    }, 0);
+    
+    const expiryDate = new Date(couponData.expiryDate);
+    const today = new Date();
+    const isExpired = expiryDate < today;
+    const minAmount = couponData.minPurchaseAmount || 0;
+    
+    if (isExpired) {
+      showMessage("This coupon has expired", "warning");
+      return;
+    }
+    
+    if (subtotal < minAmount) {
+      showMessage(`Minimum order amount required: ₹${minAmount}`, "warning");
+      return;
+    }
+    
+    // Deselect all coupons
+    document.querySelectorAll('.coupon-item').forEach(item => {
+      item.classList.remove('selected');
+    });
+    
+    // Select this coupon
+    couponItem.classList.add('selected');
+    selectedCoupon = couponData;
+    
+    // Enable apply button
+    document.getElementById('applySelectedCouponBtn').disabled = false;
+  }
+
+  // Apply selected coupon from modal
+  async function applySelectedCoupon() {
+    if (!selectedCoupon) {
+      showMessage("Please select a coupon first", "warning");
+      return;
+    }
+
+    await validateAndApplyCoupon(selectedCoupon.code);
+    
+    // Close modal and reset
+    $('#couponModal').modal('hide');
+    selectedCoupon = null;
+    document.getElementById('applySelectedCouponBtn').disabled = true;
+  }
+
+  // Validate and apply coupon
+  async function validateAndApplyCoupon(couponCode) {
+    const token = localStorage.getItem("token");
+    const selectedCheckoutItems = JSON.parse(
+      localStorage.getItem("selectedCheckoutItems") || "[]"
+    );
+    
+    if (selectedCheckoutItems.length === 0) {
+      showMessage("No items in cart to apply coupon", "warning");
+      return;
+    }
+
+    const subtotal = selectedCheckoutItems.reduce((total, item) => {
+      const itemPrice = parseFloat(item.price) || 0;
+      const itemQuantity = parseInt(item.quantity) || 1;
+      return total + (itemPrice * itemQuantity);
+    }, 0);
+
+    showLoading("Validating coupon...");
+
+    try {
+      // Call your backend API
+      const response = await fetch('/api/user/coupon/validate', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          couponCode: couponCode,
+          cartTotal: subtotal
+        })
+      });
+
+      const data = await response.json();
+      console.log("Coupon validation response:", data);
+      
+      if (data.success && data.valid) {
+        // Coupon is valid - create coupon object
+        appliedCoupon = {
+          code: data.coupon.code,
+          discountType: data.coupon.discountType,
+          discountValue: data.coupon.discountValue,
+          // Use minPurchaseAmount from coupon object
+          minimumAmount: data.coupon.minPurchaseAmount || 0,
+          maxDiscount: data.coupon.maxDiscountAmount,
+          discountAmount: data.discountAmount,
+          finalAmount: data.finalAmount
+        };
+        
+        displayAppliedCoupon(appliedCoupon);
+        calculateAndDisplayTotals(selectedCheckoutItems, appliedCoupon);
+        
+        showMessage(data.message || `Coupon applied successfully!`, "success");
+        document.getElementById("couponCodeInput").value = "";
+      } else {
+        // Coupon is invalid - show error message
+        let errorMessage = data.message || "Invalid coupon code";
+        
+        // Add additional info if available
+        if (data.minimumAmount) {
+          const remaining = data.remainingAmount || 0;
+          errorMessage += `. Minimum purchase of ₹${data.minimumAmount} required`;
+          if (remaining > 0) {
+            errorMessage += `. Add ₹${remaining} more to apply.`;
           }
-        } catch (error) {
-          console.error("Error loading selected items:", error);
-          showEmptyCheckout();
         }
+        
+        showMessage(errorMessage, "danger");
       }
+      
+    } catch (error) {
+      console.error("Error validating coupon:", error);
+      showMessage("Error applying coupon. Please try again.", "danger");
+    } finally {
+      hideLoading();
+    }
+  }
 
-      // Fetch cart ID from server
-      async function fetchCartId() {
-        const token = localStorage.getItem("token");
-        if (!token) return;
+  // Remove applied coupon
+  function removeCoupon() {
+    appliedCoupon = null;
+    document.getElementById("appliedCouponSection").style.display = "none";
+    
+    // Recalculate totals without coupon
+    const selectedCheckoutItems = JSON.parse(
+      localStorage.getItem("selectedCheckoutItems") || "[]"
+    );
+    calculateAndDisplayTotals(selectedCheckoutItems);
+    
+    localStorage.removeItem("appliedCoupon");
+    localStorage.removeItem("discountAmount");
+    
+    showMessage("Coupon removed", "info");
+  }
 
-        try {
-          const response = await fetch("/api/user/cart/getAll", {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
+  // Variable to store the order ID for verification
+  let createdOrderId = null;
 
-          if (response.ok) {
-            const cartData = await response.json();
-            if (cartData._id) {
-              localStorage.setItem("cartId", cartData._id);
-            }
-          }
-        } catch (error) {
-          console.error("Error fetching cart ID:", error);
-        }
-      }
+  // ========== RAZORPAY PAYMENT PROCESSING ==========
+  async function processRazorpayPayment() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      showMessage("Please login to make payment", "warning");
+      window.location.href = "login.html";
+      return;
+    }
 
-      // Display selected items with images
-      function displaySelectedItems(items) {
-        const itemsList = document.getElementById("selectedItemsList");
-        const selectedItemsCount = document.getElementById("selectedItemsCount");
-        const selectedItemsBadge = document.getElementById("selectedItemsBadge");
+    const selectedCheckoutItems = JSON.parse(
+      localStorage.getItem("selectedCheckoutItems") || "[]"
+    );
 
-        if (!items || items.length === 0) {
-          showEmptyCheckout();
-          return;
-        }
+    if (selectedCheckoutItems.length === 0) {
+      showMessage("No items selected for checkout", "warning");
+      return;
+    }
 
-        let itemsHtml = "";
-        items.forEach((item) => {
-          const itemName = item.name || "Product";
-          const itemSize = item.size || "";
-          const itemPrice = item.price || 0;
-          const itemQuantity = item.quantity || 1;
-          const totalPrice = itemPrice * itemQuantity;
-          
-          // Get image URL - handle both single image and array
-          let imageUrl = '';
-          if (item.image) {
-            if (Array.isArray(item.image) && item.image.length > 0) {
-              imageUrl = item.image[0];
-            } else if (typeof item.image === 'string') {
-              imageUrl = item.image;
-            }
-          }
-          
-          // Also check for images field
-          if (!imageUrl && item.images && Array.isArray(item.images) && item.images.length > 0) {
-            imageUrl = item.images[0];
-          }
+    if (!validateForms()) {
+      return;
+    }
 
-          itemsHtml += `
-            <div class="selected-item">
-              <div class="item-image-container">
-                ${imageUrl ? 
-                  `<img src="${imageUrl}" alt="${itemName}" class="item-image" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\"item-image-placeholder\"><i class=\"fas fa-image\"></i></div>' ` : 
-                  `<div class="item-image-placeholder"><i class="fas fa-image"></i></div>`
-                }
-              </div>
-              <div class="item-info">
-                <div class="item-name">${itemName}</div>
-                <div class="item-details">
-                  ${itemSize ? `Size: ${itemSize}` : ""}
-                </div>
-                <div class="item-quantity">Quantity: ${itemQuantity}</div>
-              </div>
-              <div class="item-price">₹${totalPrice.toFixed(2)}</div>
-            </div>
-          `;
-        });
+    const cartId = localStorage.getItem("cartId");
+    const addressId = localStorage.getItem("selectedAddressId");
+    const paymentMethod = "ONLINE";
 
-        itemsList.innerHTML = itemsHtml;
-        selectedItemsCount.textContent = items.length;
-        selectedItemsBadge.textContent = items.length;
-      }
+    if (!cartId) {
+      showMessage("Cart not found. Please try again.", "warning");
+      return;
+    }
 
-      // Show empty checkout message
-      function showEmptyCheckout() {
-        const itemsList = document.getElementById("selectedItemsList");
-        const selectedItemsCount = document.getElementById("selectedItemsCount");
-        const selectedItemsBadge = document.getElementById("selectedItemsBadge");
-        const placeOrderBtn = document.getElementById("placeOrderBtn");
-        const razorpayPayBtn = document.getElementById("razorpayPayBtn");
+    if (!addressId) {
+      showMessage("Please select a delivery address", "warning");
+      return;
+    }
 
-        if (itemsList) {
-          itemsList.innerHTML = `
-            <div class="empty-cart-message">
-              <p>No items selected for checkout.</p>
-              <p>Please go back to your cart and select items to checkout.</p>
-              <a href="cart.html" class="btn btn-primary">Back to Cart</a>
-            </div>
-          `;
-        }
+    const totalAmount = parseFloat(
+      document.getElementById("totalCost").textContent.replace("₹", "")
+    );
 
-        if (selectedItemsCount) selectedItemsCount.textContent = "0";
-        if (selectedItemsBadge) selectedItemsBadge.textContent = "0";
-        if (placeOrderBtn) {
-          placeOrderBtn.textContent = "No Items Selected";
-          placeOrderBtn.disabled = true;
-        }
-        if (razorpayPayBtn) {
-          razorpayPayBtn.disabled = true;
-          razorpayPayBtn.textContent = "No Items Selected";
-        }
+    const amountInPaise = Math.round(totalAmount * 100);
 
-        document.getElementById("totalItemsCount").textContent = "0";
-        document.getElementById("subTotal").textContent = "₹0.00";
-        document.getElementById("shippingCost").textContent = "₹50.00";
-        document.getElementById("totalCost").textContent = "₹0.00";
-      }
+    if (amountInPaise < 100) {
+      showMessage("Minimum payment amount is ₹1", "warning");
+      return;
+    }
 
-      // Calculate and display totals
-      function calculateAndDisplayTotals(items) {
-        if (!items || items.length === 0) {
-          showEmptyCheckout();
-          return;
-        }
+    showLoading("Creating payment order...");
 
-        const subtotal = items.reduce((total, item) => {
-          const itemPrice = item.price || 0;
-          const itemQuantity = item.quantity || 1;
-          return total + itemPrice * itemQuantity;
-        }, 0);
+    try {
+      const requestBody = {
+        cartId: cartId,
+        addressId: addressId,
+        paymentMethod: paymentMethod,
+        items: selectedCheckoutItems.map((item) => ({
+          productId: item.productId,
+          itemId: item.itemId,
+          size: item.size,
+          price: item.price,
+          quantity: item.quantity
+        })),
+        amount: amountInPaise,
+        currency: "INR",
+        receipt: `receipt_${Date.now()}`,
+        couponCode: appliedCoupon ? appliedCoupon.code : null,
+        notes: {
+          itemsCount: selectedCheckoutItems.length,
+          orderType: "cart_checkout",
+          fromCheckoutPage: true,
+        },
+      };
 
-        const totalItemsCount = items.reduce((total, item) => {
-          return total + (item.quantity || 1);
-        }, 0);
+      const orderEndpoint = `/api/user/cart/order/checkout`;
 
-        const shippingCost = 50.0;
-        const totalCost = subtotal + shippingCost;
+      const orderResponse = await fetch(orderEndpoint, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
 
-        document.getElementById("totalItemsCount").textContent = totalItemsCount;
-        document.getElementById("subTotal").textContent = `₹${subtotal.toFixed(2)}`;
-        document.getElementById("shippingCost").textContent = `₹${shippingCost.toFixed(2)}`;
-        document.getElementById("totalCost").textContent = `₹${totalCost.toFixed(2)}`;
-
-        const placeOrderBtn = document.getElementById("placeOrderBtn");
-        if (placeOrderBtn) {
-          placeOrderBtn.textContent = `Place Order - ₹${totalCost.toFixed(2)}`;
-          placeOrderBtn.disabled = false;
-        }
-
-        const razorpayPayBtn = document.getElementById("razorpayPayBtn");
-        if (razorpayPayBtn) {
-          razorpayPayBtn.textContent = `Pay ₹${totalCost.toFixed(2)} with Razorpay`;
-          razorpayPayBtn.disabled = false;
-        }
-
-        localStorage.setItem("checkoutSubtotal", subtotal.toFixed(2));
-        localStorage.setItem("checkoutTotal", totalCost.toFixed(2));
-        localStorage.setItem("checkoutItemsCount", totalItemsCount);
-      }
-
-      // Load selected address
-      async function loadSelectedAddress() {
-        const token = localStorage.getItem("token");
-        const selectedAddressId = localStorage.getItem("selectedAddressId");
-
-        if (!token) {
-          console.log("No token, cannot load address");
-          return;
-        }
-
-        if (!selectedAddressId) {
-          console.log("⚠️ No address selected in localStorage");
-          showMessage("Please select an address from Manage Addresses page", "warning");
-          return;
-        }
-
-        try {
-          const response = await fetch("/api/user/addresses", {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            const addresses = data.addresses || data.data || [];
-            const selectedAddress = addresses.find(
-              (addr) => addr._id === selectedAddressId
-            );
-
-            if (selectedAddress) {
-              populateBillingForm(selectedAddress);
-            } else {
-              showMessage("Selected address not found. Please select a new address.", "warning");
-            }
-          }
-        } catch (error) {
-          console.error("Error loading addresses:", error);
-        }
-      }
-
-      // Populate billing form with address data
-      function populateBillingForm(address) {
-        if (address.fullName)
-          document.getElementById("billingFullName").value = address.fullName;
-        if (address.phone)
-          document.getElementById("billingPhone").value = address.phone;
-        if (address.house)
-          document.getElementById("billingHouse").value = address.house;
-        if (address.street)
-          document.getElementById("billingStreet").value = address.street;
-        if (address.city)
-          document.getElementById("billingCity").value = address.city;
-        if (address.state)
-          document.getElementById("billingState").value = address.state;
-        if (address.pinCode)
-          document.getElementById("billingPinCode").value = address.pinCode;
-
-        document.getElementById("sameAsBilling").checked = true;
-        copyBillingToShipping();
-      }
-
-      // Copy billing address to shipping address
-      function copyBillingToShipping() {
-        document.getElementById("shippingFullName").value =
-          document.getElementById("billingFullName").value;
-        document.getElementById("shippingPhone").value =
-          document.getElementById("billingPhone").value;
-        document.getElementById("shippingHouse").value =
-          document.getElementById("billingHouse").value;
-        document.getElementById("shippingStreet").value =
-          document.getElementById("billingStreet").value;
-        document.getElementById("shippingCity").value =
-          document.getElementById("billingCity").value;
-        document.getElementById("shippingState").value =
-          document.getElementById("billingState").value;
-        document.getElementById("shippingPinCode").value =
-          document.getElementById("billingPinCode").value;
-      }
-
-      // Setup event listeners
-      function setupEventListeners() {
-        const sameAsBilling = document.getElementById("sameAsBilling");
-        sameAsBilling.addEventListener("change", function () {
-          if (this.checked) {
-            copyBillingToShipping();
-          }
-        });
-
-        const placeOrderBtn = document.getElementById("placeOrderBtn");
-        placeOrderBtn.addEventListener("click", placeOrder);
-
-        const billingInputs = document.querySelectorAll("#billingForm input");
-        billingInputs.forEach((input) => {
-          input.addEventListener("input", function () {
-            if (sameAsBilling.checked) {
-              copyBillingToShipping();
-            }
-          });
-        });
-
-        const paymentOptions = document.querySelectorAll('input[name="payment"]');
-        paymentOptions.forEach(option => {
-          option.addEventListener('change', function() {
-            console.log("Payment method changed to:", this.value);
-          });
-        });
-      }
-
-      // Variable to store the order ID for verification
-      let createdOrderId = null;
-
-      // Razorpay Payment Processing
-      async function processRazorpayPayment() {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          showMessage("Please login to make payment", "warning");
-          window.location.href = "login.html";
-          return;
-        }
-
-        const selectedCheckoutItems = JSON.parse(
-          localStorage.getItem("selectedCheckoutItems") || "[]"
+      if (!orderResponse.ok) {
+        const errorData = await orderResponse.json();
+        throw new Error(
+          `Failed to create payment order: ${errorData.message || "Unknown error"}`
         );
-
-        if (selectedCheckoutItems.length === 0) {
-          showMessage("No items selected for checkout", "warning");
-          return;
-        }
-
-        if (!validateForms()) {
-          return;
-        }
-
-        const cartId = localStorage.getItem("cartId");
-        const addressId = localStorage.getItem("selectedAddressId");
-        const paymentMethod = "ONLINE";
-
-        console.log("Payment details:", {
-          cartId,
-          addressId,
-          paymentMethod,
-          itemCount: selectedCheckoutItems.length
-        });
-
-        if (!cartId) {
-          showMessage("Cart not found. Please try again.", "warning");
-          return;
-        }
-
-        if (!addressId) {
-          showMessage("Please select a delivery address", "warning");
-          return;
-        }
-
-        const totalAmount = parseFloat(
-          document.getElementById("totalCost").textContent.replace("₹", "")
-        );
-
-        const amountInPaise = Math.round(totalAmount * 100);
-
-        if (amountInPaise < 100) {
-          showMessage("Minimum payment amount is ₹1", "warning");
-          return;
-        }
-
-        showLoading("Creating payment order...");
-
-        try {
-          const orderEndpoint = `/api/user/cart/order/checkout/${cartId}/${addressId}/${paymentMethod}`;
-          console.log("Calling endpoint:", orderEndpoint);
-
-          const orderResponse = await fetch(orderEndpoint, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              amount: amountInPaise,
-              currency: "INR",
-              receipt: `receipt_${Date.now()}`,
-              notes: {
-                itemsCount: selectedCheckoutItems.length,
-                orderType: "cart_checkout",
-              },
-            }),
-          });
-
-          if (!orderResponse.ok) {
-            const errorData = await orderResponse.json();
-            throw new Error(`Failed to create payment order: ${errorData.message || "Unknown error"}`);
-          }
-
-          const orderData = await orderResponse.json();
-          console.log("Order created response:", orderData);
-
-          if (orderData.data && orderData.data.order && orderData.data.order.id) {
-            createdOrderId = orderData.data.order.id;
-            localStorage.setItem("lastCreatedOrderId", createdOrderId);
-            localStorage.setItem("paymentSuccess", "true");
-            localStorage.setItem("latestOrderId", createdOrderId);
-          } else {
-            throw new Error("Failed to get order ID from server");
-          }
-
-          const options = {
-            key: RAZORPAY_KEY_ID,
-            amount: orderData.data?.payment?.amount || amountInPaise,
-            currency: orderData.data?.payment?.currency || "INR",
-            name: "ShopStyle",
-            description: "Purchase from ShopStyle",
-            order_id: orderData.data?.payment?.razorpayOrderId || orderData.data?.order?.orderId,
-            handler: async function (response) {
-              console.log("Payment successful:", response);
-              
-              showLoading("Verifying payment...");
-              
-              try {
-                console.log("Sending verification data:", {
-                  orderId: createdOrderId,
-                  razorpayPaymentId: response.razorpay_payment_id,
-                  razorpaySignature: response.razorpay_signature
-                });
-
-                const verifyResponse = await fetch("/api/user/cart/order/verifyPayment", {
-                  method: "POST",
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    orderId: createdOrderId,
-                    razorpayPaymentId: response.razorpay_payment_id,
-                    razorpaySignature: response.razorpay_signature,
-                  }),
-                });
-
-                if (verifyResponse.ok) {
-                  const verificationResult = await verifyResponse.json();
-                  console.log("Verification result:", verificationResult);
-                  
-                  if (verificationResult.success) {
-                    showMessage("Payment successful! Order placed.", "success");
-                    
-                    // Clear localStorage
-                    localStorage.removeItem("selectedCheckoutItems");
-                    localStorage.removeItem("checkoutSubtotal");
-                    localStorage.removeItem("checkoutTotal");
-                    localStorage.removeItem("checkoutItemsCount");
-                    localStorage.removeItem("cartId");
-                    localStorage.removeItem("cartItems");
-                    localStorage.removeItem("cartTotal");
-                    localStorage.removeItem("lastCreatedOrderId");
-                    localStorage.removeItem("selectedAddressId");
-                    
-                    updateCartCount(0);
-                    
-                    hideLoading();
-                    
-                    setTimeout(() => {
-                      window.location.href = `order-history.html?payment=success&orderId=${
-                        verificationResult.order?.id || verificationResult.orderId || createdOrderId
-                      }&paymentId=${response.razorpay_payment_id}`;
-                    }, 1500);
-                  } else {
-                    showMessage("Payment verification failed: " + (verificationResult.message || "Unknown error"), "danger");
-                    hideLoading();
-                  }
-                } else {
-                  const errorText = await verifyResponse.text();
-                  throw new Error(`Verification failed: ${errorText}`);
-                }
-              } catch (error) {
-                console.error("Verification error:", error);
-                showMessage("Error verifying payment: " + error.message, "danger");
-                hideLoading();
-              }
-            },
-            prefill: {
-              name: document.getElementById("billingFullName").value || "",
-              email: getCurrentUserEmail() || "customer@example.com",
-              contact: document.getElementById("billingPhone").value || "",
-            },
-            theme: {
-              color: "#3395ff",
-            },
-            modal: {
-              ondismiss: function() {
-                console.log("Payment modal dismissed");
-                hideLoading();
-              }
-            }
-          };
-
-          const rzp = new Razorpay(options);
-          rzp.open();
-          
-        } catch (error) {
-          console.error("Razorpay error:", error);
-          showMessage("Error processing payment: " + error.message, "danger");
-          hideLoading();
-        }
       }
 
-      // Helper function to get current user email
-      function getCurrentUserEmail() {
-        const userData = localStorage.getItem("userData");
-        if (userData) {
+      const orderData = await orderResponse.json();
+      console.log("Order created response:", orderData);
+
+      if (orderData.data && orderData.data.order && orderData.data.order.id) {
+        createdOrderId = orderData.data.order.id;
+        localStorage.setItem("lastCreatedOrderId", createdOrderId);
+        localStorage.setItem("paymentSuccess", "true");
+        localStorage.setItem("latestOrderId", createdOrderId);
+      } else {
+        throw new Error("Failed to get order ID from server");
+      }
+
+      const options = {
+        key: RAZORPAY_KEY_ID,
+        amount: orderData.data?.payment?.amount || amountInPaise,
+        currency: orderData.data?.payment?.currency || "INR",
+        name: "ShopStyle",
+        description: "Purchase from ShopStyle",
+        order_id: orderData.data?.payment?.razorpayOrderId || orderData.data?.order?.orderId,
+        handler: async function (response) {
+          console.log("Payment successful:", response);
+
+          showLoading("Verifying payment...");
+
           try {
-            const parsedUser = JSON.parse(userData);
-            return parsedUser.email;
-          } catch (e) {
-            return null;
-          }
-        }
-        return null;
-      }
+            const verifyResponse = await fetch("/api/user/cart/order/verifyPayment", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                orderId: createdOrderId,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpaySignature: response.razorpay_signature,
+              }),
+            });
 
-      // Function to update cart count in header
-      function updateCartCount(count) {
-        const cartCountElement = document.getElementById("cartCount");
-        if (cartCountElement) {
-          cartCountElement.textContent = `(${count})`;
-        }
-        localStorage.setItem("cartItemCount", count);
-      }
+            if (verifyResponse.ok) {
+              const verificationResult = await verifyResponse.json();
+              console.log("Verification result:", verificationResult);
 
-      // Updated place order function for COD
-      async function placeOrder() {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          showMessage("Please login to place order", "warning");
-          window.location.href = "login.html";
-          return;
-        }
+              if (verificationResult.success) {
+                showMessage("Payment successful! Order placed.", "success");
 
-        const selectedCheckoutItems = JSON.parse(
-          localStorage.getItem("selectedCheckoutItems") || "[]"
-        );
+                // Clear localStorage
+                localStorage.removeItem("selectedCheckoutItems");
+                localStorage.removeItem("checkoutSubtotal");
+                localStorage.removeItem("checkoutTotal");
+                localStorage.removeItem("checkoutItemsCount");
+                localStorage.removeItem("cartId");
+                localStorage.removeItem("cartItems");
+                localStorage.removeItem("cartTotal");
+                localStorage.removeItem("lastCreatedOrderId");
+                localStorage.removeItem("selectedAddressId");
+                localStorage.removeItem("appliedCoupon");
+                localStorage.removeItem("discountAmount");
 
-        if (selectedCheckoutItems.length === 0) {
-          showMessage("No items selected for checkout", "warning");
-          return;
-        }
+                updateCartCount(0);
 
-        const paymentMethod = document.querySelector(
-          'input[name="payment"]:checked'
-        ).value;
+                hideLoading();
 
-        console.log("Selected payment method:", paymentMethod);
-
-        if (paymentMethod === "ONLINE") {
-          console.log("Switching to Razorpay payment flow");
-          processRazorpayPayment();
-          return;
-        }
-
-        if (paymentMethod !== "COD") {
-          showMessage(`Invalid payment method: ${paymentMethod}. Use COD or ONLINE`, "danger");
-          return;
-        }
-
-        if (!validateForms()) {
-          return;
-        }
-
-        const cartId = localStorage.getItem("cartId");
-        const addressId = localStorage.getItem("selectedAddressId");
-
-        console.log("COD Order details:", {
-          cartId,
-          addressId,
-          paymentMethod,
-          itemCount: selectedCheckoutItems.length
-        });
-
-        if (!cartId) {
-          showMessage("Cart not found. Please try again.", "warning");
-          return;
-        }
-
-        if (!addressId) {
-          showMessage("Please select a delivery address", "warning");
-          return;
-        }
-
-        showLoading("Placing your COD order...");
-
-        try {
-          const orderEndpoint = `/api/user/cart/order/checkout/${cartId}/${addressId}/COD`;
-          console.log("Calling COD endpoint:", orderEndpoint);
-
-          const orderResponse = await fetch(orderEndpoint, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+                setTimeout(() => {
+                  window.location.href = `order-history.html?payment=success&orderId=${
+                    verificationResult.order?.id || verificationResult.orderId || createdOrderId
+                  }&paymentId=${response.razorpay_payment_id}`;
+                }, 1500);
+              } else {
+                showMessage(
+                  "Payment verification failed: " +
+                    (verificationResult.message || "Unknown error"),
+                  "danger"
+                );
+                hideLoading();
+              }
+            } else {
+              const errorText = await verifyResponse.text();
+              throw new Error(`Verification failed: ${errorText}`);
             }
-          });
-
-          if (orderResponse.ok) {
-            const orderResult = await orderResponse.json();
-            console.log("COD Order created:", orderResult);
-
-            showMessage("COD Order placed successfully!", "success");
-
-            localStorage.setItem("paymentSuccess", "true");
-            localStorage.setItem("latestOrderId", orderResult.data?.order?.id || "success");
-
-            localStorage.removeItem("selectedCheckoutItems");
-            localStorage.removeItem("checkoutSubtotal");
-            localStorage.removeItem("checkoutTotal");
-            localStorage.removeItem("checkoutItemsCount");
-            localStorage.removeItem("cartId");
-            localStorage.removeItem("selectedAddressId");
-            localStorage.removeItem("cartItems");
-            localStorage.removeItem("cartTotal");
-
-            updateCartCount(0);
-
+          } catch (error) {
+            console.error("Verification error:", error);
+            showMessage("Error verifying payment: " + error.message, "danger");
             hideLoading();
-
-            setTimeout(() => {
-              window.location.href = `order-history.html?payment=success&orderId=${
-                orderResult.data?.order?.id || "success"
-              }`;
-            }, 1500);
-          } else {
-            const errorData = await orderResponse.json();
-            console.error("COD Order failed:", errorData);
-            throw new Error(errorData.message || "Failed to place COD order");
           }
-        } catch (error) {
-          console.error("Error placing COD order:", error);
-          showMessage("Error placing order: " + error.message, "danger");
-          hideLoading();
-        }
-      }
+        },
+        prefill: {
+          name: document.getElementById("billingFullName").value || "",
+          email: getCurrentUserEmail() || "customer@example.com",
+          contact: document.getElementById("billingPhone").value || "",
+        },
+        theme: {
+          color: "#3395ff",
+        },
+        modal: {
+          ondismiss: function () {
+            console.log("Payment modal dismissed");
+            hideLoading();
+          },
+        },
+      };
 
-      // Validate forms
-      function validateForms() {
-        const billingForm = document.getElementById("billingForm");
+      const rzp = new Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error("Razorpay error:", error);
+      showMessage("Error processing payment: " + error.message, "danger");
+      hideLoading();
+    }
+  }
 
-        if (!billingForm.checkValidity()) {
-          showMessage("Please fill all required billing address fields", "warning");
-          billingForm.reportValidity();
-          return false;
-        }
+  // COD ORDER PLACEMENT
+  async function placeOrder() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      showMessage("Please login to place order", "warning");
+      window.location.href = "login.html";
+      return;
+    }
 
-        return true;
-      }
+    const selectedCheckoutItems = JSON.parse(
+      localStorage.getItem("selectedCheckoutItems") || "[]"
+    );
 
-      // Show loading overlay
-      function showLoading(message = "Processing...") {
-        const loadingOverlay = document.getElementById("loadingOverlay");
-        const loadingMessage = document.getElementById("loadingMessage");
-        loadingMessage.textContent = message;
-        loadingOverlay.style.display = "flex";
-      }
+    if (selectedCheckoutItems.length === 0) {
+      showMessage("No items selected for checkout", "warning");
+      return;
+    }
 
-      // Hide loading overlay
-      function hideLoading() {
-        const loadingOverlay = document.getElementById("loadingOverlay");
-        loadingOverlay.style.display = "none";
-      }
+    const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
 
-      // Show message function
-      function showMessage(message, type) {
-        const existingAlerts = document.querySelectorAll(".alert");
-        existingAlerts.forEach((alert) => alert.remove());
+    console.log("Selected payment method:", paymentMethod);
 
-        const alertDiv = document.createElement("div");
-        alertDiv.className = `alert alert-${type} alert-dismissible fade show alert-message`;
-        alertDiv.innerHTML = `
-          ${message}
-          <button type="button" class="close" data-dismiss="alert">
-            <span>&times;</span>
-          </button>
-        `;
+    if (paymentMethod === "ONLINE") {
+      console.log("Switching to Razorpay payment flow");
+      processRazorpayPayment();
+      return;
+    }
 
-        document.body.appendChild(alertDiv);
+    if (paymentMethod !== "COD") {
+      showMessage(
+        `Invalid payment method: ${paymentMethod}. Use COD or ONLINE`,
+        "danger"
+      );
+      return;
+    }
+
+    if (!validateForms()) {
+      return;
+    }
+
+    const cartId = localStorage.getItem("cartId");
+    const addressId = localStorage.getItem("selectedAddressId");
+
+    if (!cartId) {
+      showMessage("Cart not found. Please try again.", "warning");
+      return;
+    }
+
+    if (!addressId) {
+      showMessage("Please select a delivery address", "warning");
+      return;
+    }
+
+    showLoading("Placing your COD order...");
+
+    try {
+      const requestBody = {
+        cartId: cartId,
+        addressId: addressId,
+        paymentMethod: paymentMethod,
+        items: selectedCheckoutItems.map((item) => ({
+          productId: item.productId,
+          itemId: item.itemId,
+          size: item.size,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image,
+          name: item.name,
+          totalPrice: item.price * item.quantity,
+        })),
+        couponCode: appliedCoupon ? appliedCoupon.code : null,
+      };
+
+      const orderEndpoint = `/api/user/cart/order/checkout`;
+
+      const orderResponse = await fetch(orderEndpoint, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (orderResponse.ok) {
+        const orderResult = await orderResponse.json();
+        console.log("COD Order created:", orderResult);
+
+        showMessage("COD Order placed successfully!", "success");
+
+        localStorage.setItem("paymentSuccess", "true");
+        localStorage.setItem("latestOrderId", orderResult.data?.order?.id || "success");
+
+        localStorage.removeItem("selectedCheckoutItems");
+        localStorage.removeItem("checkoutSubtotal");
+        localStorage.removeItem("checkoutTotal");
+        localStorage.removeItem("checkoutItemsCount");
+        localStorage.removeItem("cartId");
+        localStorage.removeItem("selectedAddressId");
+        localStorage.removeItem("cartItems");
+        localStorage.removeItem("cartTotal");
+        localStorage.removeItem("appliedCoupon");
+        localStorage.removeItem("discountAmount");
+
+        updateCartCount(0);
+
+        hideLoading();
 
         setTimeout(() => {
-          if (alertDiv.parentElement) {
-            alertDiv.remove();
-          }
-        }, 5000);
+          window.location.href = `order-history.html?payment=success&orderId=${
+            orderResult.data?.order?.id || "success"
+          }`;
+        }, 1500);
+      } else {
+        const errorData = await orderResponse.json();
+        console.error("COD Order failed:", errorData);
+        throw new Error(errorData.message || "Failed to place COD order");
       }
-    </script>
+    } catch (error) {
+      console.error("Error placing COD order:", error);
+      showMessage("Error placing order: " + error.message, "danger");
+      hideLoading();
+    }
+  }
+
+  // Helper function to get current user email
+  function getCurrentUserEmail() {
+    const userData = localStorage.getItem("userData");
+    if (userData) {
+      try {
+        const parsedUser = JSON.parse(userData);
+        return parsedUser.email;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  // Function to update cart count in header
+  function updateCartCount(count) {
+    const cartCountElement = document.getElementById("cartCount");
+    if (cartCountElement) {
+      cartCountElement.textContent = `(${count})`;
+    }
+    localStorage.setItem("cartItemCount", count);
+  }
+
+  // Validate forms
+  function validateForms() {
+    const billingForm = document.getElementById("billingForm");
+
+    if (!billingForm.checkValidity()) {
+      showMessage("Please fill all required billing address fields", "warning");
+      billingForm.reportValidity();
+      return false;
+    }
+
+    return true;
+  }
+
+  // Show loading overlay
+  function showLoading(message = "Processing...") {
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    const loadingMessage = document.getElementById("loadingMessage");
+    loadingMessage.textContent = message;
+    loadingOverlay.style.display = "flex";
+  }
+
+  // Hide loading overlay
+  function hideLoading() {
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    loadingOverlay.style.display = "none";
+  }
+
+  // Show message function
+  function showMessage(message, type) {
+    const existingAlerts = document.querySelectorAll(".alert");
+    existingAlerts.forEach((alert) => alert.remove());
+
+    const alertDiv = document.createElement("div");
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show alert-message`;
+    alertDiv.innerHTML = `
+      ${message}
+      <button type="button" class="close" data-dismiss="alert">
+        <span>&times;</span>
+      </button>
+    `;
+
+    document.body.appendChild(alertDiv);
+
+    setTimeout(() => {
+      if (alertDiv.parentElement) {
+        alertDiv.remove();
+      }
+    }, 5000);
+  }
+</script>
   </body>
 </html>

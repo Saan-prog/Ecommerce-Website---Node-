@@ -43,110 +43,7 @@ const adminLogin = async (req, res) => {
   }
 };
 
-// ----------------------------------Get Dashboard ----------------------------------------
-const showDashboard = async (req, res) => {
-  console.log("🎯 showDashboard function CALLED");
-  console.log("Models loaded:", {
-    User: typeof User,
-    Order: typeof Order,
-    product: typeof product, // ✅ FIXED: Changed Product to product
-  });
 
-  try {
-    // 1. authentication check
-    if (!req.user || req.user.role !== "admin") {
-      return res.status(403).json({
-        success: false,
-        message: "Access denied. Admin privileges required",
-      });
-    }
-
-    // 2. get current date ranges for calculation
-    const today = new Date();
-    const startOfToday = new Date(today);
-    startOfToday.setHours(0, 0, 0, 0);
-
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay());
-    startOfWeek.setHours(0, 0, 0, 0);
-
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-
-    // 3. execute all database queries in parallel for better performance
-    const [
-      totalOrders,
-      totalCustomers,
-      totalProducts,
-      totalRevenue,
-      todayOrders,
-      weeklyRevenue,
-      monthlyRevenue,
-      recentOrders,
-      lowStockProducts,
-    ] = await Promise.all([
-      // total counts
-      Order.countDocuments(),
-      User.countDocuments({ role: "user" }),
-      // ✅ FIXED: Corrected typo
-      product.countDocuments(),
-
-      Order.aggregate([
-        { $match: { status: "completed" } },
-        { $group: { _id: null, total: { $sum: "$totalAmount" } } },
-      ]),
-
-      Order.countDocuments({ createdAt: { $gte: startOfToday } }),
-
-      Order.aggregate([
-        { $match: { status: "completed", createdAt: { $gte: startOfWeek } } },
-        { $group: { _id: null, total: { $sum: "$totalAmount" } } },
-      ]),
-
-      Order.aggregate([
-        { $match: { status: "completed", createdAt: { $gte: startOfMonth } } },
-        { $group: { _id: null, total: { $sum: "$totalAmount" } } },
-      ]),
-
-      Order.find()
-        .sort({ createdAt: -1 })
-        .limit(5)
-        .populate("user", "name email")
-        .lean(),
-
-      // ✅ FIXED: Use the correct variable name (product)
-      product.countDocuments({ stock: { $lt: 10 } }),
-    ]);
-
-    const statistics = {
-      totalOrders,
-      totalCustomers,
-      totalProducts,
-      totalRevenue: totalRevenue[0]?.total || 0,
-      todayOrders,
-      weeklyRevenue: weeklyRevenue[0]?.total || 0,
-      monthlyRevenue: monthlyRevenue[0]?.total || 0,
-      lowStockProducts,
-    };
-
-    console.log("📊 Dashboard statistics:", statistics);
-
-    res.json({
-      success: true,
-      data: {
-        statistics,
-        recentOrders,
-        // Add any other data you want to send
-      },
-      message: "Dashboard data fetched successfully",
-    });
-  } catch (error) {
-    console.error("Dashboard stats error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error fetching dashboard statistics",
-    });
-  }
-};
 // -------------------------Admin Dashboard----------------------------------
 
 const getUsers = async (req, res) => {
@@ -326,4 +223,4 @@ const blockUser = async (req, res) => {
     });
   }
 };
-module.exports = { adminLogin, showDashboard, getUsers, blockUser };
+module.exports = { adminLogin, getUsers, blockUser };

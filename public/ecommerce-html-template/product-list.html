@@ -31,6 +31,53 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet" />
     <style>
+      
+/* Alternative layout with wishlist icon at top-right corner of card */
+.product-header {
+  display: flex;
+  justify-content: space-between;
+  background-color: #000000;
+  align-items: flex-start;
+  margin-bottom: 0px;
+  padding: 20px;
+}
+
+.product-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #FFFFFF;
+  background-color: #000000;
+  text-decoration: none;
+  flex: 1;
+}
+
+.product-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wishlist-icon-top {
+  width: 30px;
+  height: 30px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff6f61;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  opacity: 1 !important;
+  visibility: visible !important;
+  transition: all 0.3s ease;
+}
+
+.wishlist-icon-top:hover {
+  background: #ff6f61;
+  color: white;
+  transform: scale(1.1);
+}
       .category-sidebar .nav-link {
         color: #333;
         padding: 8px 15px;
@@ -123,6 +170,7 @@
                 style="display: none"
                 >Cart</a
               >
+              <a href="wishlist.html" class="nav-item nav-link">Wishlist</a>
               <a
                 href="checkout.html"
                 class="nav-item nav-link"
@@ -130,6 +178,7 @@
                 style="display: none"
                 >Checkout</a
               >
+              <a href="order-history.html" class="nav-item nav-link protected-menu" id="checkoutMenuItem">My Orders</a>
               <a
                 href="my-account.html"
                 class="nav-item nav-link"
@@ -691,59 +740,100 @@
         }
       }
 
-      function renderProducts(products) {
-        const container = document.getElementById("products-container");
-        container.innerHTML = "";
+      // ========== WISHLIST FUNCTIONALITY ==========
+// ========== WISHLIST FUNCTIONALITY ==========
+async function handleAddToWishlist(event, productId) {
+  event.preventDefault();
+  event.stopPropagation();
+  
+  const token = localStorage.getItem('token');
+  
+  if (!token) {
+    alert('Please login to add items to wishlist');
+    window.location.href = 'login.html';
+    return;
+  }
+  
+  try {
+    const response = await fetch('http://localhost:8070/api/user/wishlist/add', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ productId })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      alert('Added to wishlist!');
+    } else {
+      alert('Failed to add to wishlist: ' + data.message);
+    }
+  } catch (error) {
+    console.error('Error adding to wishlist:', error);
+    alert('Error adding to wishlist. Please try again.');
+  }
+}
+function renderProducts(products) {
+  const container = document.getElementById("products-container");
+  container.innerHTML = "";
 
-        if (products.length === 0) {
-          container.innerHTML = `
-            <div class="col-12 text-center py-5">
-              <i class="fa fa-search fa-3x text-muted"></i>
-              <h4 class="mt-3">No products found</h4>
-              <p class="text-muted">Try adjusting your search or filter criteria</p>
-              <button class="btn btn-primary" onclick="resetFilters()">Reset Filters</button>
-            </div>
-          `;
-          return;
-        }
+  if (products.length === 0) {
+    container.innerHTML = `
+      <div class="col-12 text-center py-5">
+        <i class="fa fa-search fa-3x text-muted"></i>
+        <h4 class="mt-3">No products found</h4>
+        <p class="text-muted">Try adjusting your search or filter criteria</p>
+        <button class="btn btn-primary" onclick="resetFilters()">Reset Filters</button>
+      </div>
+    `;
+    return;
+  }
 
-        products.forEach((product) => {
-          const productId = product._id || product.id;
-          const productName = product.name || 'Product Name';
-          const productPrice = parseFloat(product.price) || 0;
-          const productRating = product.rating || 0;
-          const productImage = getProductImageUrl(product.image || product.images || []);
-          
-          const productHTML = `
-            <div class="col-md-4">
-              <div class="product-item">
-                <div class="product-title">
-                  <a href="product-detail.html?id=${productId}">${productName}</a>
-                  <div class="ratting">
-                    ${generateRatingStars(productRating)}
-                  </div>
-                </div>
-                <div class="product-image">
-                  <a href="product-detail.html?id=${productId}">
-                    <img src="${productImage}" 
-                         alt="${productName}"
-                         onerror="this.onerror=null; this.src='img/product-1.jpg'">
-                  </a>
-                  
-                </div>
-                <div class="product-price">
-                  <h3><span>$</span>${productPrice.toFixed(2)}</h3>
-                  <a class="btn" href="#" onclick="handleAddToCart(event, '${productId}')">
-                    <i class="fa fa-shopping-cart"></i>Add to Cart
-                  </a>
-                </div>
-              </div>
-            </div>
-          `;
-          container.innerHTML += productHTML;
-        });
-      }
-
+  products.forEach((product) => {
+    const productId = product._id || product.id;
+    const productName = product.name || 'Product Name';
+    const productPrice = parseFloat(product.price) || 0;
+    const productRating = product.rating || 0;
+    const productImage = getProductImageUrl(product.image || product.images || []);
+    
+    const productHTML = `
+  <div class="col-md-4">
+    <div class="product-item">
+      <div class="product-header">
+        <a href="product-detail.html?id=${productId}" class="product-name">${productName}</a>
+        <div class="product-header-right">
+          <div class="ratting">
+            ${generateRatingStars(productRating)}
+          </div>
+          <!-- Wishlist icon - floated to right -->
+          <a href="#" class="wishlist-icon-top" onclick="handleAddToWishlist(event, '${productId}')">
+            <i class="fa fa-heart"></i>
+          </a>
+        </div>
+      </div>
+      <div class="product-image">
+        <a href="product-detail.html?id=${productId}">
+          <img src="${productImage}" 
+               alt="${productName}"
+               onerror="this.onerror=null; this.src='img/product-1.jpg'">
+        </a>
+      </div>
+      <div class="product-price">
+        <h3><span>₹</span>${productPrice.toFixed(2)}</h3>
+        <a class="btn" href="#" onclick="handleAddToCart(event, '${productId}')">
+          <i class="fa fa-shopping-cart"></i>Add to Cart
+        </a>
+      </div>
+    </div>
+  </div>
+`;
+    container.innerHTML += productHTML;
+  });
+}
+    
       function generateRatingStars(rating) {
         const fullStars = Math.floor(rating);
         const hasHalfStar = rating % 1 >= 0.5;

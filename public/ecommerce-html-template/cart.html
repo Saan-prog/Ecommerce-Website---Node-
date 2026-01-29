@@ -127,6 +127,7 @@
                             <a href="product-detail.html" class="nav-item nav-link" style="display: none;">Product Detail</a>
                             <a href="cart.html" class="nav-item nav-link">Cart</a>
                             <a href="checkout.html" class="nav-item nav-link">Checkout</a>
+                            <a href="order-history.html" class="nav-item nav-link protected-menu" id="checkoutMenuItem">My Orders</a>
                             <a href="my-account.html" class="nav-item nav-link" style="display: none;">My Account</a>
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" style="display: none;">More Pages</a>
@@ -251,10 +252,10 @@
                         <div class="cart-page-inner">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="coupon">
+                                    <!-- <div class="coupon">
                                         <input type="text" placeholder="Coupon Code">
                                         <button>Apply Code</button>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <div class="col-md-12">
                                     <div class="cart-summary">
@@ -262,7 +263,7 @@
                                             <h1>Cart Summary</h1>
                                             <p>Items<span id="itemCount">0</span></p>
                                             <p>Sub Total<span id="subTotal">$0</span></p>
-                                            <p>Shipping Cost<span>$5</span></p>
+                                            <p>Shipping Cost<span>₹5</span></p>
                                             <h2>Grand Total<span id="grandTotal">$1</span></h2>
                                         </div>
                                         <div class="cart-btn">
@@ -562,9 +563,9 @@ async function fetchCartFromBackend() {
             
             let cleanImage = firstImage.trim();
             
-            if (cleanImage.startsWith('uploads/uploads/')) {
-                cleanImage = cleanImage.replace('uploads/uploads/', 'uploads/');
-            }
+            // if (cleanImage.startsWith('uploads/uploads/')) {
+            //     cleanImage = cleanImage.replace('uploads/uploads/', 'uploads/');
+            // }
             
             if (!cleanImage.startsWith('/') && !cleanImage.startsWith('uploads/')) {
                 cleanImage = 'uploads/' + cleanImage;
@@ -613,7 +614,6 @@ async function fetchCartFromBackend() {
                                    data-price="${productPrice}"
                                    data-quantity="${quantity}"
                                    data-name="${productName}"
-                                   data-image="${productImage}"
                                    onchange="updateSelectedItems()"
                                    checked>
                         </div>
@@ -629,7 +629,7 @@ async function fetchCartFromBackend() {
                         </div>
                     </div>
                 </td>
-                <td class="align-middle">$${productPrice.toFixed(2)}</td>
+                <td class="align-middle">₹${productPrice.toFixed(2)}</td>
                 <td class="align-middle">
                     <div class="qty">
                         <button class="btn-minus" onclick="updateQuantity('${productId}', '${itemId}', ${quantity - 1}, '${size}')">
@@ -641,7 +641,7 @@ async function fetchCartFromBackend() {
                         </button>
                     </div>
                 </td>
-                <td class="align-middle">$${(productPrice * quantity).toFixed(2)}</td>
+                <td class="align-middle">₹${(productPrice * quantity).toFixed(2)}</td>
                 <td class="align-middle">
                     <button class="btn btn-danger btn-sm" onclick="removeItem('${productId}', '${itemId}', '${size}')">
                         <i class="fa fa-trash"></i>
@@ -698,8 +698,8 @@ async function fetchCartFromBackend() {
 
             // Update displays
             updateItemCountDisplay(totalItems);
-            if (subTotalElement) subTotalElement.textContent = `$${subTotal.toFixed(2)}`;
-            if (grandTotalElement) grandTotalElement.textContent = `$${grandTotal.toFixed(2)}`;
+            if (subTotalElement) subTotalElement.textContent = `₹${subTotal.toFixed(2)}`;
+            if (grandTotalElement) grandTotalElement.textContent = `₹${grandTotal.toFixed(2)}`;
 
             // Store selected items for checkout
             window.selectedItemsForCheckout = selectedItems;
@@ -927,28 +927,99 @@ async function fetchCartFromBackend() {
         }
 
         // ========== CHECKOUT ==========
-        window.checkout = function() {
-            const token = localStorage.getItem('token');
+  
+window.checkout = async function() {
+    const token = localStorage.getItem('token');
+    const selectedItems = window.selectedItemsForCheckout || [];
+    
+    if (selectedItems.length === 0) {
+        alert('Please select at least one item to checkout!');
+        return;
+    }
+    
+    if (!token) {
+        alert('Please login to proceed to checkout');
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    try {
+        // 1. Get fresh cart data from backend
+        console.log('Fetching fresh cart data for checkout...');
+        const response = await fetch('/api/user/cart/getAll', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch cart data');
+        }
+        
+        const cartData = await response.json();
+        console.log('Cart data fetched:', cartData);
+        
+        // 2. Get cart items from response
+        const cartItems = cartData.cart?.items || cartData.data?.items || cartData.items || [];
+        console.log('Cart items found:', cartItems.length);
+        
+        // 3. Match selected items with cart items to get COMPLETE data
+        const completeSelectedItems = selectedItems.map(selected => {
+            // Find the matching cart item
+            const cartItem = cartItems.find(item => {
+                const itemId = item._id || item.itemId;
+                const productId = item.product?._id || item.productId;
+                
+                return (
+                    (selected.productId === productId || selected.itemId === itemId) &&
+                    selected.size === item.size
+                );
+            });
             
-            const selectedItems = window.selectedItemsForCheckout || [];
-            
-            if (selectedItems.length === 0) {
-                alert('Please select at least one item to checkout!');
-                return;
+            if (cartItem && cartItem.product) {
+                console.log('Found matching cart item:', cartItem);
+                return {
+                    productId: cartItem.product._id || selected.productId,
+                    itemId: cartItem._id || selected.itemId, // ✅ FIXED: cartItem._id not item._id
+                    size: selected.size,
+                    quantity: selected.quantity,
+                    price: cartItem.product.price || 0,
+                    name: cartItem.product.name || "Product",
+                    image: cartItem.product.image || []
+                };
             }
             
-            if (!token) {
-                alert('Please login to proceed to checkout');
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            // Store selected items for the checkout page
-            localStorage.setItem('selectedCheckoutItems', JSON.stringify(selectedItems));
-            window.location.href = 'address.html';
-        };
-
-        // Initialize cart count
+            // Fallback to selected item if no match found
+            console.warn('No matching cart item found for:', selected);
+            return {
+                ...selected,
+                name: selected.name || "Product",
+                price: selected.price || 0,
+                image: selected.image || []
+            };
+        });
+        
+        console.log('Complete selected items for checkout:', completeSelectedItems);
+        
+        // 4. Save to localStorage
+        localStorage.setItem('selectedCheckoutItems', JSON.stringify(completeSelectedItems));
+        
+        // 5. Also save cart ID if available
+        if (cartData._id || cartData.cart?._id) {
+            localStorage.setItem('cartId', cartData._id || cartData.cart._id);
+        }
+        
+        console.log('✅ Checkout data saved to localStorage');
+        console.log('selectedCheckoutItems:', localStorage.getItem('selectedCheckoutItems'));
+        console.log('cartId:', localStorage.getItem('cartId'));
+        
+        // 6. Navigate to address page
+        window.location.href = 'address.html';
+        
+    } catch (error) {
+        console.error('Checkout error:', error);
+        alert('Error preparing checkout. Please try again.');
+    }
+};
+// Initialize cart count
         updateCartCountDisplay();
     });
 </script>

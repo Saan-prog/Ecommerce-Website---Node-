@@ -332,6 +332,51 @@
         background: #3498db;
       }
 
+      /* Reviews styling */
+      .reviews-container {
+        max-height: 400px;
+        overflow-y: auto;
+        padding-right: 10px;
+      }
+      
+      .review-item {
+        border-bottom: 1px solid #eee;
+        padding: 15px 0;
+      }
+      
+      .review-item:last-child {
+        border-bottom: none;
+      }
+      
+      .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      
+      .reviewer-name {
+        font-weight: bold;
+        color: #333;
+      }
+      
+      .review-date {
+        color: #999;
+        font-size: 14px;
+      }
+      
+      .no-reviews {
+        text-align: center;
+        padding: 40px 0;
+        color: #999;
+      }
+      
+      .no-reviews i {
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+      }
+
       /* Mobile responsiveness for zoom */
       @media (max-width: 992px) {
         .zoom-result {
@@ -624,7 +669,7 @@
                     </li>
                     <li class="nav-item">
                       <a class="nav-link" data-toggle="pill" href="#reviews"
-                        >Reviews (1)</a
+                        >Reviews</a
                       >
                     </li>
                   </ul>
@@ -643,64 +688,14 @@
                       </ul>
                     </div>
                     <div id="reviews" class="container tab-pane fade">
-                      <div class="reviews-submitted">
-                        <div class="reviewer">
-                          Phasellus Gravida - <span>01 Jan 2020</span>
-                        </div>
-                        <div class="ratting">
-                          <i class="fa fa-star"></i>
-                          <i class="fa fa-star"></i>
-                          <i class="fa fa-star"></i>
-                          <i class="fa fa-star"></i>
-                          <i class="fa fa-star"></i>
-                        </div>
-                        <p>
-                          Sed ut perspiciatis unde omnis iste natus error sit
-                          voluptatem accusantium doloremque laudantium, totam
-                          rem aperiam.
-                        </p>
-                      </div>
-                      <div class="reviews-submit">
-                        <h4>Give your Review:</h4>
-                        <div class="ratting">
-                          <i class="far fa-star"></i>
-                          <i class="far fa-star"></i>
-                          <i class="far fa-star"></i>
-                          <i class="far fa-star"></i>
-                          <i class="far fa-star"></i>
-                        </div>
-                        <div class="row form">
-                          <div class="col-sm-6">
-                            <input type="text" placeholder="Name" />
-                          </div>
-                          <div class="col-sm-6">
-                            <input type="email" placeholder="Email" />
-                          </div>
-                          <div class="col-sm-12">
-                            <textarea placeholder="Review"></textarea>
-                          </div>
-                          <div class="col-sm-12">
-                            <button>Submit</button>
-                          </div>
+                      <div id="reviews-container">
+                        <!-- Reviews will be loaded here dynamically -->
+                        <div class="text-center p-4">
+                          <i class="fa fa-spinner fa-spin fa-2x"></i>
+                          <p class="mt-2">Loading reviews...</p>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="product">
-                <div class="section-header">
-                  <h1 id="related-products-title">Related Products</h1>
-                </div>
-
-                <div
-                  class="row align-items-center product-slider product-slider-3"
-                  id="related-products"
-                >
-                  <!-- Related products will be loaded here -->
-                  <div class="col-12 text-center">
-                    <p>Loading related products...</p>
                   </div>
                 </div>
               </div>
@@ -847,7 +842,7 @@
     <script src="js/main.js"></script>
 
     <!-- Product Detail Script with Zoom Feature -->
-    <script>
+<script>
 // ========== INITIALIZATION ==========
 document.addEventListener("DOMContentLoaded", function() {
   console.log("=== Product Detail Page Loaded ===");
@@ -910,8 +905,16 @@ async function loadProductDetails() {
     
     if (data.success) {
       currentProduct = data.product;
+      
+      // DEBUG: Check what rating is coming from backend
+      console.log("Product data from backend:", currentProduct);
+      console.log("Product rating from backend:", currentProduct.rating, "type:", typeof currentProduct.rating);
+      
       displayProductDetails(currentProduct);
       showContent();
+      
+      // Load reviews after product details are loaded
+      await loadProductReviews(productId);
     } else {
       throw new Error(data.message || "Failed to load product");
     }
@@ -937,7 +940,7 @@ function displayProductDetails(product) {
   document.getElementById("product-description").textContent = 
     product.description || "No description available.";
   
-  // Update rating
+  // Update rating with initial product rating (will be updated when reviews load)
   updateProductRating(product.rating || 0);
   
   // Update size options
@@ -948,6 +951,171 @@ function displayProductDetails(product) {
   
   // Setup cart buttons
   setupAddToCart();
+}
+
+// ========== PRODUCT RATING ==========
+function updateProductRating(rating) {
+  const container = document.getElementById("product-rating");
+  if (!container) return;
+  
+  container.innerHTML = "";
+  
+  // Convert rating to number
+  const ratingValue = parseFloat(rating) || 0;
+  
+  console.log("updateProductRating called with:", ratingValue);
+  
+  // FIXED: Show filled stars based on rating value (1-5 scale)
+  // 1-star rating = ⭐☆☆☆☆
+  // 5-star rating = ⭐⭐⭐⭐⭐
+  for (let i = 1; i <= 5; i++) {
+    const star = document.createElement("i");
+    
+    if (i <= ratingValue) {
+      // Full star for ratings >= current position
+      star.className = "fa fa-star";
+      star.style.color = "#ff9900"; // Orange color for filled stars
+    } else {
+      // Empty star
+      star.className = "far fa-star";
+      star.style.color = "#cccccc"; // Gray color for empty stars
+    }
+    
+    container.appendChild(star);
+  }
+  
+  // Add the numeric rating as text
+  const ratingText = document.createElement("span");
+  ratingText.className = "rating-text ml-2";
+  ratingText.textContent = `(${ratingValue.toFixed(1)})`;
+  ratingText.style.fontSize = "14px";
+  ratingText.style.color = "#666";
+  container.appendChild(ratingText);
+}
+
+async function loadProductReviews(productId) {
+  try {
+    console.log(`Fetching reviews for product: ${productId}`);
+    
+    const response = await fetch(`/api/user/products/${productId}/reviews`);
+    
+    console.log(`Response status: ${response.status}`);
+    
+    if (!response.ok) {
+      console.error(`Failed to fetch reviews: ${response.status} - ${response.statusText}`);
+      displayNoReviews();
+      return;
+    }
+
+    const data = await response.json();
+    console.log("Reviews API response:", data);
+    
+    if (data.success && data.reviews && data.reviews.length > 0) {
+      console.log(`Found ${data.reviews.length} reviews`);
+      console.log(`Average rating: ${data.averageRating}`);
+      
+      // Update the product rating display with average rating
+      const averageRating = parseFloat(data.averageRating) || 0;
+      updateProductRating(averageRating);
+      
+      // Also update the product rating in the sidebar if needed
+      if (currentProduct) {
+        currentProduct.rating = averageRating;
+      }
+      
+      displayReviews(data.reviews);
+    } else {
+      console.log("No reviews found or empty response");
+      displayNoReviews();
+      // If no reviews, show the original product rating or 0
+      const productRating = currentProduct?.rating || 0;
+      updateProductRating(productRating);
+    }
+  } catch (error) {
+    console.error("Error loading reviews:", error);
+    displayNoReviews();
+  }
+}
+
+function displayReviews(reviews) {
+  const reviewsContainer = document.getElementById("reviews-container");
+  
+  if (!reviewsContainer) {
+    console.error("Reviews container not found");
+    return;
+  }
+  
+  if (!reviews || reviews.length === 0) {
+    displayNoReviews();
+    return;
+  }
+  
+  let reviewsHTML = '<div class="reviews-container">';
+  
+  reviews.forEach((review, index) => {
+    // Your backend populates 'user' with name and email
+    const user = review.user || {};
+    const userName = user.name || "Anonymous User";
+    const userEmail = user.email || "";
+    const displayName = userName || (userEmail ? userEmail.split('@')[0] : "Anonymous User");
+    
+    // Format date from review.createdAt
+    const reviewDate = new Date(review.createdAt);
+    const formattedDate = reviewDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+    
+    const rating = review.rating || 0;
+    const comment = review.comment || review.text || "No comment provided.";
+    
+    // Create rating stars
+    let ratingStars = "";
+    
+    for (let i = 1; i <= 5; i++) {
+      if (i <= rating) {
+        // Filled star for ratings up to current position
+        ratingStars += '<i class="fa fa-star"></i>';
+      } else {
+        // Empty star for remaining positions
+        ratingStars += '<i class="far fa-star"></i>';
+      }
+    }
+    
+    reviewsHTML += `
+      <div class="review-item">
+        <div class="review-header">
+          <div>
+            <div class="reviewer-name">${displayName}</div>
+            <div class="review-date">${formattedDate}</div>
+          </div>
+          <div class="ratting">
+            ${ratingStars}
+            <span class="ml-2 text-muted">(${rating.toFixed(1)})</span>
+          </div>
+        </div>
+        <p>${comment}</p>
+      </div>
+    `;
+  });
+  
+  reviewsHTML += '</div>';
+  reviewsContainer.innerHTML = reviewsHTML;
+}
+
+function displayNoReviews() {
+  const reviewsContainer = document.getElementById("reviews-container");
+  
+  if (reviewsContainer) {
+    reviewsContainer.innerHTML = `
+      <div class="no-reviews">
+        <i class="far fa-comment-alt"></i>
+        <h4>No Reviews Yet</h4>
+        <p>Be the first to review this product!</p>
+      </div>
+    `;
+  }
 }
 
 function updatePriceDisplay() {
@@ -1340,27 +1508,6 @@ function updateZoomResult(img, lens, result, e) {
   }
 }
 
-// ========== PRODUCT RATING ==========
-function updateProductRating(rating) {
-  const container = document.getElementById("product-rating");
-  container.innerHTML = "";
-  
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 >= 0.5;
-  
-  for (let i = 0; i < 5; i++) {
-    const star = document.createElement("i");
-    if (i < fullStars) {
-      star.className = "fa fa-star";
-    } else if (i === fullStars && hasHalfStar) {
-      star.className = "fa fa-star-half-alt";
-    } else {
-      star.className = "far fa-star";
-    }
-    container.appendChild(star);
-  }
-}
-
 // ========== SIZE OPTIONS ==========
 function updateSizeOptions() {
   const sizeButtons = document.getElementById("size-buttons");
@@ -1729,18 +1876,14 @@ function renderSidebarSlider(products) {
     const productName = product.name || "Product Name";
     const productPrice = parseFloat(product.price) || 0;
     const productImage = getProductImageForSidebar(product.image || product.images || "");
-    const productRating = product.rating || 0;
+    const productRating = parseFloat(product.rating) || 0;
 
-    // Create rating stars
+    // Create rating stars with new logic
     let ratingStars = "";
-    const fullStars = Math.floor(productRating);
-    const hasHalfStar = productRating % 1 >= 0.5;
-
-    for (let i = 0; i < 5; i++) {
-      if (i < fullStars) {
+    
+    for (let i = 1; i <= 5; i++) {
+      if (i <= productRating) {
         ratingStars += '<i class="fa fa-star"></i>';
-      } else if (i === fullStars && hasHalfStar) {
-        ratingStars += '<i class="fa fa-star-half-alt"></i>';
       } else {
         ratingStars += '<i class="far fa-star"></i>';
       }

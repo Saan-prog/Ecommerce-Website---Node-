@@ -1,6 +1,6 @@
 const express = require ("express");
 const router = express.Router();
-const { adminLogin, getUsers, showDashboard, blockUser } = require ("../Controller/adminController.js");
+const { adminLogin, getUsers, blockUser } = require ("../Controller/adminController.js");
 const  { authenticate } = require("../middilewares/adminAuthMiddleware.js");
 /**
  * @swagger
@@ -231,13 +231,14 @@ const  { authenticate } = require("../middilewares/adminAuthMiddleware.js");
  *                   type: string
  *                   example: "Database connection error"
  */
+
 router.get("/login", (req, res) => {
   console.log("admin login page");
   res.send("Admin login route");
 });
 
 router.post("/login", adminLogin);
-router.get("/dashboard", authenticate, showDashboard);
+
 router.get("/users", authenticate, getUsers);
 router.patch("/users/:id/block", authenticate, blockUser);
 

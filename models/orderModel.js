@@ -48,8 +48,10 @@ const orderSchema = new mongoose.Schema(
           required: true
         },
         image: {
-          type: [String]
-        },
+    type: [String],
+    default: [],
+    validate: [arr => arr.length <= 5, 'Cannot upload more than 5 images']
+},
         quantity: {
           type: Number,
           required: true,

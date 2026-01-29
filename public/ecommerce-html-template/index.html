@@ -498,8 +498,10 @@
               <a href="product-list.html" class="nav-item nav-link">Products</a>
               <a href="product-detail.html" class="nav-item nav-link" style="display: none;">Product Detail</a>
               <!-- Protected menu items -->
-              <a href="cart.html" class="nav-item nav-link protected-menu" id="cartMenuItem">Cart</a>
+              <a href="cart.html" class="nav-item nav-link protected-menu" id="cartMenuItem" styel="display:none;">Cart</a>
+              <a href="wishlist.html" class="nav-item nav-link" styel="display:none;">Wishlist</a>
               <a href="checkout.html" class="nav-item nav-link protected-menu" id="checkoutMenuItem">Checkout</a>
+              <a href="order-history.html" class="nav-item nav-link protected-menu" id="checkoutMenuItem">My Orders</a>
             </div>
             <div class="navbar-nav ml-auto align-items-center">
               <!-- User Account dropdown (only visible after login) -->
@@ -547,7 +549,7 @@
             <div class="user">
               <a href="wishlist.html" class="btn wishlist">
                 <i class="fa fa-heart"></i>
-                <span>(0)</span>
+                <span id="wishlist-count">(0)</span>
               </a>
               <a href="cart.html" class="btn cart">
                 <i class="fa fa-shopping-cart"></i>
@@ -1398,7 +1400,7 @@
                   </div>
                 </div>
                 <div class="product-price">
-                  <h3><span>$</span>${productPrice.toFixed(2)}</h3>
+                  <h3><span>₹</span>${productPrice.toFixed(2)}</h3>
                 </div>
                 <div class="product-action-buttons">
                   <a class="btn btn-add-to-cart" href="#" 

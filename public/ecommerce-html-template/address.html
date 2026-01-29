@@ -346,6 +346,82 @@
         text-align: center;
       }
 
+      /* Success Message Styles - FIXED */
+      .success-message-container {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 99999;
+        min-width: 350px;
+        max-width: 400px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        overflow: hidden;
+        display: none;
+      }
+
+      .success-message-container.show {
+        display: block;
+        animation: slideInRight 0.5s ease-out;
+      }
+
+      .success-message-container.hide {
+        animation: slideOutRight 0.5s ease-out forwards;
+      }
+
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideOutRight {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+
+      .success-message-content {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .success-message-text {
+        flex: 1;
+        font-weight: 500;
+        font-size: 16px;
+      }
+
+      .success-message-icon {
+        font-size: 24px;
+        margin-right: 15px;
+      }
+
+      .success-message-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0;
+        margin-left: 15px;
+      }
+
       /* Modal Styles */
       .modal-header {
         background-color: #f8f9fa;
@@ -398,6 +474,14 @@
 
         .action-buttons-container {
           flex-direction: column;
+        }
+
+        .success-message-container {
+          top: 80px;
+          left: 10px;
+          right: 10px;
+          min-width: auto;
+          max-width: none;
         }
       }
     </style>
@@ -537,6 +621,21 @@
           </li>
           <li class="breadcrumb-item active">Manage Addresses</li>
         </ul>
+      </div>
+    </div>
+
+    <!-- Success Message Container - FIXED POSITION -->
+    <div id="successMessageContainer" class="success-message-container">
+      <div class="success-message-content">
+        <div class="success-message-icon">
+          <i class="fa fa-check-circle"></i>
+        </div>
+        <div class="success-message-text" id="successMessageText">
+          Address added successfully!
+        </div>
+        <button class="success-message-close" onclick="hideSuccessMessage()">
+          &times;
+        </button>
       </div>
     </div>
 
@@ -851,12 +950,14 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
 
-    <script>
+       <script>
       let addresses = [];
       let selectedAddressId = null;
+      let redirectTimer = null;
 
       // Load addresses when page loads
       document.addEventListener("DOMContentLoaded", function () {
+        console.log("Page loaded");
         checkAuthAndUpdateUI();
         loadAddresses();
         setupEventListeners();
@@ -982,7 +1083,12 @@
 
       // Logout function
       function logoutUser() {
-        if (confirm("Are you sure you want to logout?")) {
+        const logoutConfirmed = showConfirmMessage(
+          "Are you sure you want to logout?", 
+          "Confirm Logout"
+        );
+        
+        if (logoutConfirmed) {
           localStorage.removeItem("token");
           localStorage.removeItem("userName");
           localStorage.removeItem("userId");
@@ -1045,9 +1151,6 @@
           
           // Update radio buttons
           updateRadioButtons();
-          
-          // Show success message
-          showMessage(`Address selected: ${address.fullName}`, "success");
           
           // Save to backend (optional)
           saveSelectedAddress(addressId);
@@ -1256,198 +1359,363 @@
         return pinCode.length === 6 && /^\d+$/.test(pinCode);
       }
 
-      async function saveAddress() {
-        const token = localStorage.getItem("token");
-        const addressId = document.getElementById("addressId").value;
-        const isEdit = !!addressId;
+async function saveAddress() {
+  const token = localStorage.getItem("token");
+  const addressId = document.getElementById("addressId").value;
+  const isEdit = !!addressId;
 
-        const addressData = {
-          fullName: document.getElementById("fullName").value.trim(),
-          phone: document.getElementById("phone").value.trim(),
-          pinCode: document.getElementById("pinCode").value.trim(),
-          street: document.getElementById("street").value.trim(),
-          house: document.getElementById("house").value.trim(),
-          city: document.getElementById("city").value.trim(),
-          state: document.getElementById("state").value.trim(),
-          country: document.getElementById("country").value.trim(),
-          isDefault: document.getElementById("isDefault").checked,
-        };
+  const addressData = {
+    fullName: document.getElementById("fullName").value.trim(),
+    phone: document.getElementById("phone").value.trim(),
+    pinCode: document.getElementById("pinCode").value.trim(),
+    street: document.getElementById("street").value.trim(),
+    house: document.getElementById("house").value.trim(),
+    city: document.getElementById("city").value.trim(),
+    state: document.getElementById("state").value.trim(),
+    country: document.getElementById("country").value.trim(),
+    isDefault: document.getElementById("isDefault").checked,
+  };
 
-        // Basic validation
-        if (
-          !addressData.fullName ||
-          !addressData.phone ||
-          !addressData.pinCode ||
-          !addressData.house ||
-          !addressData.city ||
-          !addressData.state
-        ) {
-          showMessage("Please fill all required fields", "warning");
-          return;
-        }
+  // Basic validation
+  if (
+    !addressData.fullName ||
+    !addressData.phone ||
+    !addressData.pinCode ||
+    !addressData.house ||
+    !addressData.city ||
+    !addressData.state
+  ) {
+    showMessage("Please fill all required fields", "warning");
+    return;
+  }
 
-        // Phone validation
-        if (!validatePhoneNumber(addressData.phone)) {
-          showMessage("Please enter a valid 10-digit phone number", "warning");
-          return;
-        }
+  // Phone validation
+  if (!validatePhoneNumber(addressData.phone)) {
+    showMessage("Please enter a valid 10-digit phone number", "warning");
+    return;
+  }
 
-        // Pin code validation
-        if (!validatePinCode(addressData.pinCode)) {
-          showMessage("Please enter a valid 6-digit pin code", "warning");
-          return;
-        }
+  // Pin code validation
+  if (!validatePinCode(addressData.pinCode)) {
+    showMessage("Please enter a valid 6-digit pin code", "warning");
+    return;
+  }
 
-        try {
-          const url = isEdit
-            ? `/api/user/addresses/${addressId}`
-            : "/api/user/addresses";
-          const method = isEdit ? "PUT" : "POST";
+  try {
+    const url = isEdit
+      ? `/api/user/addresses/${addressId}`
+      : "/api/user/addresses";
+    const method = isEdit ? "PUT" : "POST";
 
-          const response = await fetch(url, {
-            method: method,
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(addressData),
-          });
+    console.log("📤 Saving address:", {
+      url,
+      method,
+      isEdit,
+      addressData
+    });
 
-          if (response.ok) {
-            $("#addressModal").modal("hide");
-            const message = `Address ${
-              isEdit ? "updated" : "added"
-            } successfully`;
+    // Show loading state
+    const saveBtn = document.getElementById("saveAddressBtn");
+    const originalBtnText = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Saving...';
+    saveBtn.disabled = true;
 
-            // If this is a new address and is set as default, select it automatically
-            if (!isEdit && addressData.isDefault) {
-              const data = await response.json();
-              selectedAddressId = data.address?._id || data.data?._id;
-              if (selectedAddressId) {
-                localStorage.setItem("selectedAddressId", selectedAddressId);
-                showMessage(`${message} and selected as default`, "success");
-              }
-            } else {
-              showMessage(message, "success");
-            }
+    const response = await fetch(url, {
+      method: method,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(addressData),
+    });
 
-            loadAddresses();
-          } else {
-            const error = await response.json();
-            throw new Error(error.message || "Failed to save address");
-          }
-        } catch (error) {
-          console.error("Error saving address:", error);
-          showMessage(error.message, "danger");
-        }
+    console.log("📥 Save response status:", response.status);
+
+    // Restore button state
+    saveBtn.innerHTML = originalBtnText;
+    saveBtn.disabled = false;
+
+    // Try to parse response
+    let responseData;
+    try {
+      responseData = await response.json();
+      console.log("📥 Save response data:", responseData);
+    } catch (jsonError) {
+      console.log("📥 No JSON response or parse error:", jsonError);
+      responseData = {};
+    }
+
+    if (response.ok) {
+      // Close modal
+      $("#addressModal").modal("hide");
+      resetForm();
+      
+      // Show success message
+      const message = isEdit ? "Address updated successfully!" : "Address added successfully!";
+      console.log("✅ Showing success message:", message);
+      
+      // Show success message
+      showSuccessMessage(message);
+      
+      // Clear any existing redirect timer
+      if (redirectTimer) {
+        clearTimeout(redirectTimer);
       }
-
-      async function deleteAddress(addressId) {
-        if (!confirm("Are you sure you want to delete this address?")) return;
-
-        const address = addresses.find((addr) => addr._id === addressId);
-        if (!address) return;
-
-        const token = localStorage.getItem("token");
-        try {
-          const response = await fetch(`/api/user/addresses/${addressId}`, {
-            method: "DELETE",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (response.ok) {
-            // If deleted address was selected, clear selection
-            if (selectedAddressId === addressId) {
-              selectedAddressId = null;
-              localStorage.removeItem("selectedAddressId");
-              showMessage(
-                `Address "${address.fullName}" deleted and unselected`,
-                "info"
-              );
-            } else {
-              showMessage("Address deleted successfully", "success");
-            }
-
-            loadAddresses();
-          } else {
-            throw new Error("Failed to delete address");
-          }
-        } catch (error) {
-          console.error("Error deleting address:", error);
-          showMessage("Error deleting address", "danger");
-        }
-      }
-
-      async function setDefaultAddress(addressId) {
-        const address = addresses.find((addr) => addr._id === addressId);
-        if (!address) return;
-
-        const token = localStorage.getItem("token");
-        try {
-          const response = await fetch(`/api/user/addresses/${addressId}`, {
-            method: "PUT",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ isDefault: true }),
-          });
-
-          if (response.ok) {
-            // If no address is currently selected, select this one as it becomes default
-            if (!selectedAddressId) {
-              selectedAddressId = addressId;
-              localStorage.setItem("selectedAddressId", addressId);
-              showMessage(
-                `Address set as default and selected: ${address.fullName}`,
-                "success"
-              );
-            } else {
-              showMessage("Address set as default successfully", "success");
-            }
-
-            loadAddresses();
-          } else {
-            throw new Error("Failed to set default address");
-          }
-        } catch (error) {
-          console.error("Error setting default address:", error);
-          showMessage("Error setting default address", "danger");
-        }
-      }
-
-      function resetForm() {
-        document.getElementById("addressForm").reset();
-        document.getElementById("addressId").value = "";
-        document.getElementById("country").value = "India";
-      }
-
-      function showMessage(message, type) {
-        const alertDiv = document.createElement("div");
-        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-        alertDiv.innerHTML = `
-            ${message}
-            <button type="button" class="close" data-dismiss="alert">
-                <span>&times;</span>
-            </button>
-        `;
-
-        document
-          .querySelector(".manage-addresses-container")
-          .insertBefore(
-            alertDiv,
-            document.querySelector(".manage-addresses-container").firstChild
-          );
-
+      
+      // Set redirect timer
+      redirectTimer = setTimeout(() => {
+        console.log("🔄 Redirecting to address.html");
+        window.location.href = "address.html";
+      }, 2000); // 2 seconds delay
+      
+      // Reload addresses
+      loadAddresses();
+      
+    } else {
+      // Handle error response
+      const errorMessage = responseData.message || 
+                          responseData.error || 
+                          `Failed to ${isEdit ? 'update' : 'add'} address. Status: ${response.status}`;
+      console.error("❌ Save error:", errorMessage);
+      showMessage(errorMessage, "danger");
+      
+      // If it's a 401 error (unauthorized), redirect to login
+      if (response.status === 401) {
+        showMessage("Session expired. Please login again.", "warning");
         setTimeout(() => {
-          if (alertDiv.parentElement) {
-            alertDiv.remove();
-          }
-        }, 5000);
+          window.location.href = "login.html";
+        }, 2000);
       }
+    }
+  } catch (error) {
+    console.error("💥 Network/Request error:", error);
+    showMessage("Network error. Please check your connection.", "danger");
+    
+    // Restore button state in case of error
+    const saveBtn = document.getElementById("saveAddressBtn");
+    saveBtn.innerHTML = "Save Address";
+    saveBtn.disabled = false;
+  }
+}
+
+// Show success message (non-alert)
+function showSuccessMessage(message) {
+  console.log("🚀 Attempting to show success message:", message);
+  
+  const messageContainer = document.getElementById("successMessageContainer");
+  const messageText = document.getElementById("successMessageText");
+  
+  if (!messageContainer) {
+    console.error("❌ Success message container not found!");
+    showMessage(message, "success"); // Fallback to regular message
+    return;
+  }
+  
+  if (!messageText) {
+    console.error("❌ Success message text element not found!");
+    showMessage(message, "success"); // Fallback to regular message
+    return;
+  }
+  
+  // Update message text
+  messageText.textContent = message;
+  
+  // Remove any existing animation classes
+  messageContainer.classList.remove("hide", "show");
+  
+  // Force reflow
+  void messageContainer.offsetWidth;
+  
+  // Show with animation
+  messageContainer.style.display = "block";
+  messageContainer.classList.add("show");
+  
+  console.log("✅ Success message should be visible now");
+  
+  // Auto-hide after 3 seconds
+  setTimeout(() => {
+    hideSuccessMessage();
+  }, 3000);
+}
+
+// Hide success message
+function hideSuccessMessage() {
+  const messageContainer = document.getElementById("successMessageContainer");
+  if (!messageContainer) return;
+  
+  messageContainer.classList.remove("show");
+  messageContainer.classList.add("hide");
+  
+  // Hide after animation
+  setTimeout(() => {
+    messageContainer.classList.remove("hide");
+    messageContainer.style.display = "none";
+  }, 500);
+}
+
+async function deleteAddress(addressId) {
+  const address = addresses.find((addr) => addr._id === addressId);
+  if (!address) return;
+
+  // Show custom confirmation dialog instead of alert
+  if (!await showConfirmMessage(`Are you sure you want to delete the address for ${address.fullName}?`, "Confirm Deletion")) {
+    return;
+  }
+
+  const token = localStorage.getItem("token");
+  try {
+    const response = await fetch(`/api/user/addresses/${addressId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      // If deleted address was selected, clear selection
+      if (selectedAddressId === addressId) {
+        selectedAddressId = null;
+        localStorage.removeItem("selectedAddressId");
+        showMessage(
+          `Address "${address.fullName}" deleted and unselected`,
+          "info"
+        );
+      } else {
+        showMessage("Address deleted successfully", "success");
+      }
+
+      loadAddresses();
+    } else {
+      throw new Error("Failed to delete address");
+    }
+  } catch (error) {
+    console.error("Error deleting address:", error);
+    showMessage("Error deleting address", "danger");
+  }
+}
+
+async function setDefaultAddress(addressId) {
+  const address = addresses.find((addr) => addr._id === addressId);
+  if (!address) return;
+
+  const token = localStorage.getItem("token");
+  try {
+    const response = await fetch(`/api/user/addresses/${addressId}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ isDefault: true }),
+    });
+
+    if (response.ok) {
+      // If no address is currently selected, select this one as it becomes default
+      if (!selectedAddressId) {
+        selectedAddressId = addressId;
+        localStorage.setItem("selectedAddressId", addressId);
+        showMessage(
+          `Address set as default and selected: ${address.fullName}`,
+          "success"
+        );
+      } else {
+        showMessage("Address set as default successfully", "success");
+      }
+
+      loadAddresses();
+    } else {
+      throw new Error("Failed to set default address");
+    }
+  } catch (error) {
+    console.error("Error setting default address:", error);
+    showMessage("Error setting default address", "danger");
+  }
+}
+
+function resetForm() {
+  document.getElementById("addressForm").reset();
+  document.getElementById("addressId").value = "";
+  document.getElementById("country").value = "India";
+}
+
+function showMessage(message, type) {
+  const alertDiv = document.createElement("div");
+  alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+  alertDiv.innerHTML = `
+      ${message}
+      <button type="button" class="close" data-dismiss="alert">
+          <span>&times;</span>
+      </button>
+  `;
+
+  document
+    .querySelector(".manage-addresses-container")
+    .insertBefore(
+      alertDiv,
+      document.querySelector(".manage-addresses-container").firstChild
+    );
+
+  setTimeout(() => {
+    if (alertDiv.parentElement) {
+      alertDiv.remove();
+    }
+  }, 5000);
+}
+
+// Custom confirmation dialog function
+function showConfirmMessage(message, title = "Confirm") {
+  return new Promise((resolve) => {
+    // Remove any existing confirmation modal
+    const existingModal = document.getElementById("customConfirmModal");
+    if (existingModal) {
+      existingModal.remove();
+    }
+
+    // Create confirmation modal
+    const modalHtml = `
+      <div class="modal fade" id="customConfirmModal" tabindex="-1" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">${title}</h5>
+              <button type="button" class="close" data-dismiss="modal" onclick="document.getElementById('customConfirmModal').remove(); resolve(false);">
+                <span>&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>${message}</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="document.getElementById('customConfirmModal').remove(); resolve(false);">
+                Cancel
+              </button>
+              <button type="button" class="btn btn-primary" onclick="document.getElementById('customConfirmModal').remove(); resolve(true);">
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Add modal to DOM
+    const modalContainer = document.createElement('div');
+    modalContainer.innerHTML = modalHtml;
+    document.body.appendChild(modalContainer);
+
+    // Show modal
+    $('#customConfirmModal').modal('show');
+
+    // Clean up when modal is hidden
+    $('#customConfirmModal').on('hidden.bs.modal', function () {
+      if (document.getElementById('customConfirmModal')) {
+        document.getElementById('customConfirmModal').remove();
+        resolve(false);
+      }
+    });
+  });
+}
     </script>
   </body>
 </html>

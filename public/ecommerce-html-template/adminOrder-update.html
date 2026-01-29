@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Order - ShopStyle Admin</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Source+Code+Pro:wght@700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Open Sans", sans-serif;
+        background-color: #f5f7fa;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      /* Admin Layout */
+      .admin-container {
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .admin-sidebar {
+        width: 250px;
+        background: #2c3e50;
+        color: white;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        transition: all 0.3s;
+        z-index: 1000;
+      }
+
+      .sidebar-brand {
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid #34495e;
+        background: #1a252f;
+      }
+
+      .sidebar-brand h2 {
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .sidebar-brand i {
+        margin-right: 10px;
+        color: #e74c3c;
+      }
+
+      .sidebar-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .sidebar-menu li a {
+        color: #bdc3c7;
+        padding: 15px 20px;
+        display: block;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-left: 3px solid transparent;
+      }
+
+      .sidebar-menu li a:hover,
+      .sidebar-menu li a.active {
+        background: #34495e;
+        color: white;
+        border-left: 3px solid #e74c3c;
+      }
+
+      .sidebar-menu li a i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+      }
+
+      /* Main Content */
+      .admin-main {
+        flex: 1;
+        margin-left: 250px;
+        transition: all 0.3s;
+      }
+
+      .admin-header {
+        background: white;
+        padding: 15px 30px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .admin-user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .admin-user span {
+        color: #2c3e50;
+        font-weight: 600;
+      }
+
+      .logout-btn {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
+
+      .logout-btn i {
+        margin-right: 5px;
+      }
+
+      .admin-content {
+        padding: 30px;
+      }
+
+      /* Page Header */
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+
+      .back-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+      }
+
+      .back-btn:hover {
+        background: #2980b9;
+      }
+
+      /* Order Status */
+      .order-status-header {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .order-info-basic {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .order-id-display {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2c3e50;
+      }
+
+      .order-date-display {
+        color: #7f8c8d;
+        font-size: 14px;
+      }
+
+      /* Status Badges */
+      .status-badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        display: inline-block;
+        text-transform: uppercase;
+      }
+
+      .status-pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .status-processing {
+        background: #cce5ff;
+        color: #004085;
+      }
+
+      .status-shipped {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+
+      .status-delivered {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .status-cancelled {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .status-out-for-delivery {
+        background: #e8f4f8;
+        color: #0c5460;
+        border: 1px solid #b6e0f2;
+      }
+
+      /* Payment Status */
+      .payment-status {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .payment-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+
+      .payment-paid {
+        background: #27ae60;
+      }
+
+      .payment-pending {
+        background: #f39c12;
+      }
+
+      .payment-failed {
+        background: #e74c3c;
+      }
+
+      /* Order Details Grid */
+      .order-details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .detail-card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .detail-card h3 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-size: 18px;
+        border-bottom: 2px solid #ecf0f1;
+        padding-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .detail-card h3 i {
+        color: #3498db;
+      }
+
+      .detail-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 14px;
+      }
+
+      .detail-label {
+        color: #7f8c8d;
+        font-weight: 500;
+      }
+
+      .detail-value {
+        color: #2c3e50;
+        font-weight: 600;
+        text-align: right;
+        max-width: 60%;
+      }
+
+      /* Items Table */
+      .items-table-container {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 30px;
+        overflow: hidden;
+      }
+
+      .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+
+      .items-table th {
+        background: #34495e;
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid #2c3e50;
+      }
+
+      .items-table td {
+        padding: 15px;
+        border-bottom: 1px solid #ecf0f1;
+        vertical-align: middle;
+      }
+
+      .items-table tr:hover {
+        background: #f8f9fa;
+      }
+
+      .item-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+      }
+
+      .item-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .item-details {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .item-name {
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      .item-size {
+        font-size: 12px;
+        color: #7f8c8d;
+      }
+
+      /* Totals Section */
+      .totals-section {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+
+      .total-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 14px;
+      }
+
+      .total-label {
+        color: #7f8c8d;
+      }
+
+      .total-value {
+        color: #2c3e50;
+        font-weight: 500;
+      }
+
+      .grand-total {
+        font-size: 18px;
+        font-weight: 700;
+        color: #27ae60;
+        padding-top: 15px;
+        border-top: 2px solid #ecf0f1;
+        margin-top: 15px;
+      }
+
+      /* Status Update Section */
+      .status-update-section {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+
+      .status-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 20px 0;
+      }
+
+      .status-option {
+        flex: 1;
+        min-width: 120px;
+      }
+
+      .status-option input {
+        display: none;
+      }
+
+      .status-option label {
+        display: block;
+        padding: 12px;
+        text-align: center;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 500;
+      }
+
+      .status-option input:checked + label {
+        border-color: #3498db;
+        background: #3498db;
+        color: white;
+      }
+
+      .status-option label:hover {
+        border-color: #3498db;
+        background: #e8f3fc;
+      }
+
+      .update-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .btn-save {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.3s;
+      }
+
+      .btn-save:hover {
+        background: #229954;
+      }
+
+      .btn-cancel {
+        background: #95a5a6;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.3s;
+      }
+
+      .btn-cancel:hover {
+        background: #7f8c8d;
+      }
+
+      /* Loading and Error States */
+      .loading {
+        text-align: center;
+        padding: 40px;
+        font-size: 16px;
+        color: #7f8c8d;
+      }
+
+      .error {
+        text-align: center;
+        padding: 40px;
+        font-size: 16px;
+        color: #e74c3c;
+        background: white;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+
+      /* Success Message */
+      .success-message {
+        background: #d4edda;
+        color: #155724;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        display: none;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .admin-sidebar {
+          width: 70px;
+        }
+
+        .admin-sidebar .sidebar-brand h2 span,
+        .admin-sidebar .sidebar-menu li a span {
+          display: none;
+        }
+
+        .admin-sidebar .sidebar-menu li a i {
+          margin-right: 0;
+          font-size: 18px;
+        }
+
+        .admin-main {
+          margin-left: 70px;
+        }
+
+        .page-header {
+          flex-direction: column;
+          gap: 15px;
+          align-items: flex-start;
+        }
+
+        .order-status-header {
+          flex-direction: column;
+          gap: 15px;
+          align-items: flex-start;
+        }
+
+        .order-details-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .items-table {
+          display: block;
+          overflow-x: auto;
+        }
+
+        .status-options {
+          flex-direction: column;
+        }
+
+        .update-actions {
+          flex-direction: column;
+        }
+
+        .btn-save,
+        .btn-cancel {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="admin-container">
+      <!-- Sidebar -->
+      <div class="admin-sidebar">
+        <div class="sidebar-brand">
+          <h2>
+            <i class="fas fa-user-shield"></i> <span>ShopStyle Admin</span>
+          </h2>
+        </div>
+        <ul class="sidebar-menu">
+          <li>
+            <a href="admin-dashboard.html"
+              ><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a
+            >
+          </li>
+          <li>
+            <a href="admin-showusers.html"
+              ><i class="fas fa-users"></i> <span>Users</span></a
+            >
+          </li>
+          <li>
+            <a href="admin-orders.html" class="active"
+              ><i class="fas fa-shopping-cart"></i> <span>Orders</span></a
+            >
+          </li>
+          <li>
+            <a href="admin-products.html"
+              ><i class="fas fa-box"></i> <span>Products</span></a
+            >
+          </li>
+          <li>
+            <a href="admin-categories.html"
+              ><i class="fas fa-tags"></i> <span>Categories</span></a
+            >
+          </li>
+          <li>
+            <a href="admin-coupon.html"
+              ><i class="fas fa-warehouse"></i> <span>Coupons</span></a
+            >
+          </li>
+          <li>
+            <a href="admin-reports.html"
+              ><i class="fas fa-chart-bar"></i> <span>Reports</span></a
+            >
+          </li>
+          <li>
+            <a href="#" id="logoutBtn"
+              ><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <!-- Main Content -->
+      <div class="admin-main">
+        <div class="admin-header">
+          <h1>Update Order</h1>
+          <div class="admin-user">
+            <span id="adminNameDisplay">Admin</span>
+            <button class="logout-btn" id="logoutBtnHeader">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-content">
+          <!-- Page Header -->
+          <div class="page-header">
+            <button class="back-btn" onclick="goBack()">
+              <i class="fas fa-arrow-left"></i> Back to Orders
+            </button>
+            <div id="successMessage" class="success-message">
+              <i class="fas fa-check-circle"></i>
+              <span id="successText">Order status updated successfully!</span>
+            </div>
+          </div>
+
+          <!-- Order Loading/Error -->
+          <div id="orderLoading" class="loading">
+            Loading order details...
+          </div>
+          
+          <div id="orderError" class="error" style="display: none;">
+            Error loading order details. Please try again.
+          </div>
+
+          <!-- Order Details (will be populated by JavaScript) -->
+          <div id="orderDetails" style="display: none;">
+            <!-- Order Status Header -->
+            <div class="order-status-header">
+              <div class="order-info-basic">
+                <div class="order-id-display" id="orderIdDisplay"></div>
+                <div class="order-date-display" id="orderDateDisplay"></div>
+              </div>
+              <div class="payment-status">
+                <span class="payment-dot" id="paymentDot"></span>
+                <span id="paymentStatusDisplay"></span>
+              </div>
+            </div>
+
+            <!-- Order Details Grid -->
+            <div class="order-details-grid">
+              <!-- Customer Information -->
+              <div class="detail-card">
+                <h3><i class="fas fa-user"></i> Customer Information</h3>
+                <div class="detail-item">
+                  <span class="detail-label">Name:</span>
+                  <span class="detail-value" id="customerName"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Email:</span>
+                  <span class="detail-value" id="customerEmail"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Phone:</span>
+                  <span class="detail-value" id="customerPhone"></span>
+                </div>
+              </div>
+
+              <!-- Shipping Information -->
+              <div class="detail-card">
+                <h3><i class="fas fa-truck"></i> Shipping Information</h3>
+                <div class="detail-item">
+                  <span class="detail-label">Address:</span>
+                  <span class="detail-value" id="shippingAddress"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">City:</span>
+                  <span class="detail-value" id="shippingCity"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">State:</span>
+                  <span class="detail-value" id="shippingState"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">ZIP Code:</span>
+                  <span class="detail-value" id="shippingZip"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Tracking Number:</span>
+                  <span class="detail-value" id="trackingNumber">Not Assigned</span>
+                </div>
+              </div>
+
+              <!-- Payment Information -->
+              <div class="detail-card">
+                <h3><i class="fas fa-credit-card"></i> Payment Information</h3>
+                <div class="detail-item">
+                  <span class="detail-label">Method:</span>
+                  <span class="detail-value" id="paymentMethod"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Status:</span>
+                  <span class="detail-value" id="paymentStatus"></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Transaction ID:</span>
+                  <span class="detail-value" id="paymentId">N/A</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Gateway:</span>
+                  <span class="detail-value" id="paymentGateway">N/A</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="items-table-container">
+              <h3><i class="fas fa-boxes"></i> Order Items</h3>
+              <table class="items-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody id="itemsTableBody">
+                  <!-- Items will be populated here -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Order Totals -->
+            <div class="totals-section">
+              <h3><i class="fas fa-receipt"></i> Order Summary</h3>
+              <div class="total-row">
+                <span class="total-label">Subtotal:</span>
+                <span class="total-value" id="subtotalAmount"></span>
+              </div>
+              <div class="total-row">
+                <span class="total-label">Shipping:</span>
+                <span class="total-value" id="shippingAmount"></span>
+              </div>
+              <div class="total-row">
+                <span class="total-label">Tax:</span>
+                <span class="total-value" id="taxAmount"></span>
+              </div>
+              <div class="total-row">
+                <span class="total-label">Discount:</span>
+                <span class="total-value" id="discountAmount"></span>
+              </div>
+              <div class="total-row grand-total">
+                <span class="total-label">Grand Total:</span>
+                <span class="total-value" id="totalAmount"></span>
+              </div>
+            </div>
+
+            <!-- Status Update Section -->
+            <div class="status-update-section">
+              <h3><i class="fas fa-sync-alt"></i> Update Order Status</h3>
+              <div class="detail-item">
+                <span class="detail-label">Current Status:</span>
+                <span class="detail-value">
+                  <span class="status-badge" id="currentStatusBadge"></span>
+                </span>
+              </div>
+              
+              <p style="margin: 15px 0; color: #7f8c8d;">
+                Select new status for this order:
+              </p>
+              
+              <div class="status-options" id="statusOptions">
+                <div class="status-option">
+                  <input type="radio" id="status-created" name="orderStatus" value="CREATED">
+                  <label for="status-created" class="status-badge status-pending">Created</label>
+                </div>
+                <div class="status-option">
+                  <input type="radio" id="status-confirmed" name="orderStatus" value="CONFIRMED">
+                  <label for="status-confirmed" class="status-badge status-pending">Confirmed</label>
+                </div>
+                <div class="status-option">
+                  <input type="radio" id="status-shipped" name="orderStatus" value="SHIPPED">
+                  <label for="status-shipped" class="status-badge status-processing">Shipped</label>
+                </div>
+                <div class="status-option">
+                  <input type="radio" id="status-outfordelivery" name="orderStatus" value="OUT FOR DELIVERY">
+                  <label for="status-outfordelivery" class="status-badge status-out-for-delivery">Out for Delivery</label>
+                </div>
+                <div class="status-option">
+                  <input type="radio" id="status-delivered" name="orderStatus" value="DELIVERED">
+                  <label for="status-delivered" class="status-badge status-delivered">Delivered</label>
+                </div>
+                <div class="status-option">
+                  <input type="radio" id="status-cancelled" name="orderStatus" value="CANCELLED">
+                  <label for="status-cancelled" class="status-badge status-cancelled">Cancelled</label>
+                </div>
+              </div>
+              
+              <div class="update-actions">
+                <button class="btn-cancel" onclick="goBack()">
+                  <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn-save" onclick="updateOrderStatus()">
+                  <i class="fas fa-save"></i> Update Status
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+<script>
+  // Authentication check
+  (function checkAuth() {
+    const token = localStorage.getItem("adminToken");
+    const isLoggedIn = localStorage.getItem("adminLoggedIn") === "true";
+
+    if (!token || !isLoggedIn) {
+      window.location.href = "admin-login.html";
+      return;
+    }
+  })();
+
+  let currentOrder = null;
+
+  // Get order ID from URL or localStorage
+  function getOrderId() {
+    // Try to get from URL parameters first
+    const urlParams = new URLSearchParams(window.location.search);
+    let orderId = urlParams.get('orderId');
+    
+    // If not in URL, check localStorage
+    // if (!orderId) {
+    //   orderId = localStorage.getItem('selectedOrderId');
+    // }
+    
+    // Clear localStorage after getting the value
+    localStorage.removeItem('selectedOrderId');
+    
+    return orderId;
+  }
+
+  // Format currency
+  function formatCurrency(amount) {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR'
+    }).format(amount || 0);
+  }
+
+  // Format date
+  function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  // Get status badge class
+  function getStatusClass(status) {
+    const statusValue = status?.toLowerCase();
+    if (statusValue === 'created' || statusValue === 'confirmed') {
+      return 'status-pending';
+    } else if (statusValue === 'shipped') {
+      return 'status-processing';
+    } else if (statusValue === 'out for delivery') {
+      return 'status-out-for-delivery';
+    } else if (statusValue === 'delivered') {
+      return 'status-delivered';
+    } else if (statusValue === 'cancelled') {
+      return 'status-cancelled';
+    }
+    return 'status-pending';
+  }
+
+  // Get status text for display
+  function getStatusText(status) {
+    const statusValue = status?.toLowerCase();
+    if (statusValue === 'created') {
+      return 'Created';
+    } else if (statusValue === 'confirmed') {
+      return 'Confirmed';
+    } else if (statusValue === 'shipped') {
+      return 'Shipped';
+    } else if (statusValue === 'out for delivery') {
+      return 'Out for Delivery';
+    } else if (statusValue === 'delivered') {
+      return 'Delivered';
+    } else if (statusValue === 'cancelled') {
+      return 'Cancelled';
+    }
+    return status || 'Created';
+  }
+
+  // Helper function to set the correct radio button based on backend status
+  function setSelectedRadio(status) {
+    const statusValue = status?.toLowerCase();
+    
+    if (statusValue === 'created') {
+      document.getElementById('status-created').checked = true;
+    } else if (statusValue === 'confirmed') {
+      document.getElementById('status-confirmed').checked = true;
+    } else if (statusValue === 'shipped') {
+      document.getElementById('status-shipped').checked = true;
+    } else if (statusValue === 'out for delivery') {
+      document.getElementById('status-outfordelivery').checked = true;
+    } else if (statusValue === 'delivered') {
+      document.getElementById('status-delivered').checked = true;
+    } else if (statusValue === 'cancelled') {
+      document.getElementById('status-cancelled').checked = true;
+    } else {
+      document.getElementById('status-created').checked = true;
+    }
+  }
+
+  // Get payment status dot class
+  function getPaymentDotClass(paymentStatus) {
+    const status = paymentStatus?.toLowerCase();
+    if (status === 'paid') return 'payment-paid';
+    if (status === 'pending') return 'payment-pending';
+    if (status === 'failed') return 'payment-failed';
+    return 'payment-pending';
+  }
+
+  // Get payment status text
+  function getPaymentStatusText(paymentStatus) {
+    const status = paymentStatus?.toLowerCase();
+    if (status === 'paid') return 'Paid';
+    if (status === 'pending') return 'Pending';
+    if (status === 'failed') return 'Failed';
+    return paymentStatus || 'Pending';
+  }
+
+  // Helper function to get correct image URL
+  function getImageUrl(imagePath) {
+    if (!imagePath) return 'https://via.placeholder.com/60x60?text=No+Image';
+    
+    // Remove any quotes or special characters
+    imagePath = imagePath.toString().replace(/['"]/g, '').trim();
+    
+    // Check if it's already a full URL
+    if (imagePath.startsWith('http') || imagePath.startsWith('data:')) {
+      return imagePath;
+    }
+    
+    // Add your base URL - adjust according to your setup
+    // Option 1: If using relative path to your backend
+    return `/uploads/${imagePath}`;
+    
+    // Option 2: If using absolute URL (uncomment and adjust)
+    // const baseUrl = 'http://localhost:3000'; // Your backend URL
+    // return `${baseUrl}/uploads/${imagePath}`;
+  }
+
+  // Load order details
+  async function loadOrderDetails() {
+    const orderId = getOrderId();
+    
+    if (!orderId) {
+      showError("No order ID found. Please go back and select an order.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch(`/api/admin/orders/getAll/${orderId}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          alert("Session expired. Please login again.");
+          window.location.href = "admin-login.html";
+          return;
+        }
+        if (response.status === 404) {
+          showError("Order not found. It may have been deleted.");
+          return;
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      console.log("Order data received:", data.order);
+      console.log("Current status:", data.order?.status);
+      
+      if (data.success) {
+        currentOrder = data.order;
+        displayOrderDetails(currentOrder);
+      } else {
+        showError(data.message || "Failed to load order details");
+      }
+    } catch (error) {
+      console.error("Error loading order details:", error);
+      showError("Error loading order details. Please try again.");
+    }
+  }
+
+  // Display order details
+  function displayOrderDetails(order) {
+    // Hide loading, show content
+    document.getElementById('orderLoading').style.display = 'none';
+    document.getElementById('orderDetails').style.display = 'block';
+    
+    // Set order basic info
+    document.getElementById('orderIdDisplay').textContent = order.orderId || order._id;
+    document.getElementById('orderDateDisplay').textContent = `Order Date: ${formatDate(order.createdAt)}`;
+    
+    // Set payment status
+    const paymentDot = document.getElementById('paymentDot');
+    const paymentStatusDisplay = document.getElementById('paymentStatusDisplay');
+    paymentDot.className = `payment-dot ${getPaymentDotClass(order.paymentStatus)}`;
+    paymentStatusDisplay.textContent = getPaymentStatusText(order.paymentStatus);
+    
+    // Set customer information
+    document.getElementById('customerName').textContent = order.user?.name || order.customer?.name || 'N/A';
+    document.getElementById('customerEmail').textContent = order.user?.email || order.customer?.email || 'N/A';
+    document.getElementById('customerPhone').textContent = order.user?.phone || order.address?.phone || 'N/A';
+    
+    // Set shipping information
+    if (order.address) {
+      document.getElementById('shippingAddress').textContent = order.address.street || 'N/A';
+      document.getElementById('shippingCity').textContent = order.address.city || 'N/A';
+      document.getElementById('shippingState').textContent = order.address.state || 'N/A';
+      document.getElementById('shippingZip').textContent = order.address.zipCode || order.address.pinCode || 'N/A';
+    } else {
+      document.getElementById('shippingAddress').textContent = 'N/A';
+      document.getElementById('shippingCity').textContent = 'N/A';
+      document.getElementById('shippingState').textContent = 'N/A';
+      document.getElementById('shippingZip').textContent = 'N/A';
+    }
+    
+    // Set tracking number
+    // if (order.trackingNumber) {
+    //   document.getElementById('trackingNumber').textContent = order.trackingNumber;
+    // }
+    
+    // Set payment information
+    document.getElementById('paymentMethod').textContent = order.paymentMethod || 'N/A';
+    document.getElementById('paymentStatus').textContent = getPaymentStatusText(order.paymentStatus);
+    if (order.paymentId) document.getElementById('paymentId').textContent = order.paymentId;
+    if (order.paymentGateway) document.getElementById('paymentGateway').textContent = order.paymentGateway;
+    
+    // Set order totals
+    document.getElementById('subtotalAmount').textContent = formatCurrency(order.subtotal);
+    document.getElementById('shippingAmount').textContent = formatCurrency(order.shipping);
+    document.getElementById('taxAmount').textContent = formatCurrency(order.tax);
+    document.getElementById('discountAmount').textContent = formatCurrency(order.discount);
+    document.getElementById('totalAmount').textContent = formatCurrency(order.totalAmount);
+    
+    // Set current status badge
+    const currentStatusBadge = document.getElementById('currentStatusBadge');
+    currentStatusBadge.className = `status-badge ${getStatusClass(order.status)}`;
+    currentStatusBadge.textContent = getStatusText(order.status);
+    
+    // Set selected radio button for current status
+    setSelectedRadio(order.status);
+    
+    // Display order items
+    displayOrderItems(order.items || []);
+  }
+
+  // Display order items
+  function displayOrderItems(items) {
+    const itemsTableBody = document.getElementById('itemsTableBody');
+    itemsTableBody.innerHTML = '';
+    
+    if (!items || items.length === 0) {
+      itemsTableBody.innerHTML = `
+        <tr>
+          <td colspan="4" style="text-align: center; color: #7f8c8d; padding: 20px;">
+            No items found in this order
+          </td>
+        </tr>
+      `;
+      return;
+    }
+    
+    items.forEach(item => {
+      // Get the first image from item.image array (based on your console output)
+      let itemImageUrl = 'https://via.placeholder.com/60x60?text=No+Image';
+      
+      if (item.image && Array.isArray(item.image) && item.image.length > 0) {
+        // Get the first image from the array
+        const firstImage = item.image[0];
+        itemImageUrl = getImageUrl(firstImage);
+      } else if (typeof item.image === 'string') {
+        // If image is a string instead of array
+        itemImageUrl = getImageUrl(item.image);
+      } else if (item.product?.image && Array.isArray(item.product.image) && item.product.image.length > 0) {
+        // Fallback to product image array
+        const firstImage = item.product.image[0];
+        itemImageUrl = getImageUrl(firstImage);
+      } else if (typeof item.product?.image === 'string') {
+        // Fallback to product image string
+        itemImageUrl = getImageUrl(item.product.image);
+      }
+      
+      const itemName = item.name || item.product?.name || 'Unknown Product';
+      const itemSize = item.size || 'N/A';
+      const itemPrice = item.price || 0;
+      const itemQuantity = item.quantity || 0;
+      const itemTotal = itemPrice * itemQuantity;
+      
+      const row = `
+        <tr>
+          <td>
+            <div class="item-info">
+              <img src="${itemImageUrl}" alt="${itemName}" class="item-image" 
+                   onerror="this.onerror=null; this.src='https://via.placeholder.com/60x60?text=No+Image'">
+              <div class="item-details">
+                <div class="item-name">${itemName}</div>
+                <div class="item-size">Size: ${itemSize}</div>
+              </div>
+            </div>
+          </td>
+          <td>${formatCurrency(itemPrice)}</td>
+          <td>${itemQuantity}</td>
+          <td>${formatCurrency(itemTotal)}</td>
+        </tr>
+      `;
+      itemsTableBody.innerHTML += row;
+    });
+  }
+
+  // Update order status
+  async function updateOrderStatus() {
+    const selectedStatus = document.querySelector('input[name="orderStatus"]:checked')?.value;
+    
+    if (!selectedStatus) {
+      alert('Please select a status');
+      return;
+    }
+    
+    if (!currentOrder || !currentOrder._id) {
+      alert('No order data available');
+      return;
+    }
+    
+    console.log('Updating order status to:', selectedStatus);
+    
+    try {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch(`/api/admin/orders/getAll/${currentOrder._id}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          status: selectedStatus // Already in correct format (CREATED, CONFIRMED, etc.)
+        })
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          alert("Token expired. Please login again.");
+          window.location.href = "admin-login.html";
+          return;
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      console.log('Update response:', data);
+      
+      if (data.success) {
+        // Show success message
+        const successMessage = document.getElementById('successMessage');
+        const successText = document.getElementById('successText');
+        successText.textContent = data.message || 'Order status updated successfully!';
+        successMessage.style.display = 'flex';
+        
+        // Update current order status locally
+        currentOrder.status = selectedStatus;
+        
+        // Update status badge
+        const currentStatusBadge = document.getElementById('currentStatusBadge');
+        currentStatusBadge.className = `status-badge ${getStatusClass(selectedStatus)}`;
+        currentStatusBadge.textContent = getStatusText(selectedStatus);
+        
+        // Hide success message after 3 seconds
+        setTimeout(() => {
+          successMessage.style.display = 'none';
+        }, 3000);
+        
+      } else {
+        alert(data.message || 'Failed to update order status');
+      }
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      alert('Error updating order status. Please try again.');
+    }
+  }
+
+  // Show error message
+  function showError(message) {
+    document.getElementById('orderLoading').style.display = 'none';
+    const errorDiv = document.getElementById('orderError');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+  }
+
+  // Go back to orders page
+  function goBack() {
+    window.location.href = 'admin-orders.html';
+  }
+
+  // Logout function
+  function logout() {
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminLoggedIn");
+    localStorage.removeItem("adminId");
+    localStorage.removeItem("adminName");
+    localStorage.removeItem('selectedOrderId');
+    window.location.href = "admin-login.html";
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add logout event listeners
+    const logoutBtn = document.getElementById("logoutBtn");
+    const logoutBtnHeader = document.getElementById("logoutBtnHeader");
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        logout();
+      });
+    }
+    if (logoutBtnHeader) {
+      logoutBtnHeader.addEventListener("click", function (e) {
+        e.preventDefault();
+        logout();
+      });
+    }
+
+    // Display admin name if available
+    const adminName = localStorage.getItem("adminName");
+    if (adminName) {
+      const adminNameElement = document.getElementById("adminNameDisplay");
+      if (adminNameElement) {
+        adminNameElement.textContent = adminName;
+      }
+    }
+
+    // Load order details
+    loadOrderDetails();
+  });
+</script>
+  </body>
+</html>

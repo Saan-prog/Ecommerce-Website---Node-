@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>E Store - eCommerce HTML Template</title>
+        <title>E Store - Wishlist</title>
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <meta content="eCommerce HTML Template Free Download" name="keywords">
         <meta content="eCommerce HTML Template Free Download" name="description">
@@ -21,6 +21,232 @@
 
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
+        
+        <!-- Custom CSS for Wishlist -->
+        <style>
+            /* ULTRA COMPACT Wishlist Card */
+            .wishlist-card {
+                border: 1px solid #eaeaea;
+                border-radius: 6px;
+                margin-bottom: 15px;
+                transition: all 0.2s ease;
+                background: #fff;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                position: relative;
+                cursor: pointer;
+            }
+            
+            .wishlist-card:hover {
+                box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+                border-color: #ddd;
+            }
+            
+            /* Image container - fixed height */
+            .wishlist-card-image-container {
+                height: 320px;
+                overflow: hidden;
+                background-color: #f9f9f9;
+                flex-shrink: 0;
+                position: relative;
+            }
+            
+            .wishlist-card-image-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.4s ease;
+            }
+            
+            .wishlist-card:hover .wishlist-card-image-container img {
+                transform: scale(1.02);
+            }
+            
+            /* SUPER COMPACT Card Body */
+            .wishlist-card-body {
+                padding: 10px 12px 12px 12px;
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            /* Compact Title */
+            .wishlist-card-title {
+                font-size: 14px;
+                font-weight: 600;
+                margin: 0;
+                color: #333;
+                line-height: 1.3;
+                height: 36px;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+            
+            /* Compact Price */
+            .wishlist-card-price {
+                font-size: 15px;
+                color: #FF6B6B;
+                font-weight: 700;
+                margin: 0;
+                line-height: 1;
+            }
+            
+            /* Ultra Compact Action Buttons */
+            .wishlist-card-actions {
+                display: flex;
+                gap: 6px;
+                margin-top: 2px;
+            }
+            
+            .btn-view {
+                background: #4a6bff;
+                color: white;
+                border: none;
+                padding: 4px 10px;
+                border-radius: 3px;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-size: 12px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 3px;
+                flex-grow: 1;
+                justify-content: center;
+                height: 28px;
+                line-height: 1;
+                text-decoration: none;
+            }
+            
+            .btn-view:hover {
+                background: #3a5bff;
+                transform: translateY(-1px);
+                color: white;
+                text-decoration: none;
+            }
+            
+            .btn-remove {
+                background: transparent;
+                border: 1px solid #e0e0e0;
+                color: #777;
+                width: 28px;
+                height: 28px;
+                border-radius: 3px;
+                font-size: 12px;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                padding: 0;
+            }
+            
+            .btn-remove:hover {
+                color: #ff5252;
+                border-color: #ff5252;
+                background: rgba(255, 82, 82, 0.05);
+            }
+            
+            /* Remove fade effect from buttons */
+            .btn-view:active,
+            .btn-remove:active {
+                transform: translateY(0);
+            }
+            
+            /* Clickable product area */
+            .product-clickable {
+                cursor: pointer;
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .wishlist-card-image-container {
+                    height: 280px;
+                }
+                
+                .wishlist-card-title {
+                    font-size: 13px;
+                    height: 34px;
+                }
+                
+                .wishlist-card-price {
+                    font-size: 14px;
+                }
+                
+                .wishlist-card-body {
+                    padding: 8px 10px 10px 10px;
+                    gap: 6px;
+                }
+                
+                .btn-view,
+                .btn-remove {
+                    height: 26px;
+                    font-size: 11px;
+                }
+                
+                .btn-remove {
+                    width: 26px;
+                }
+            }
+            
+            @media (max-width: 576px) {
+                .wishlist-card-image-container {
+                    height: 240px;
+                }
+            }
+            
+            /* Keep existing styles for other elements */
+            .empty-wishlist {
+                text-align: center;
+                padding: 80px 20px;
+            }
+            
+            .empty-wishlist i {
+                font-size: 80px;
+                color: #ddd;
+                margin-bottom: 20px;
+            }
+            
+            .empty-wishlist h3 {
+                color: #666;
+                margin-bottom: 15px;
+            }
+            
+            .wishlist-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+                padding-bottom: 15px;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .wishlist-count {
+                font-size: 16px;
+                color: #666;
+            }
+            
+            .wishlist-count span {
+                font-weight: bold;
+                color: #FF6B6B;
+            }
+            
+            /* Loading spinner */
+            .spinner-border {
+                width: 3rem;
+                height: 3rem;
+            }
+        </style>
     </head>
 
     <body>
@@ -33,7 +259,7 @@
                         support@email.com
                     </div>
                     <div class="col-sm-6">
-                        <i class="fa fa-phone-alt"></i>
+                        <i class="fa fa-eye"></i>
                         +012-345-6789
                     </div>
                 </div>
@@ -51,28 +277,35 @@
                     </button>
 
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                        <!-- Left side navigation -->
                         <div class="navbar-nav mr-auto">
                             <a href="index.html" class="nav-item nav-link">Home</a>
                             <a href="product-list.html" class="nav-item nav-link">Products</a>
-                            <a href="product-detail.html" class="nav-item nav-link">Product Detail</a>
-                            <a href="cart.html" class="nav-item nav-link">Cart</a>
-                            <a href="checkout.html" class="nav-item nav-link">Checkout</a>
-                            <a href="my-account.html" class="nav-item nav-link">My Account</a>
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">More Pages</a>
+                            <a href="product-detail.html" class="nav-item nav-link d-none product-detail-link">Product Detail</a>
+                            <a href="cart.html" class="nav-item nav-link d-none user-link">Cart</a>
+                            <a href="wishlist.html" class="nav-item nav-link active d-none user-link">Wishlist</a>
+                            <a href="checkout.html" class="nav-item nav-link d-none user-link">Checkout</a>
+                        </div>
+                        
+                        <!-- Right side navigation -->
+                        <div class="navbar-nav ml-auto">
+                            <div class="nav-item dropdown not-logged-in">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-user"></i> Login
+                                </a>
                                 <div class="dropdown-menu">
-                                    <a href="wishlist.html" class="dropdown-item active">Wishlist</a>
-                                    <a href="login.html" class="dropdown-item">Login & Register</a>
-                                    <a href="contact.html" class="dropdown-item">Contact Us</a>
+                                    <a href="login.html" class="dropdown-item">Login</a>
+                                    <a href="register.html" class="dropdown-item">Register</a>
                                 </div>
                             </div>
-                        </div>
-                        <div class="navbar-nav ml-auto">
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">User Account</a>
+                            
+                            <div class="nav-item dropdown logged-in d-none">
+                                <a href="#" class="nav-link dropdownToggle" data-toggle="dropdown">
+                                    <i class="fa fa-user"></i> My Account
+                                </a>
                                 <div class="dropdown-menu">
-                                    <a href="#" class="dropdown-item">Login</a>
-                                    <a href="#" class="dropdown-item">Register</a>
+                                    <a href="my-account.html" class="dropdown-item">Dashboard</a>
+                                    <a href="#" class="dropdown-item" id="logout-btn">Logout</a>
                                 </div>
                             </div>
                         </div>
@@ -101,13 +334,13 @@
                     </div>
                     <div class="col-md-3">
                         <div class="user">
-                            <a href="wishlist.html" class="btn wishlist">
+                            <a href="wishlist.html" class="btn wishlist d-none user-link">
                                 <i class="fa fa-heart"></i>
-                                <span>(0)</span>
+                                <span id="wishlist-count">(0)</span>
                             </a>
-                            <a href="cart.html" class="btn cart">
+                            <a href="cart.html" class="btn cart d-none user-link">
                                 <i class="fa fa-shopping-cart"></i>
-                                <span>(0)</span>
+                                <span id="cart-count">(0)</span>
                             </a>
                         </div>
                     </div>
@@ -132,114 +365,39 @@
         <div class="wishlist-page">
             <div class="container-fluid">
                 <div class="wishlist-page-inner">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead class="thead-dark">
-                                        <tr>
-                                            <th>Product</th>
-                                            <th>Price</th>
-                                            <th>Quantity</th>
-                                            <th>Add to Cart</th>
-                                            <th>Remove</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="align-middle">
-                                        <tr>
-                                            <td>
-                                                <div class="img">
-                                                    <a href="#"><img src="img/product-6.jpg" alt="Image"></a>
-                                                    <p>Product Name</p>
-                                                </div>
-                                            </td>
-                                            <td>$99</td>
-                                            <td>
-                                                <div class="qty">
-                                                    <button class="btn-minus"><i class="fa fa-minus"></i></button>
-                                                    <input type="text" value="1">
-                                                    <button class="btn-plus"><i class="fa fa-plus"></i></button>
-                                                </div>
-                                            </td>
-                                            <td><button class="btn-cart">Add to Cart</button></td>
-                                            <td><button><i class="fa fa-trash"></i></button></td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="img">
-                                                    <a href="#"><img src="img/product-7.jpg" alt="Image"></a>
-                                                    <p>Product Name</p>
-                                                </div>
-                                            </td>
-                                            <td>$99</td>
-                                            <td>
-                                                <div class="qty">
-                                                    <button class="btn-minus"><i class="fa fa-minus"></i></button>
-                                                    <input type="text" value="1">
-                                                    <button class="btn-plus"><i class="fa fa-plus"></i></button>
-                                                </div>
-                                            </td>
-                                            <td><button class="btn-cart">Add to Cart</button></td>
-                                            <td><button><i class="fa fa-trash"></i></button></td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="img">
-                                                    <a href="#"><img src="img/product-8.jpg" alt="Image"></a>
-                                                    <p>Product Name</p>
-                                                </div>
-                                            </td>
-                                            <td>$99</td>
-                                            <td>
-                                                <div class="qty">
-                                                    <button class="btn-minus"><i class="fa fa-minus"></i></button>
-                                                    <input type="text" value="1">
-                                                    <button class="btn-plus"><i class="fa fa-plus"></i></button>
-                                                </div>
-                                            </td>
-                                            <td><button class="btn-cart">Add to Cart</button></td>
-                                            <td><button><i class="fa fa-trash"></i></button></td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="img">
-                                                    <a href="#"><img src="img/product-9.jpg" alt="Image"></a>
-                                                    <p>Product Name</p>
-                                                </div>
-                                            </td>
-                                            <td>$99</td>
-                                            <td>
-                                                <div class="qty">
-                                                    <button class="btn-minus"><i class="fa fa-minus"></i></button>
-                                                    <input type="text" value="1">
-                                                    <button class="btn-plus"><i class="fa fa-plus"></i></button>
-                                                </div>
-                                            </td>
-                                            <td><button class="btn-cart">Add to Cart</button></td>
-                                            <td><button><i class="fa fa-trash"></i></button></td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="img">
-                                                    <a href="#"><img src="img/product-10.jpg" alt="Image"></a>
-                                                    <p>Product Name</p>
-                                                </div>
-                                            </td>
-                                            <td>$99</td>
-                                            <td>
-                                                <div class="qty">
-                                                    <button class="btn-minus"><i class="fa fa-minus"></i></button>
-                                                    <input type="text" value="1">
-                                                    <button class="btn-plus"><i class="fa fa-plus"></i></button>
-                                                </div>
-                                            </td>
-                                            <td><button class="btn-cart">Add to Cart</button></td>
-                                            <td><button><i class="fa fa-trash"></i></button></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                    <!-- Wishlist Header -->
+                    <div class="wishlist-header">
+                        <h1>My Wishlist</h1>
+                        <div class="wishlist-count">Items: <span id="total-items">0</span></div>
+                    </div>
+                    
+                    <!-- Login Required Message -->
+                    <div class="row" id="login-required-message">
+                        <div class="col-12">
+                            <div class="empty-wishlist">
+                                <i class="fa fa-heart"></i>
+                                <h3>Please Login to View Your Wishlist</h3>
+                                <p>Sign in to see items you've saved for later</p>
+                                <a href="login.html" class="btn btn-primary">Login Now</a>
                             </div>
                         </div>
+                    </div>
+                    
+                    <!-- Empty Wishlist Message -->
+                    <div class="row d-none" id="empty-wishlist-message">
+                        <div class="col-12">
+                            <div class="empty-wishlist">
+                                <i class="fa fa-heart"></i>
+                                <h3>Your Wishlist is Empty</h3>
+                                <p>Start adding items you love to your wishlist!</p>
+                                <a href="product-list.html" class="btn btn-primary">Browse Products</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Wishlist Items Grid -->
+                    <div class="row d-none" id="wishlist-items-grid">
+                        <!-- Dynamic content will be loaded from backend -->
                     </div>
                 </div>
             </div>
@@ -291,7 +449,7 @@
                         <div class="footer-widget">
                             <h2>Purchase Info</h2>
                             <ul>
-                                <li><a href="#">Pyament Policy</a></li>
+                                <li><a href="#">Payment Policy</a></li>
                                 <li><a href="#">Shipping Policy</a></li>
                                 <li><a href="#">Return Policy</a></li>
                             </ul>
@@ -328,7 +486,6 @@
                     </div>
 
                     <div class="col-md-6 template-by">
-						<!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->					
                         <p>Designed By <a href="https://htmlcodex.com">HTML Codex</a></p>
                     </div>
                 </div>
@@ -347,5 +504,373 @@
         
         <!-- Template Javascript -->
         <script src="js/main.js"></script>
+        
+        <!-- Wishlist Custom JavaScript -->
+               <!-- Wishlist Custom JavaScript -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                checkLoginStatus();
+                setupEventListeners();
+            });
+            
+            function setupEventListeners() {
+                // Logout button
+                const logoutBtn = document.getElementById('logout-btn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        logoutUser();
+                    });
+                }
+                
+                // Event delegation for dynamic content
+                document.addEventListener('click', function(e) {
+                    // Remove item button
+                    if (e.target.closest('.btn-remove')) {
+                        const button = e.target.closest('.btn-remove');
+                        const productId = button.getAttribute('data-id');
+                        const productName = button.getAttribute('data-name') || 'this item';
+                        
+                        if (confirm('Remove ' + productName + ' from wishlist?')) {
+                            removeFromWishlist(productId, productName);
+                        }
+                        e.stopPropagation(); // Prevent triggering view action
+                    }
+                    
+                    // View product button
+                    if (e.target.closest('.btn-view')) {
+                        const button = e.target.closest('.btn-view');
+                        const productId = button.getAttribute('data-id');
+                        viewProduct(productId);
+                        e.stopPropagation(); // Prevent triggering card click
+                    }
+                    
+                    // Click on card image or title to view product
+                    if (e.target.closest('.wishlist-card')) {
+                        const card = e.target.closest('.wishlist-card');
+                        // Only trigger if not clicking on buttons
+                        if (!e.target.closest('.btn-view') && !e.target.closest('.btn-remove')) {
+                            const productId = card.getAttribute('data-id');
+                            viewProduct(productId);
+                        }
+                    }
+                });
+            }
+            
+            function checkLoginStatus() {
+                const token = localStorage.getItem("token");
+                const isLoggedIn = !!token;
+                
+                if (isLoggedIn) {
+                    document.querySelector('.not-logged-in')?.classList.add('d-none');
+                    document.querySelector('.logged-in')?.classList.remove('d-none');
+                    document.querySelectorAll('.user-link').forEach(link => link.classList.remove('d-none'));
+                    document.getElementById('login-required-message').style.display = 'none';
+                    fetchWishlist();
+                } else {
+                    document.querySelector('.not-logged-in')?.classList.remove('d-none');
+                    document.querySelector('.logged-in')?.classList.add('d-none');
+                    document.querySelectorAll('.user-link').forEach(link => link.classList.add('d-none'));
+                    document.getElementById('login-required-message').style.display = 'block';
+                    document.getElementById('empty-wishlist-message')?.classList.add('d-none');
+                    document.getElementById('wishlist-items-grid')?.classList.add('d-none');
+                }
+            }
+            
+            async function fetchWishlist() {
+                const token = localStorage.getItem("token");
+                
+                if (!token) {
+                    showError('Please login to view your wishlist');
+                    return;
+                }
+                
+                try {
+                    const wishlistGrid = document.getElementById('wishlist-items-grid');
+                    if (wishlistGrid) {
+                        wishlistGrid.innerHTML = `
+                            <div class="col-12 text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading your wishlist...</p>
+                            </div>
+                        `;
+                        wishlistGrid.classList.remove('d-none');
+                    }
+                    
+                    document.getElementById('empty-wishlist-message')?.classList.add('d-none');
+                    
+                    const response = await fetch('http://localhost:8070/api/user/wishlist/all', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.status === 401) {
+                        localStorage.removeItem("token");
+                        showError('Your session has expired. Please login again.');
+                        checkLoginStatus();
+                        return;
+                    }
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        let wishlistItems = [];
+                        
+                        if (result.data && Array.isArray(result.data.products)) {
+                            wishlistItems = result.data.products;
+                        } else if (result.data && Array.isArray(result.data)) {
+                            wishlistItems = result.data;
+                        } else if (Array.isArray(result.products)) {
+                            wishlistItems = result.products;
+                        } else {
+                            wishlistItems = [];
+                        }
+                        
+                        if (wishlistItems.length === 0) {
+                            document.getElementById('empty-wishlist-message')?.classList.remove('d-none');
+                            document.getElementById('wishlist-items-grid')?.classList.add('d-none');
+                            document.getElementById('total-items').textContent = '0';
+                        } else {
+                            renderWishlistItems(wishlistItems);
+                            document.getElementById('empty-wishlist-message')?.classList.add('d-none');
+                            document.getElementById('wishlist-items-grid')?.classList.remove('d-none');
+                            document.getElementById('total-items').textContent = wishlistItems.length;
+                        }
+                        
+                        document.querySelectorAll('#wishlist-count').forEach(element => {
+                            element.textContent = '(' + wishlistItems.length + ')';
+                        });
+                    } else {
+                        showError('Failed to load wishlist: ' + (result.message || 'Unknown error'));
+                    }
+                } catch (error) {
+                    console.error('Error fetching wishlist:', error);
+                    showError('Unable to load wishlist. Please check your connection.');
+                }
+            }
+            
+            function formatImageUrl(imagePath) {
+                if (!imagePath || imagePath === 'null' || imagePath === 'undefined' || imagePath === '') {
+                    return 'img/default-product.jpg';
+                }
+                
+                let cleanPath = imagePath.toString().trim().replace(/['"]/g, '');
+                
+                if (!cleanPath.includes('/') && !cleanPath.startsWith('http')) {
+                    cleanPath = 'uploads/' + cleanPath;
+                }
+                
+                return cleanPath;
+            }
+            
+            function getProductImageUrl(product) {
+                // Try images array first
+                if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+                    return formatImageUrl(product.images[0]);
+                }
+                
+                // Try image field
+                if (product.image) {
+                    if (Array.isArray(product.image) && product.image.length > 0) {
+                        return formatImageUrl(product.image[0]);
+                    } else if (typeof product.image === 'string') {
+                        return formatImageUrl(product.image);
+                    }
+                }
+                
+                return 'img/default-product.jpg';
+            }
+            
+            function renderWishlistItems(items) {
+                const container = document.getElementById('wishlist-items-grid');
+                if (!container) return;
+                
+                container.innerHTML = '';
+                
+                items.forEach((item) => {
+                    const imageUrl = getProductImageUrl(item);
+                    const productName = item.name || 'Product Name';
+                    const productPrice = parseFloat(item.price) || 0;
+                    const productId = item._id;
+                    
+                    const cardHtml = `
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="wishlist-card" data-id="${productId}">
+                                <div class="wishlist-card-image-container">
+                                    <img src="${imageUrl}" 
+                                         alt="${productName}"
+                                         onerror="this.src='img/default-product.jpg'"
+                                         loading="lazy">
+                                </div>
+                                <div class="wishlist-card-body">
+                                    <h5 class="wishlist-card-title">${productName}</h5>
+                                    <div class="wishlist-card-price">$${productPrice.toFixed(2)}</div>
+                                    
+                                    <div class="wishlist-card-actions">
+    <a href="product-detail.html?id=${productId}" class="btn-view">
+        <i class="fa fa-eye"></i> View
+    </a>
+</div>
+                                        <button class="btn-remove" 
+                                                data-id="${productId}" 
+                                                data-name="${productName}">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.innerHTML += cardHtml;
+                });
+            }
+            
+            async function removeFromWishlist(productId, productName) {
+                const token = localStorage.getItem("token");
+                
+                if (!token) {
+                    showError('Please login to modify your wishlist');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`http://localhost:8070/api/user/wishlist/remove/${productId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showSuccess(`"${productName}" removed from wishlist`);
+                        setTimeout(() => {
+                            fetchWishlist();
+                        }, 500);
+                    } else {
+                        showError('Failed to remove item: ' + (result.message || 'Unknown error'));
+                    }
+                } catch (error) {
+                    console.error('Error removing from wishlist:', error);
+                    showError('Unable to remove item. Please try again.');
+                }
+            }
+            
+            async function viewProduct(productId) {
+                try {
+                    // First, fetch the product details from the API
+                    const response = await fetch(`http://localhost:8070/api/user/products/${productId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Save the entire product object to localStorage
+                        localStorage.setItem('selectedProduct', JSON.stringify(result.data));
+                        
+                        // Also save just the ID for compatibility
+                        localStorage.setItem('selectedProductId', productId);
+                        
+                        // Show loading message
+                        showSuccess('Loading product details...');
+                        
+                        // Redirect to product detail page
+                        setTimeout(() => {
+                            window.location.href = 'product-detail.html';
+                        }, 500);
+                    } else {
+                        showError('Failed to load product details: ' + (result.message || 'Unknown error'));
+                    }
+                } catch (error) {
+                    console.error('Error fetching product:', error);
+                    showError('Unable to load product details. Please try again.');
+                }
+            }
+            
+            function showSuccess(message) {
+                const existingAlerts = document.querySelectorAll('.custom-alert');
+                existingAlerts.forEach(alert => alert.remove());
+                
+                const alertHtml = `
+                    <div class="custom-alert alert alert-success alert-dismissible fade show" 
+                         style="position: fixed; top: 20px; right: 20px; z-index: 1050; min-width: 300px;">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-check-circle mr-2"></i>
+                            <div>${message}</div>
+                            <button type="button" class="close ml-3" data-dismiss="alert">
+                                <span>&times;</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', alertHtml);
+                
+                setTimeout(() => {
+                    const alert = document.querySelector('.custom-alert');
+                    if (alert && alert.parentNode) {
+                        alert.parentNode.removeChild(alert);
+                    }
+                }, 4000);
+            }
+            
+            function showError(message) {
+                const existingAlerts = document.querySelectorAll('.custom-alert');
+                existingAlerts.forEach(alert => alert.remove());
+                
+                const alertHtml = `
+                    <div class="custom-alert alert alert-danger alert-dismissible fade show" 
+                         style="position: fixed; top: 20px; right: 20px; z-index: 1050; min-width: 300px;">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-exclamation-circle mr-2"></i>
+                            <div>${message}</div>
+                            <button type="button" class="close ml-3" data-dismiss="alert">
+                                <span>&times;</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', alertHtml);
+                
+                setTimeout(() => {
+                    const alert = document.querySelector('.custom-alert');
+                    if (alert && alert.parentNode) {
+                        alert.parentNode.removeChild(alert);
+                    }
+                }, 5000);
+            }
+            
+            function logoutUser() {
+                localStorage.removeItem("token");
+                localStorage.removeItem("cart");
+                localStorage.removeItem("cartCount");
+                localStorage.removeItem('selectedCheckoutItems');
+                localStorage.removeItem('cartId');
+                localStorage.removeItem('selectedProductId');
+                localStorage.removeItem('selectedProduct');
+                window.location.href = 'index.html';
+            }
+        </script>
     </body>
 </html>

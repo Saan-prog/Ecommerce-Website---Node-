@@ -70,7 +70,6 @@ const userLogin = async (req, res) => {
     }
 }
 
-
 // --------------- Forgot Password - Generate Reset Token ----------------------
 const forgotPassword = async (req, res) => {
     try {
@@ -178,6 +177,7 @@ const resetPassword = async (req, res) => {
         });
     }
 };
+
 // // --------------- Get user profile ----------------------
 const getUserProfile = async (req, res) => {
     try{
@@ -374,6 +374,11 @@ const createAddress = async (req, res) => {
     });
 
     const saveAddress = await newAddress.save();
+    res.status(201).json({
+            success: true, 
+            message: "Address created successfully",
+            address: saveAddress
+        });
 }catch (error){
     console.error('Error creating address', error);
     res.status(500).json({success: false, message: "Server error while creating address"

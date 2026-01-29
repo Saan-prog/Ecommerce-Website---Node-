@@ -1,6 +1,7 @@
 const Product = require("../models/productModel.js");
 const mongoose = require('mongoose');
-const path = require('path');
+const Review = require("../models/reviewModels.js");
+
 
 // ------------------------------------------- List Products --------------------------------------------------
 const listProducts = async (req, res) => {
@@ -106,6 +107,56 @@ const getProduct = async (req, res) => {
         res.status(500).json({success: false, message: "Error while fetching products by id", error});
     }
 }
+// ------------------------------------------------Get Product Reviews ---------------------------------------------------------
+const getReviews = async(req, res) =>{
+    console.log("get review function called");
+    try {
+        const { id }= req.params
+         console.log("Received request for product reviews:", id);
+        console.log("Full URL:", req.originalUrl);
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(400).json({success: false, message: "Invalid Product Id"});
+        }
+
+        const productExists = await Product.findOne({_id: id});
+
+        if(!productExists){
+            return res.status(404).json({
+                success: false,
+                message:"Product not found"
+            });
+        }
+
+        const reviews = await Review.find({ product:id })
+        .populate({
+            path:"user",
+            select:"name email",
+        })
+        .sort({ createdAt: -1 })
+        .lean();
+
+        let averageRating = 0;
+        if(reviews.length > 0) {
+            const totalRating = reviews.reduce((sum, review) => sum + (review.rating || 0), 0);
+            averageRating = totalRating/ reviews.length;
+        }
+
+        return res.status(200).json({
+            success: true,
+            message:"reviews retrived",
+            totalreviews: reviews.length,
+            averageRating: averageRating.toFixed(1),
+            reviews,
+        });
+
+    } catch (error) {
+        console.error("Get Product Reviews Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while fetching reviews",
+    })
+}
+}
 
 
-module.exports = { listProducts, getProduct };
+module.exports = { listProducts, getProduct, getReviews };

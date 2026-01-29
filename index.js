@@ -8,10 +8,15 @@ const userRoutes = require("./routes/user.js");
 const adminProductRoutes = require("./routes/adminProduct.js");
 const adminCategoriesRoutes = require("./routes/adminCategories.js");
 // const adminSubcategories = require("./routes/adminSubcategories.js");
-const userProductRoutes = require("./routes/userProduct.js");
+const userProductRoutes = require("./routes/products.js");
 const userCategoryRoute = require("./routes/userCategories.js");
 const cartRoutes = require("./routes/cart.js");
+const wishlistRoutes = require("./routes/wishlist.js");
 const orderRoutes = require("./routes/order.js");
+const adminOrderRoutes = require("./routes/adminOrders.js");
+const adminCouponRoutes = require("./routes/adminCoupons.js");
+const userCouponRoutes = require("./routes/userCoupons.js");
+const adminDashboardRoutes = require("./routes/adminDashboard.js");
 const seedAdmin = require("./scripts/seedAdmin.js");
 const { swaggerUi, swaggerSpec } = require("./swagger.js"); 
 
@@ -34,6 +39,11 @@ app.use("/api/admin/category", adminCategoriesRoutes);
 app.use("/api/user/cart", cartRoutes);
 app.use("/api/user/category", userCategoryRoute);
 app.use("/api/user/cart/order", orderRoutes);
+app.use("/api/user/wishlist", wishlistRoutes);
+app.use("/api/admin/orders", adminOrderRoutes);
+app.use("/api/admin/coupon", adminCouponRoutes);
+app.use("/api/user/coupon", userCouponRoutes);
+app.use("/api/admin/dashboard", adminDashboardRoutes);
 // app.use("/api/admin/category", adminSubcategories);
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

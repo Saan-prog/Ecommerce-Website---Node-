@@ -344,6 +344,17 @@
         color: white;
       }
 
+      .btn-outline-primary {
+        background: transparent;
+        color: #3498db;
+        border: 1px solid #3498db;
+      }
+
+      .btn-outline-primary:hover {
+        background: #3498db;
+        color: white;
+      }
+
       .btn:hover {
         opacity: 0.9;
       }
@@ -605,8 +616,8 @@
             >
           </li>
           <li>
-            <a href="admin-inventory.html"
-              ><i class="fas fa-warehouse"></i> <span>Inventory</span></a
+            <a href="admin-coupon.html"
+              ><i class="fas fa-warehouse"></i> <span>Coupons</span></a
             >
           </li>
           <li>
@@ -627,7 +638,7 @@
         <div class="admin-header">
           <h1>User Management</h1>
           <div class="admin-user">
-            <span>Welcome, Admin</span>
+            <span id="adminNameDisplay">Welcome, Admin</span>
             <button class="logout-btn" id="logoutBtnHeader">
               <i class="fas fa-sign-out-alt"></i> Logout
             </button>
@@ -727,9 +738,6 @@
                 <table class="table" id="usersTable" style="display: none">
                   <thead>
                     <tr>
-                      <th>
-                        <input type="checkbox" id="selectAll" />
-                      </th>
                       <th>User</th>
                       <th>Email</th>
                       <th>Phone</th>
@@ -746,35 +754,8 @@
                 </table>
               </div>
 
-              <!-- Bulk Actions and Pagination -->
-              <div
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                  margin-top: 20px;
-                "
-              >
-                <div
-                  class="bulk-actions"
-                  style="display: flex; gap: 10px; align-items: center"
-                >
-                  <span id="selectedCount">0 users selected</span>
-                  <select
-                    class="filter-select"
-                    id="bulkAction"
-                    style="width: auto"
-                  >
-                    <option value="">Bulk Actions</option>
-                    <option value="block">Block Selected</option>
-                    <option value="unblock">Unblock Selected</option>
-                    <option value="delete">Delete Selected</option>
-                  </select>
-                  <button class="btn btn-sm btn-primary" id="applyBulkAction">
-                    Apply
-                  </button>
-                </div>
-
+              <!-- Pagination -->
+              <div style="margin-top: 20px;">
                 <div class="pagination" id="pagination">
                   <!-- Pagination will be dynamically inserted here -->
                 </div>
@@ -798,10 +779,10 @@
             <strong id="blockUserName">User</strong>?
           </p>
           <p>Blocked users will not be able to login or place orders.</p>
-          <div class="form-group" style="margin-top: 15px">
+          <div style="margin-top: 15px">
             <label for="blockReason">Reason for blocking (optional):</label>
             <textarea
-              class="form-control"
+              style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-top: 5px;"
               id="blockReason"
               rows="3"
               placeholder="Enter reason..."
@@ -838,13 +819,13 @@
       </div>
     </div>
 
-    <!-- ----------------------------------JavaScript Section--------------------------------->
-
+    <!-- JavaScript -->
     <script>
       let allUsers = [];
       let currentPage = 1;
       let usersPerPage = 10;
       let filteredUsers = [];
+      let userOrdersMap = {};
 
       document.addEventListener("DOMContentLoaded", function () {
         const isLoggedIn = localStorage.getItem("adminLoggedIn") === "true";
@@ -855,21 +836,29 @@
           window.location.href = "admin-login.html";
           return;
         }
+        
+        // Display admin name
+        const adminName = localStorage.getItem("adminName");
+        if (adminName) {
+          document.getElementById("adminNameDisplay").textContent = `Welcome, ${adminName}`;
+        }
+        
         initializePage();
       });
 
-      function initializePage() {
-        loadUsers();
-
+      async function initializePage() {
+        await loadUsers();
+        await loadOrderCounts();
         setupEventListeners();
       }
 
       function setupEventListeners() {
-        // search
+        // Search
         document
           .getElementById("userSearch")
           .addEventListener("input", handleSearch);
-        // filter
+        
+        // Filters
         document
           .getElementById("statusFilter")
           .addEventListener("change", applyFilters);
@@ -879,16 +868,20 @@
         document
           .getElementById("dateFilter")
           .addEventListener("change", applyFilters);
-        // refresh
+        
+        // Refresh
         document
           .getElementById("refreshBtn")
-          .addEventListener("click", loadUsers);
-        // bulk action
-        // document.getElementById('applyBulkAction').addEventListener('click', handleBulkAction);
+          .addEventListener("click", async () => {
+            await loadUsers();
+            await loadOrderCounts();
+          });
+        
+        // Export (placeholder functionality)
         document
-          .getElementById("selectAll")
-          .addEventListener("change", handleSelectAll);
-
+          .getElementById("exportBtn")
+          .addEventListener("click", exportUsers);
+        
         setupModalEvents();
       }
 
@@ -897,9 +890,7 @@
           showLoadingState();
 
           const token = localStorage.getItem("adminToken");
-          console.log("🔑 Admin Token:", token);
 
-          console.log("🌐 Making API call to: /api/admin/users");
           const response = await fetch("/api/admin/users", {
             method: "GET",
             headers: {
@@ -908,13 +899,6 @@
             },
           });
 
-          console.log("📨 API Response:", {
-            status: response.status,
-            statusText: response.statusText,
-            ok: response.ok,
-            url: response.url,
-          });
-          // ✅ FIX: Fix the typo here
           if (!response.ok) {
             throw new Error(
               `HTTP Error! status: ${response.status} - ${response.statusText}`
@@ -922,7 +906,6 @@
           }
 
           const data = await response.json();
-          console.log("📊 API Response data:", data);
 
           if (data.success) {
             allUsers = data.users || [];
@@ -934,10 +917,72 @@
             throw new Error(data.message || "Failed to load users");
           }
         } catch (error) {
-          console.error("❌ Error Loading User:", error);
-          showError("Failed to load all users: " + error.message);
+          console.error("❌ Error Loading Users:", error);
+          showError("Failed to load users: " + error.message);
         } finally {
           hideLoadingState();
+        }
+      }
+
+      async function loadOrderCounts() {
+        try {
+          const token = localStorage.getItem("adminToken");
+
+          // Try to fetch from order counts endpoint
+          const response = await fetch("/api/admin/users/order-counts", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.orderCounts) {
+              userOrdersMap = data.orderCounts;
+              renderUsersTable();
+            } else {
+              await loadAndCountOrdersManually();
+            }
+          } else {
+            await loadAndCountOrdersManually();
+          }
+        } catch (error) {
+          console.error("❌ Error loading order counts:", error);
+          await loadAndCountOrdersManually();
+        }
+      }
+
+      async function loadAndCountOrdersManually() {
+        try {
+          const token = localStorage.getItem("adminToken");
+
+          const response = await fetch("/api/admin/orders/getAll?limit=1000", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.orders) {
+              userOrdersMap = {};
+              
+              data.orders.forEach(order => {
+                const userId = order.user?._id || order.userId;
+                if (userId) {
+                  userOrdersMap[userId] = (userOrdersMap[userId] || 0) + 1;
+                }
+              });
+              
+              renderUsersTable();
+            }
+          }
+        } catch (error) {
+          console.error("❌ Error in manual order counting:", error);
         }
       }
 
@@ -953,7 +998,7 @@
 
       function showEmptyState() {
         document.getElementById("emptyState").style.display = "block";
-        document.getElementById("usersTable").style.display = "table";
+        document.getElementById("usersTable").style.display = "none";
       }
 
       function showUserTable() {
@@ -982,13 +1027,6 @@
         document.getElementById("activeUsers").textContent = activeUsers;
         document.getElementById("blockedUsers").textContent = blockedUsers;
         document.getElementById("pendingUsers").textContent = pendingUsers;
-
-        console.log("📈 Statistics updated:", {
-          totalUsers,
-          activeUsers,
-          blockedUsers,
-          pendingUsers,
-        });
       }
 
       function getStatusBadgeClass(status) {
@@ -1010,8 +1048,8 @@
         filteredUsers = allUsers.filter((user) => {
           const matchesSearch =
             user.name.toLowerCase().includes(searchTerm) ||
-            user.email.toLowerCase().includes(searchTerm) || // ✅ Fixed spelling
-            user.userId.toLowerCase().includes(searchTerm);
+            user.email.toLowerCase().includes(searchTerm) ||
+            (user.userId && user.userId.toLowerCase().includes(searchTerm));
           const matchesStatus = !statusFilter || user.status === statusFilter;
           const matchesRole = !roleFilter || user.role === roleFilter;
 
@@ -1025,7 +1063,7 @@
 
       function renderUsersTable() {
         const tableBody = document.getElementById("usersTableBody");
-        tableBody.innerHTML = ""; // clear existing rows
+        tableBody.innerHTML = "";
 
         if (filteredUsers.length === 0) {
           showEmptyState();
@@ -1034,7 +1072,6 @@
 
         showUserTable();
 
-        //calculate pagination
         const startIndex = (currentPage - 1) * usersPerPage;
         const endIndex = startIndex + usersPerPage;
         const usersToShow = filteredUsers.slice(startIndex, endIndex);
@@ -1043,86 +1080,68 @@
           const row = createUserRow(user);
           tableBody.appendChild(row);
         });
-
-        updateSelectedCount();
       }
-
-      function updateSelectedCount() {
-        const selectedCount = document.querySelectorAll(
-          ".user-checkbox:checked"
-        ).length;
-        document.getElementById(
-          "selectedCount"
-        ).textContent = `${selectedCount} users selected`;
-      }
+      
       function createUserRow(user) {
         const row = document.createElement("tr");
 
-        // Determine if user is blocked (based on status or isBlocked field)
+        const orderCount = userOrdersMap[user._id] || 0;
         const isBlocked = user.status === "blocked" || user.isBlocked === true;
 
-        // Checkbox
         row.innerHTML = `
-        <td><input type="checkbox" class="user-checkbox" data-user-id="${
-          user._id
-        }"></td>
-        <td>
+          <td>
             <div style="display: flex; align-items: center; gap: 10px;">
-                <div class="user-avatar" style="background: ${getAvatarColor(
-                  user.name
-                )}">
-                    ${getInitials(user.name)}
-                </div>
-                <div>
-                    <div style="font-weight: 600;">${user.name}</div>
-                    <div style="font-size: 12px; color: #7f8c8d;">${
-                      user.userId
-                    }</div>
-                </div>
+              <div class="user-avatar" style="background: ${getAvatarColor(user.name)}">
+                ${getInitials(user.name)}
+              </div>
+              <div>
+                <div style="font-weight: 600;">${user.name}</div>
+                <div style="font-size: 12px; color: #7f8c8d;">${user.userId || user._id.substring(0, 8)}</div>
+              </div>
             </div>
-        </td>
-        <td>${user.email}</td>
-        <td>${user.phone || "N/A"}</td>
-        <td><span class="badge ${getRolesBadgeClass(user.role)}">${
-          user.role
-        }</span></td>
-        <td>${formatDate(user.createdAt)}</td>
-        <td><span class="badge ${getStatusBadgeClass(user.status)}">${
-          user.status
-        }</span></td>
-        <td>${user.orderCount || 0}</td>
-        <td>
+          </td>
+          <td>${user.email}</td>
+          <td>${user.phone || "N/A"}</td>
+          <td><span class="badge ${getRolesBadgeClass(user.role)}">${user.role}</span></td>
+          <td>${formatDate(user.createdAt)}</td>
+          <td><span class="badge ${getStatusBadgeClass(user.status)}">${user.status}</span></td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <span class="badge badge-info" style="min-width: 30px; text-align: center;">${orderCount}</span>
+              ${orderCount > 0 ? `
+                <button class="btn btn-sm btn-outline-primary view-orders" data-user-id="${user._id}" title="View Orders">
+                  <i class="fas fa-shopping-cart"></i>
+                </button>
+              ` : ''}
+            </div>
+          </td>
+          <td>
             <div class="action-buttons">
-                <button class="btn btn-sm btn-primary view-user" data-user-id="${
-                  user._id
-                }">
-                    <i class="fas fa-eye"></i>
-                </button>
-                <button class="btn btn-sm btn-warning edit-user" data-user-id="${
-                  user._id
-                }">
-                    <i class="fas fa-edit"></i>
-                </button>
-                ${
-                  !isBlocked
-                    ? `<button class="btn btn-sm btn-danger block-user" data-user-id="${user._id}">
-                        <i class="fas fa-ban"></i> Block
+              <button class="btn btn-sm btn-primary view-user" data-user-id="${user._id}" title="View Profile">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-sm btn-warning edit-user" data-user-id="${user._id}" title="Edit User">
+                <i class="fas fa-edit"></i>
+              </button>
+              ${
+                !isBlocked
+                  ? `<button class="btn btn-sm btn-danger block-user" data-user-id="${user._id}" title="Block User">
+                      <i class="fas fa-ban"></i>
                     </button>`
-                    : `<button class="btn btn-sm btn-success unblock-user" data-user-id="${user._id}">
-                        <i class="fas fa-check"></i> Unblock
+                  : `<button class="btn btn-sm btn-success unblock-user" data-user-id="${user._id}" title="Unblock User">
+                      <i class="fas fa-check"></i>
                     </button>`
-                }
+              }
             </div>
-        </td>
-    `;
+          </td>
+        `;
 
-        // Add event listeners to action buttons
         addRowEventListeners(row, user);
-
         return row;
       }
 
       function getInitials(name) {
+        if (!name) return "U";
         return name
           .split(" ")
           .map((part) => part[0])
@@ -1140,58 +1159,66 @@
           "#9b59b6",
           "#1abc9c",
         ];
-        const index = name.length % colors.length;
+        const index = (name || "").length % colors.length;
         return colors[index];
       }
+      
       function getRolesBadgeClass(role) {
         const classes = {
           customer: "badge-info",
           vendor: "badge-secondary",
-          admin: "badge-warning", // ✅ Fixed spelling
+          admin: "badge-warning",
         };
         return classes[role] || "badge-info";
       }
 
       function formatDate(dateString) {
-        return new Date(dateString).toLocaleDateString();
+        if (!dateString) return "N/A";
+        try {
+          return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+        } catch (e) {
+          return "Invalid Date";
+        }
       }
 
       function addRowEventListeners(row, user) {
-        // clock user
-
+        // Block user
         const blockBtn = row.querySelector(".block-user");
         if (blockBtn) {
           blockBtn.addEventListener("click", () => showBlockModal(user));
         }
-        // unblock user
+        
+        // Unblock user
         const unblockBtn = row.querySelector(".unblock-user");
         if (unblockBtn) {
           unblockBtn.addEventListener("click", () => showUnblockModal(user));
         }
 
-        // view user
+        // View user
         const viewBtn = row.querySelector(".view-user");
-
         if (viewBtn) {
           viewBtn.addEventListener("click", () => viewUserDetails(user));
         }
+        
         // Edit user
         const editBtn = row.querySelector(".edit-user");
         if (editBtn) {
-          editBtn.addEventListener("click", () => edituser(user));
+          editBtn.addEventListener("click", () => editUser(user));
+        }
+        
+        // View orders
+        const viewOrdersBtn = row.querySelector(".view-orders");
+        if (viewOrdersBtn) {
+          viewOrdersBtn.addEventListener("click", () => viewUserOrders(user));
         }
       }
 
       function handleSearch() {
         applyFilters();
-      }
-
-      function handleSelectAll(event) {
-        const checkboxes = document.querySelectorAll(".user-checkbox");
-        checkboxes.forEach((checkbox) => {
-          checkbox.checked = event.target.checked;
-        });
-        updateSelectedCount();
       }
 
       function setupPagination() {
@@ -1245,7 +1272,6 @@
       async function blockUser(userId, reason = "") {
         try {
           const token = localStorage.getItem("adminToken");
-          console.log(`Blocking user ${userId}`);
 
           const response = await fetch(`/api/admin/users/${userId}/block`, {
             method: "PATCH",
@@ -1266,10 +1292,11 @@
           const data = await response.json();
           if (data.success) {
             console.log("User blocked successfully");
-            loadUsers();
+            await loadUsers();
+            await loadOrderCounts();
             return true;
           } else {
-            throw new Error(data.message || " Failed to block user");
+            throw new Error(data.message || "Failed to block user");
           }
         } catch (error) {
           console.error("Error blocking user:", error);
@@ -1281,7 +1308,6 @@
       async function unblockUser(userId) {
         try {
           const token = localStorage.getItem("adminToken");
-          console.log(`Unblocking user ${userId}`);
 
           const response = await fetch(`/api/admin/users/${userId}/block`, {
             method: "PATCH",
@@ -1302,7 +1328,8 @@
 
           if (data.success) {
             console.log("User unblocked successfully");
-            loadUsers();
+            await loadUsers();
+            await loadOrderCounts();
             return true;
           } else {
             throw new Error(data.message || `Failed to unblock user`);
@@ -1313,6 +1340,7 @@
           return false;
         }
       }
+      
       function setupModalEvents() {
         // Close modals when clicking X or cancel
         document.querySelectorAll(".close-modal").forEach((button) => {
@@ -1333,8 +1361,6 @@
       function showBlockModal(user) {
         document.getElementById("blockUserName").textContent = user.name;
         document.getElementById("blockUserModal").style.display = "flex";
-
-        // Store user ID for the confirm action
         document
           .getElementById("confirmBlock")
           .setAttribute("data-user-id", user._id);
@@ -1343,8 +1369,6 @@
       function showUnblockModal(user) {
         document.getElementById("unblockUserName").textContent = user.name;
         document.getElementById("unblockUserModal").style.display = "flex";
-
-        // Store user ID for the confirm action
         document
           .getElementById("confirmUnblock")
           .setAttribute("data-user-id", user._id);
@@ -1373,13 +1397,26 @@
       }
 
       function viewUserDetails(user) {
-        console.log("View user:", user);
-        // Implement view user details
+        console.log("View user details:", user);
+        // You can implement this to show user details in a modal or separate page
+        alert(`Viewing details for: ${user.name}\nEmail: ${user.email}\nPhone: ${user.phone || 'N/A'}\nOrders: ${userOrdersMap[user._id] || 0}`);
       }
 
-      function edituser(user) {
+      function editUser(user) {
         console.log("Edit user:", user);
         // Implement edit user functionality
+        alert(`Edit user functionality for: ${user.name}\nThis would open an edit form.`);
+      }
+      
+      function viewUserOrders(user) {
+        console.log("View orders for user:", user);
+        // Redirect to orders page filtered by this user
+        window.location.href = `admin-orders.html?userId=${user._id}`;
+      }
+
+      function exportUsers() {
+        // Implement export functionality (CSV, Excel, etc.)
+        alert("Export functionality would be implemented here.\nUsers would be exported as CSV/Excel file.");
       }
 
       function closeAllModals() {
