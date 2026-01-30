@@ -7,8 +7,10 @@
     <meta content="eCommerce HTML Template Free Download" name="keywords" />
     <meta content="eCommerce HTML Template" name="description" />
 
+
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
 
     <!-- Google Fonts -->
     <link
@@ -498,10 +500,10 @@
               <a href="product-list.html" class="nav-item nav-link">Products</a>
               <a href="product-detail.html" class="nav-item nav-link" style="display: none;">Product Detail</a>
               <!-- Protected menu items -->
-              <a href="cart.html" class="nav-item nav-link protected-menu" id="cartMenuItem" styel="display:none;">Cart</a>
-              <a href="wishlist.html" class="nav-item nav-link" styel="display:none;">Wishlist</a>
-              <a href="checkout.html" class="nav-item nav-link protected-menu" id="checkoutMenuItem">Checkout</a>
-              <a href="order-history.html" class="nav-item nav-link protected-menu" id="checkoutMenuItem">My Orders</a>
+              <a href="cart.html" class="nav-item nav-link protected-menu" id="cartMenuItem" style="display:none;">Cart</a>
+              <a href="wishlist.html" class="nav-item nav-link" style="display:none;">Wishlist</a>
+              <a href="checkout.html" class="nav-item nav-link protected-menu" id="checkoutMenuItem" style="display:none;">Checkout</a>
+              <a href="order-history.html" class="nav-item nav-link protected-menu" id="orderMenuItem" style="display:none;">My Orders</a>
             </div>
             <div class="navbar-nav ml-auto align-items-center">
               <!-- User Account dropdown (only visible after login) -->
@@ -541,8 +543,8 @@
           </div>
           <div class="col-md-6">
             <div class="search">
-              <input type="text" placeholder="Search">
-              <button><i class="fa fa-search"></i></button>
+              <input type="text" id="searchInput" placeholder="Search products...">
+              <button id="searchBtn"><i class="fa fa-search"></i></button>
             </div>
           </div>
           <div class="col-md-3">
@@ -553,7 +555,7 @@
               </a>
               <a href="cart.html" class="btn cart">
                 <i class="fa fa-shopping-cart"></i>
-                <span>(0)</span>
+                <span id="cart-count">(0)</span>
               </a>
             </div>
           </div>
@@ -983,10 +985,98 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     <script src="lib/easing/easing.min.js"></script>
     <script src="lib/slick/slick.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <!-- Template Javascript -->
     <script>
+        // ========== NOTYF NOTIFICATION SETUP ==========
+  // Initialize Notyf
+  const notyf = new Notyf({
+    duration: 3000, // 3 seconds
+    position: {
+      x: 'right',
+      y: 'top',
+    },
+    types: [
+      {
+        type: 'success',
+        background: '#28a745',
+        icon: {
+          className: 'fas fa-check-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'error',
+        background: '#dc3545',
+        icon: {
+          className: 'fas fa-exclamation-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'warning',
+        background: '#ffc107',
+        icon: {
+          className: 'fas fa-exclamation-triangle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'info',
+        background: '#17a2b8',
+        icon: {
+          className: 'fas fa-info-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      }
+    ]
+  });
+
+      console.log('Script loading...');
+      
       document.addEventListener("DOMContentLoaded", function () {
+        console.log('DOM fully loaded and parsed');
+        
+        // ============ SEARCH INTEGRATION =======================
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        
+        console.log('Search input exists:', !!searchInput);
+        console.log('Search button exists:', !!searchBtn);
+        
+        if (searchInput && searchBtn) {
+          console.log('Setting up search event listeners');
+          
+          // Add Enter key support for search input
+          searchInput.addEventListener('keypress', function(e) {
+            if(e.key === 'Enter'){
+              handleSearch();
+            }
+          });
+          
+          // Add click event for search button
+          searchBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            handleSearch();
+          });
+        } else {
+          console.error('Search elements not found!');
+        }
+        
+        function handleSearch(){
+          const query = searchInput.value.trim();
+          
+          if(!query) {
+            notyf.error('Please enter something to search');
+            return;
+          }
+          window.location.href = `product-list.html?search=${encodeURIComponent(query)}`;
+        }
+        
         // ========== AUTHENTICATION HANDLING ==========
         const token = localStorage.getItem("token");
         const isLoggedIn = token !== null && token !== undefined && token !== "";
@@ -995,18 +1085,20 @@
         const userAccount = document.getElementById("userAccountDropdown");
         const loginBtn = document.getElementById("loginBtn");
         const protectedMenus = document.querySelectorAll('.protected-menu');
-
+        
         console.log('Login status check:', {
           hasToken: !!token,
           tokenLength: token ? token.length : 0,
           isLoggedIn: isLoggedIn
         });
-
+        
         if (isLoggedIn) {
           // User is logged in - show protected items
           if (userAccount) userAccount.style.display = "block";
           if (loginBtn) loginBtn.style.display = "none";
-          protectedMenus.forEach(menu => menu.style.display = "block");
+          protectedMenus.forEach(menu => {
+            if (menu) menu.style.display = "block";
+          });
           
           // Update cart count
           updateCartCountDisplay();
@@ -1014,9 +1106,11 @@
           // User is not logged in - hide protected items
           if (userAccount) userAccount.style.display = "none";
           if (loginBtn) loginBtn.style.display = "inline-block";
-          protectedMenus.forEach(menu => menu.style.display = "none");
+          protectedMenus.forEach(menu => {
+            if (menu) menu.style.display = "none";
+          });
         }
-
+        
         // Logout functionality
         const logoutBtn = document.getElementById("logoutBtn");
         if (logoutBtn) {
@@ -1033,7 +1127,7 @@
             window.location.href = "index.html";
           });
         }
-
+        
         // ========== LOAD DYNAMIC CONTENT ==========
         loadCategories();
         loadFeaturedProducts();
@@ -1042,44 +1136,60 @@
         // Initialize sliders
         initializeSliders();
       });
-
+      
       // ========== LOAD CATEGORIES (WITH DROPDOWNS) ==========
       async function loadCategories() {
         try {
+          console.log('Loading categories...');
           const response = await fetch('/api/user/category/all');
           
+          console.log('Response status:', response.status);
+          
           if (!response.ok) {
-            throw new Error('Failed to fetch categories');
+            throw new Error(`Failed to fetch categories: ${response.status}`);
           }
           
           const data = await response.json();
+          console.log('Categories data:', data);
+          
           const categorySidebar = document.getElementById('categorySidebar');
           
           if (data.success && data.data && data.data.length > 0) {
+            console.log(`Found ${data.data.length} categories`);
             renderCategories(data.data);
-          } else {
+          } else if (data.success && Array.isArray(data.data) && data.data.length === 0) {
+            // Empty categories array
             categorySidebar.innerHTML = `
               <li class="nav-item">
                 <div class="category-empty">
                   <i class="fas fa-folder-open"></i>
-                  <p class="mt-2 small">No categories available</p>
+                  <p class="mt-2 small">No categories available yet</p>
+                  <a href="product-list.html" class="btn btn-sm btn-primary mt-2">Browse Products</a>
+                </div>
+              </li>
+            `;
+          } else {
+            // Invalid data structure
+            throw new Error('Invalid data structure received from API');
+          }
+        } catch (error) {
+          console.error('Error loading categories:', error);
+          const categorySidebar = document.getElementById('categorySidebar');
+          if (categorySidebar) {
+            categorySidebar.innerHTML = `
+              <li class="nav-item">
+                <div class="category-empty">
+                  <i class="fas fa-exclamation-triangle text-warning"></i>
+                  <p class="mt-2 small">Failed to load categories</p>
+                  <p class="text-muted">${error.message}</p>
+                  <a href="product-list.html" class="btn btn-sm btn-secondary mt-2">Browse All Products</a>
                 </div>
               </li>
             `;
           }
-        } catch (error) {
-          console.error('Error loading categories:', error);
-          document.getElementById('categorySidebar').innerHTML = `
-            <li class="nav-item">
-              <div class="category-empty">
-                <i class="fas fa-exclamation-triangle"></i>
-                <p class="mt-2 small">Failed to load categories</p>
-              </div>
-            </li>
-          `;
         }
       }
-
+      
       function renderCategories(categories) {
         const categorySidebar = document.getElementById('categorySidebar');
         let categoriesHTML = '';
@@ -1137,7 +1247,7 @@
           'Collectibles': 'fa-star',
           'Antiques': 'fa-history'
         };
-
+        
         // Add "All Categories" option first
         categoriesHTML += `
           <li class="nav-item">
@@ -1146,14 +1256,14 @@
             </a>
           </li>
         `;
-
+        
         // Sort categories alphabetically
         categories.sort((a, b) => {
           const nameA = (a.name || '').toUpperCase();
           const nameB = (b.name || '').toUpperCase();
           return nameA.localeCompare(nameB);
         });
-
+        
         // Add each category
         categories.forEach(category => {
           const categoryId = category._id || category.id || '';
@@ -1204,12 +1314,14 @@
           }
         });
         
-        categorySidebar.innerHTML = categoriesHTML;
-        
-        // Initialize dropdown hover effects
-        initializeCategoryDropdowns();
+        if (categorySidebar) {
+          categorySidebar.innerHTML = categoriesHTML;
+          
+          // Initialize dropdown hover effects
+          initializeCategoryDropdowns();
+        }
       }
-
+      
       function getCategoryIcon(categoryName, iconMap) {
         const normalizedName = categoryName.trim();
         
@@ -1229,7 +1341,7 @@
         // Return default icon
         return 'fa-tag';
       }
-
+      
       // ========== INITIALIZE CATEGORY DROPDOWNS ==========
       function initializeCategoryDropdowns() {
         // Add hover effect for desktop
@@ -1275,7 +1387,7 @@
           }
         });
       }
-
+      
       // ========== LOAD FEATURED PRODUCTS ==========
       async function loadFeaturedProducts() {
         try {
@@ -1301,15 +1413,18 @@
           }
         } catch (error) {
           console.error('Error loading featured products:', error);
-          document.getElementById('featuredProducts').innerHTML = `
-            <div class="col-12 text-center py-5">
-              <i class="fa fa-exclamation-triangle fa-3x text-danger"></i>
-              <p class="mt-3">Failed to load featured products</p>
-            </div>
-          `;
+          const featuredContainer = document.getElementById('featuredProducts');
+          if (featuredContainer) {
+            featuredContainer.innerHTML = `
+              <div class="col-12 text-center py-5">
+                <i class="fa fa-exclamation-triangle fa-3x text-danger"></i>
+                <p class="mt-3">Failed to load featured products</p>
+              </div>
+            `;
+          }
         }
       }
-
+      
       // ========== LOAD RECENT PRODUCTS ==========
       async function loadRecentProducts() {
         try {
@@ -1335,17 +1450,22 @@
           }
         } catch (error) {
           console.error('Error loading recent products:', error);
-          document.getElementById('recentProducts').innerHTML = `
-            <div class="col-12 text-center py-5">
-              <i class="fa fa-exclamation-triangle fa-3x text-danger"></i>
-              <p class="mt-3">Failed to load recent products</p>
-            </div>
-          `;
+          const recentContainer = document.getElementById('recentProducts');
+          if (recentContainer) {
+            recentContainer.innerHTML = `
+              <div class="col-12 text-center py-5">
+                <i class="fa fa-exclamation-triangle fa-3x text-danger"></i>
+                <p class="mt-3">Failed to load recent products</p>
+              </div>
+            `;
+          }
         }
       }
-
+      
       // ========== RENDER PRODUCTS WITH PARALLEL BUTTONS ==========
       function renderProducts(products, container, type) {
+        if (!container) return;
+        
         let productsHTML = '';
         
         products.forEach(product => {
@@ -1453,7 +1573,7 @@
           }, 100);
         }
       }
-
+      
       // ========== BUY NOW FUNCTIONALITY ==========
       async function handleBuyNow(event, productId) {
         event.preventDefault();
@@ -1462,8 +1582,10 @@
         const token = localStorage.getItem('token');
         
         if (!token) {
-          alert('Please login to purchase items');
-          window.location.href = 'login.html';
+          notyf.error('Please login to purchase items');
+          setTimeout(() => {
+    window.location.href = 'login.html';
+  }, 1500);
           return;
         }
         
@@ -1520,14 +1642,14 @@
               }, 2000);
             }
           } else {
-            alert('Failed to add to cart: ' + cartData.message);
+            notyf.error('Failed to add to cart: ' + cartData.message);
           }
         } catch (error) {
           console.error('Error adding to cart:', error);
-          alert('Error adding product to cart. Please try again.');
+          notyf.error('Error adding product to cart. Please try again.');
         }
       }
-
+      
       // ========== HELPER FUNCTIONS ==========
       function getProductImageUrl(imageData) {
         const defaultImage = 'img/product-1.jpg';
@@ -1559,7 +1681,7 @@
         
         return defaultImage;
       }
-
+      
       // ========== ADD TO CART FROM HOMEPAGE ==========
       async function handleAddToCartHome(event, productId) {
         event.preventDefault();
@@ -1568,8 +1690,10 @@
         const token = localStorage.getItem('token');
         
         if (!token) {
-          alert('Please login to add items to cart');
-          window.location.href = 'login.html';
+          notyf.error('Please login to add items to cart');
+          setTimeout(() => {
+    window.location.href = 'login.html';
+  }, 1500);
           return;
         }
         
@@ -1617,28 +1741,28 @@
             }
             
             // Show success message
-            alert(`Added ${product.name} to cart!`);
+            notyf.success(`Added ${product.name} to cart!`);
           } else {
-            alert('Failed to add to cart: ' + cartData.message);
+          notyf.error('Failed to add to cart: ' + cartData.message);
           }
         } catch (error) {
           console.error('Error adding to cart:', error);
-          alert('Error adding product to cart. Please try again.');
+          notyf.error('Error adding product to cart. Please try again.');
         }
       }
-
+      
       function updateCartCountDisplay() {
         try {
           const cartCount = localStorage.getItem('cartCount') || '0';
           const cartCountElements = document.querySelectorAll('.cart span');
           cartCountElements.forEach(element => {
-            element.textContent = `(${cartCount})`;
+            if (element) element.textContent = `(${cartCount})`;
           });
         } catch (error) {
           console.error('Error updating cart count display:', error);
         }
       }
-
+      
       // ========== INITIALIZE SLIDERS ==========
       function initializeSliders() {
         // Initialize header slider

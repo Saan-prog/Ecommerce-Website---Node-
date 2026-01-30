@@ -3,6 +3,7 @@ const { testLogs, userSignup, userLogin, forgotPassword,
         resetPassword, getUserProfile, updateUserProfile, 
         getUserAddresses, createAddress, editAddresses, 
         removeAddresses } = require("../Controller/userController.js");
+const { searchproducts } = require("../Controller/userSearchController");
 const verifyToken  = require("../middilewares/authMiddleware.js");
 const router = express.Router();
 
@@ -236,6 +237,8 @@ router.get("/addresses", verifyToken, getUserAddresses);
 router.post("/addresses", verifyToken, createAddress);
 router.put("/addresses/:id", verifyToken, editAddresses);
 router.delete("/addresses/:id", verifyToken, removeAddresses);
+
+router.get("/search/:query", searchproducts);
 
 
 module.exports = router;

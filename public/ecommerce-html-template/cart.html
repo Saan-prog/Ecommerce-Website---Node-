@@ -126,6 +126,7 @@
                             <a href="product-list.html" class="nav-item nav-link active">Products</a>
                             <a href="product-detail.html" class="nav-item nav-link" style="display: none;">Product Detail</a>
                             <a href="cart.html" class="nav-item nav-link">Cart</a>
+                            <a href="wishlist.html" class="nav-item nav-link">Wishlist</a>
                             <a href="checkout.html" class="nav-item nav-link">Checkout</a>
                             <a href="order-history.html" class="nav-item nav-link protected-menu" id="checkoutMenuItem">My Orders</a>
                             <a href="my-account.html" class="nav-item nav-link" style="display: none;">My Account</a>
@@ -262,9 +263,9 @@
                                         <div class="cart-content">
                                             <h1>Cart Summary</h1>
                                             <p>Items<span id="itemCount">0</span></p>
-                                            <p>Sub Total<span id="subTotal">$0</span></p>
-                                            <p>Shipping Cost<span>₹5</span></p>
-                                            <h2>Grand Total<span id="grandTotal">$1</span></h2>
+                                            <p>Sub Total<span id="subTotal">₹0</span></p>
+                                            <p>Shipping Cost<span>₹50</span></p>
+                                            <h2>Grand Total<span id="grandTotal">₹50</span></h2>
                                         </div>
                                         <div class="cart-btn">
                                             <button onclick="clearCart()">Clear Cart</button>
@@ -708,8 +709,8 @@ async function fetchCartFromBackend() {
         function showEmptyCart() {
             if (emptyCartMessage) emptyCartMessage.style.display = 'table-row';
             if (loginMessage) loginMessage.style.display = 'none';
-            if (subTotalElement) subTotalElement.textContent = '$0';
-            if (grandTotalElement) grandTotalElement.textContent = '$1';
+            if (subTotalElement) subTotalElement.textContent = '₹0';
+            if (grandTotalElement) grandTotalElement.textContent = '₹0';
             updateItemCountDisplay(0);
             updateCartCountDisplay();
             

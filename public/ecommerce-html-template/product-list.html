@@ -498,670 +498,749 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
-    <script>
-      let currentPage = 1;
-      const productsPerPage = 9;
-      let currentCategory = '';
-      let currentSort = '';
-      let currentPriceFilter = '';
-      let currentSearch = '';
+ <script>
+  let currentPage = 1;
+  const productsPerPage = 9;
+  let currentCategory = '';
+  let currentSubcategory = '';
+  let currentSort = '';
+  let currentPriceFilter = '';
+  let currentSearch = '';
 
-      // ========== INITIALIZATION ==========
-      document.addEventListener("DOMContentLoaded", function () {
-        // Load initial data
-        loadProducts(1);
-        loadCategories();
-        loadFeaturedProductsSidebar();
-        
-        // Setup authentication
-        setupAuth();
-        
-        // Setup event listeners
-        setupEventListeners();
+  // ========== INITIALIZATION ==========
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log('Product list page loaded');
+    
+    // Check for search query in URL
+    checkUrlForSearchQuery();
+    
+    // Load initial data
+    loadProducts(1);
+    loadCategories();
+    loadFeaturedProductsSidebar();
+    
+    // Setup authentication
+    setupAuth();
+    
+    // Setup event listeners
+    setupEventListeners();
+  });
+
+  // ========== AUTHENTICATION ==========
+  function setupAuth() {
+    const token = localStorage.getItem("token");
+    const loginDropdown = document.getElementById("loginDropdown");
+    const userAccountDropdown = document.getElementById("userAccountDropdown");
+    const cartLink = document.getElementById("cartLink");
+    const checkoutLink = document.getElementById("checkoutLink");
+
+    if (token) {
+      // User is logged in
+      if (loginDropdown) loginDropdown.style.display = "none";
+      if (userAccountDropdown) userAccountDropdown.style.display = "block";
+      if (cartLink) cartLink.style.display = "block";
+      if (checkoutLink) checkoutLink.style.display = "block";
+      updateCartCount();
+    } else {
+      // User is not logged in
+      if (loginDropdown) loginDropdown.style.display = "block";
+      if (userAccountDropdown) userAccountDropdown.style.display = "none";
+      if (cartLink) cartLink.style.display = "none";
+      if (checkoutLink) checkoutLink.style.display = "none";
+    }
+
+    // Logout functionality
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", function () {
+        localStorage.removeItem("token");
+        localStorage.removeItem("cartCount");
+        window.location.href = "index.html";
       });
+    }
+  }
 
-      // ========== AUTHENTICATION ==========
-      function setupAuth() {
-        const token = localStorage.getItem("token");
-        const loginDropdown = document.getElementById("loginDropdown");
-        const userAccountDropdown = document.getElementById("userAccountDropdown");
-        const cartLink = document.getElementById("cartLink");
-        const checkoutLink = document.getElementById("checkoutLink");
-
-        if (token) {
-          // User is logged in
-          loginDropdown.style.display = "none";
-          userAccountDropdown.style.display = "block";
-          cartLink.style.display = "block";
-          checkoutLink.style.display = "block";
-          updateCartCount();
-        } else {
-          // User is not logged in
-          loginDropdown.style.display = "block";
-          userAccountDropdown.style.display = "none";
-          cartLink.style.display = "none";
-          checkoutLink.style.display = "none";
-        }
-
-        // Logout functionality
-        const logoutBtn = document.getElementById("logoutBtn");
-        if (logoutBtn) {
-          logoutBtn.addEventListener("click", function () {
-            localStorage.removeItem("token");
-            localStorage.removeItem("cartCount");
-            window.location.href = "index.html";
-          });
-        }
+  // ========== CHECK URL FOR SEARCH QUERY ==========
+  function checkUrlForSearchQuery() {
+    const params = new URLSearchParams(window.location.search);
+    const searchQuery = params.get('search');
+    
+    console.log('URL params:', {
+      search: searchQuery,
+      category: params.get('category'),
+      subcategory: params.get('subcategory')
+    });
+    
+    if (searchQuery) {
+      console.log('Found search query in URL:', searchQuery);
+      // Update search box
+      const searchBox = document.getElementById('searchBox');
+      if (searchBox) {
+        searchBox.value = searchQuery;
       }
-
-      // ========== LOAD CATEGORIES ==========
-      async function loadCategories() {
-        try {
-          const response = await fetch('/api/user/category/all');
-          
-          if (!response.ok) {
-            throw new Error('Failed to fetch categories');
-          }
-          
-          const data = await response.json();
-          const categoryList = document.getElementById('categoryList');
-          
-          if (data.success && data.data && data.data.length > 0) {
-            renderCategories(data.data);
-          } else {
-            categoryList.innerHTML = `
-              <li class="nav-item text-center py-3">
-                <p class="text-muted">No categories available</p>
-              </li>
-            `;
-          }
-        } catch (error) {
-          console.error('Error loading categories:', error);
-          document.getElementById('categoryList').innerHTML = `
-            <li class="nav-item text-center py-3">
-              <p class="text-danger">Failed to load categories</p>
-            </li>
-          `;
-        }
+      
+      // Update current search
+      currentSearch = searchQuery;
+      
+      // Load products with search query
+      loadProductsWithSearch(searchQuery);
+    } else {
+      // Check if we have category or subcategory filters
+      const category = params.get('category');
+      const subcategory = params.get('subcategory');
+      
+      if (category) {
+        currentCategory = category;
+        loadProducts(1, category);
       }
+      if (subcategory) {
+        currentSubcategory = subcategory;
+        loadProducts(1, '', subcategory);
+      }
+    }
+  }
 
-      function renderCategories(categories) {
-        const categoryList = document.getElementById('categoryList');
-        let categoriesHTML = '';
-        
-        // Add "All Categories" option
+  // ========== LOAD CATEGORIES ==========
+  async function loadCategories() {
+    try {
+      const response = await fetch('/api/user/category/all');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+      }
+      
+      const data = await response.json();
+      const categoryList = document.getElementById('categoryList');
+      
+      if (data.success && data.data && data.data.length > 0) {
+        renderCategories(data.data);
+      } else {
+        categoryList.innerHTML = `
+          <li class="nav-item text-center py-3">
+            <p class="text-muted">No categories available</p>
+          </li>
+        `;
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error);
+      document.getElementById('categoryList').innerHTML = `
+        <li class="nav-item text-center py-3">
+          <p class="text-danger">Failed to load categories</p>
+        </li>
+      `;
+    }
+  }
+
+  function renderCategories(categories) {
+    const categoryList = document.getElementById('categoryList');
+    if (!categoryList) return;
+    
+    let categoriesHTML = '';
+    
+    // Add "All Categories" option
+    categoriesHTML += `
+      <li class="nav-item">
+        <a class="nav-link" href="#" onclick="filterByCategory('')">
+          <i class="fa fa-list"></i>All Categories
+        </a>
+      </li>
+    `;
+
+    // Define category icons mapping
+    const iconMap = {
+      'Fashion': 'fa-tshirt',
+      'Electronics': 'fa-laptop',
+      'Mobile': 'fa-mobile-alt',
+      'Clothing': 'fa-tshirt',
+      'Men': 'fa-male',
+      'Women': 'fa-female',
+      'Kids': 'fa-child',
+      'Beauty': 'fa-spa',
+      'Accessories': 'fa-glasses',
+      'Sports': 'fa-running',
+      'Home': 'fa-home',
+      'Kitchen': 'fa-utensils',
+      'Furniture': 'fa-couch',
+      'Books': 'fa-book',
+      'Toys': 'fa-gamepad'
+    };
+
+    categories.forEach(category => {
+      const categoryId = category._id || category.id || '';
+      const categoryName = category.name || 'Unnamed Category';
+      const iconClass = getCategoryIcon(categoryName, iconMap);
+      
+      // Check if category has subcategories
+      const hasSubcategories = category.subcategories && category.subcategories.length > 0;
+      
+      if (hasSubcategories) {
+        // Category with dropdown for subcategories
+        categoriesHTML += `
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" 
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fa ${iconClass}"></i>${categoryName}
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="#" onclick="filterByCategory('${categoryId}')">
+                All ${categoryName}
+              </a>
+              ${category.subcategories.map(sub => `
+                <a class="dropdown-item" href="#" onclick="filterBySubcategory('${sub._id}')">
+                  ${sub.name || 'Subcategory'}
+                </a>
+              `).join('')}
+            </div>
+          </li>
+        `;
+      } else {
+        // Simple category link
         categoriesHTML += `
           <li class="nav-item">
-            <a class="nav-link" href="#" onclick="filterByCategory('')">
-              <i class="fa fa-list"></i>All Categories
+            <a class="nav-link" href="#" onclick="filterByCategory('${categoryId}')">
+              <i class="fa ${iconClass}"></i>${categoryName}
             </a>
           </li>
         `;
-
-        // Define category icons mapping
-        const iconMap = {
-          'Fashion': 'fa-tshirt',
-          'Electronics': 'fa-laptop',
-          'Mobile': 'fa-mobile-alt',
-          'Clothing': 'fa-tshirt',
-          'Men': 'fa-male',
-          'Women': 'fa-female',
-          'Kids': 'fa-child',
-          'Beauty': 'fa-spa',
-          'Accessories': 'fa-glasses',
-          'Sports': 'fa-running',
-          'Home': 'fa-home',
-          'Kitchen': 'fa-utensils',
-          'Furniture': 'fa-couch',
-          'Books': 'fa-book',
-          'Toys': 'fa-gamepad',
-          'Gadgets': 'fa-microchip',
-          'Watches': 'fa-clock',
-          'Shoes': 'fa-shoe-prints',
-          'Bags': 'fa-shopping-bag',
-          'Jewelry': 'fa-gem',
-          'Health': 'fa-heartbeat',
-          'Automotive': 'fa-car',
-          'Music': 'fa-music'
-        };
-
-        categories.forEach(category => {
-          const categoryId = category._id || category.id || '';
-          const categoryName = category.name || 'Unnamed Category';
-          const iconClass = getCategoryIcon(categoryName, iconMap);
-          
-          // Check if category has subcategories
-          const hasSubcategories = category.subcategories && category.subcategories.length > 0;
-          
-          if (hasSubcategories) {
-            // Category with dropdown for subcategories
-            categoriesHTML += `
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" 
-                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="fa ${iconClass}"></i>${categoryName}
-                </a>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item" href="#" onclick="filterByCategory('${categoryId}')">
-                    All ${categoryName}
-                  </a>
-                  ${category.subcategories.map(sub => `
-                    <a class="dropdown-item" href="#" onclick="filterBySubcategory('${sub._id}')">
-                      ${sub.name || 'Subcategory'}
-                    </a>
-                  `).join('')}
-                </div>
-              </li>
-            `;
-          } else {
-            // Simple category link
-            categoriesHTML += `
-              <li class="nav-item">
-                <a class="nav-link" href="#" onclick="filterByCategory('${categoryId}')">
-                  <i class="fa ${iconClass}"></i>${categoryName}
-                </a>
-              </li>
-            `;
-          }
-        });
-        
-        categoryList.innerHTML = categoriesHTML;
       }
-
-      function getCategoryIcon(categoryName, iconMap) {
-        const normalizedName = categoryName.trim();
-        
-        // Check exact match
-        if (iconMap[normalizedName]) {
-          return iconMap[normalizedName];
-        }
-        
-        // Check partial matches
-        for (const [key, value] of Object.entries(iconMap)) {
-          if (normalizedName.toLowerCase().includes(key.toLowerCase()) ||
-              key.toLowerCase().includes(normalizedName.toLowerCase())) {
-            return value;
-          }
-        }
-        
-        // Return default icon
-        return 'fa-tag';
-      }
-
-      // ========== LOAD PRODUCTS ==========
-      async function loadProducts(page = 1, category = '', subcategory = '', sort = '', priceFilter = '', search = '') {
-        try {
-          currentPage = page;
-          currentCategory = category;
-          currentSubcategory = subcategory;
-          currentSort = sort;
-          currentPriceFilter = priceFilter;
-          currentSearch = search;
-          
-          const productsContainer = document.getElementById("products-container");
-          productsContainer.innerHTML = `
-            <div class="col-12 text-center py-5">
-              <div class="spinner-border text-primary" role="status">
-                <span class="sr-only">Loading products...</span>
-              </div>
-              <p class="mt-2">Loading products...</p>
-            </div>
-          `;
-
-          // Build query parameters
-          let queryParams = `page=${page}&limit=${productsPerPage}`;
-          
-          if (category) queryParams += `&category=${category}`;
-          if (subcategory) queryParams += `&subcategory=${subcategory}`;
-          if (sort) queryParams += `&sort=${sort}`;
-          if (priceFilter) queryParams += `&priceRange=${priceFilter}`;
-          if (search) queryParams += `&search=${encodeURIComponent(search)}`;
-
-          const response = await fetch(`/api/user/products?${queryParams}`);
-
-          if (!response.ok) throw new Error("Failed to load products");
-
-          const data = await response.json();
-
-          if (data.success) {
-            renderProducts(data.products);
-            setupPagination(data.pagination);
-          } else {
-            throw new Error(data.message || "Failed to load products");
-          }
-        } catch (error) {
-          console.error("Error:", error);
-          document.getElementById("products-container").innerHTML = `
-            <div class="col-12 text-center py-5">
-              <i class="fa fa-exclamation-triangle fa-3x text-danger"></i>
-              <p class="mt-3">Error loading products. Please try again.</p>
-            </div>
-          `;
-        }
-      }
-
-      // ========== WISHLIST FUNCTIONALITY ==========
-// ========== WISHLIST FUNCTIONALITY ==========
-async function handleAddToWishlist(event, productId) {
-  event.preventDefault();
-  event.stopPropagation();
-  
-  const token = localStorage.getItem('token');
-  
-  if (!token) {
-    alert('Please login to add items to wishlist');
-    window.location.href = 'login.html';
-    return;
-  }
-  
-  try {
-    const response = await fetch('http://localhost:8070/api/user/wishlist/add', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ productId })
     });
     
-    const data = await response.json();
+    categoryList.innerHTML = categoriesHTML;
+  }
+
+  function getCategoryIcon(categoryName, iconMap) {
+    const normalizedName = categoryName.trim();
     
-    if (data.success) {
-      alert('Added to wishlist!');
-    } else {
-      alert('Failed to add to wishlist: ' + data.message);
+    // Check exact match
+    if (iconMap[normalizedName]) {
+      return iconMap[normalizedName];
     }
-  } catch (error) {
-    console.error('Error adding to wishlist:', error);
-    alert('Error adding to wishlist. Please try again.');
-  }
-}
-function renderProducts(products) {
-  const container = document.getElementById("products-container");
-  container.innerHTML = "";
-
-  if (products.length === 0) {
-    container.innerHTML = `
-      <div class="col-12 text-center py-5">
-        <i class="fa fa-search fa-3x text-muted"></i>
-        <h4 class="mt-3">No products found</h4>
-        <p class="text-muted">Try adjusting your search or filter criteria</p>
-        <button class="btn btn-primary" onclick="resetFilters()">Reset Filters</button>
-      </div>
-    `;
-    return;
-  }
-
-  products.forEach((product) => {
-    const productId = product._id || product.id;
-    const productName = product.name || 'Product Name';
-    const productPrice = parseFloat(product.price) || 0;
-    const productRating = product.rating || 0;
-    const productImage = getProductImageUrl(product.image || product.images || []);
     
-    const productHTML = `
-  <div class="col-md-4">
-    <div class="product-item">
-      <div class="product-header">
-        <a href="product-detail.html?id=${productId}" class="product-name">${productName}</a>
-        <div class="product-header-right">
-          <div class="ratting">
-            ${generateRatingStars(productRating)}
+    // Check partial matches
+    for (const [key, value] of Object.entries(iconMap)) {
+      if (normalizedName.toLowerCase().includes(key.toLowerCase()) ||
+          key.toLowerCase().includes(normalizedName.toLowerCase())) {
+        return value;
+      }
+    }
+    
+    // Return default icon
+    return 'fa-tag';
+  }
+
+  // ========== LOAD PRODUCTS WITH SEARCH ==========
+  async function loadProductsWithSearch(searchQuery) {
+    try {
+      console.log('Loading products with search query:', searchQuery);
+      
+      const productsContainer = document.getElementById("products-container");
+      productsContainer.innerHTML = `
+        <div class="col-12 text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Searching products...</span>
           </div>
-          <!-- Wishlist icon - floated to right -->
-          <a href="#" class="wishlist-icon-top" onclick="handleAddToWishlist(event, '${productId}')">
-            <i class="fa fa-heart"></i>
-          </a>
+          <p class="mt-2">Searching for "${searchQuery}"...</p>
         </div>
-      </div>
-      <div class="product-image">
-        <a href="product-detail.html?id=${productId}">
-          <img src="${productImage}" 
-               alt="${productName}"
-               onerror="this.onerror=null; this.src='img/product-1.jpg'">
-        </a>
-      </div>
-      <div class="product-price">
-        <h3><span>₹</span>${productPrice.toFixed(2)}</h3>
-        <a class="btn" href="#" onclick="handleAddToCart(event, '${productId}')">
-          <i class="fa fa-shopping-cart"></i>Add to Cart
-        </a>
-      </div>
-    </div>
-  </div>
-`;
-    container.innerHTML += productHTML;
-  });
-}
-    
-      function generateRatingStars(rating) {
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 >= 0.5;
-        let starsHTML = "";
+      `;
 
-        for (let i = 0; i < 5; i++) {
-          if (i < fullStars) {
-            starsHTML += '<i class="fa fa-star"></i>';
-          } else if (i === fullStars && hasHalfStar) {
-            starsHTML += '<i class="fa fa-star-half-alt"></i>';
-          } else {
-            starsHTML += '<i class="far fa-star"></i>';
-          }
-        }
-        return starsHTML;
+      // Update page title or show search info
+      updateSearchHeader(searchQuery);
+
+      // Use the CORRECT search endpoint
+      const response = await fetch(`http://localhost:8070/api/user/search/${encodeURIComponent(searchQuery)}?page=1&limit=${productsPerPage}`);
+      
+      console.log('Search response status:', response.status);
+      
+      if (!response.ok) {
+        throw new Error(`Search failed: ${response.status}`);
       }
-
-      function getProductImageUrl(imageData) {
-        const defaultImage = 'img/product-1.jpg';
+      
+      const data = await response.json();
+      console.log('Search results:', data);
+      
+      if (data.success) {
+        // Check if we have products in the data
+        const products = data.products || data.data?.products || [];
+        const totalResults = data.totalProducts || data.data?.searchInfo?.totalResults || products.length;
         
-        if (!imageData) return defaultImage;
+        // Update header with search results info
+        updateSearchResultsHeader(searchQuery, totalResults);
         
-        let imagePath = imageData;
-        if (Array.isArray(imageData)) {
-          if (imageData.length === 0) return defaultImage;
-          imagePath = imageData[0];
-        }
+        // Render the products
+        renderProducts(products);
         
-        if (typeof imagePath === 'string' && imagePath.trim()) {
-          let path = imagePath.trim();
-          
-          while (path.startsWith('uploads/')) {
-            path = path.replace('uploads/', '');
-          }
-          
-          if (path.startsWith('http') || path.startsWith('/')) {
-            return path;
-          } else if (path.includes('.')) {
-            return `/uploads/${path}`;
-          }
+        // Setup pagination if available
+        if (data.pagination || data.data?.pagination) {
+          const pagination = data.pagination || data.data.pagination;
+          setupSearchPagination(pagination, searchQuery);
+        } else {
+          // Hide pagination if no pagination data
+          const paginationContainer = document.getElementById("pagination-container");
+          if (paginationContainer) paginationContainer.innerHTML = '';
         }
-        
-        return defaultImage;
+      } else {
+        throw new Error(data.message || "Search failed");
       }
-
-      // ========== PAGINATION ==========
-      function setupPagination(pagination) {
-        const paginationContainer = document.getElementById("pagination-container");
-        if (!paginationContainer) return;
-
-        paginationContainer.innerHTML = "";
-
-        if (!pagination || pagination.totalPages <= 1) return;
-
-        // Previous button
-        const prevLi = document.createElement("li");
-        prevLi.className = `page-item ${!pagination.hasPrevPage ? "disabled" : ""}`;
-        prevLi.innerHTML = `<a class="page-link" href="#" ${pagination.hasPrevPage ? `onclick="loadProducts(${currentPage - 1}, '${currentCategory}', '${currentSubcategory}', '${currentSort}', '${currentPriceFilter}', '${currentSearch}')"` : ""}>Previous</a>`;
-        paginationContainer.appendChild(prevLi);
-
-        // Page numbers
-        const maxVisiblePages = 5;
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-        let endPage = Math.min(pagination.totalPages, startPage + maxVisiblePages - 1);
-        
-        if (endPage - startPage + 1 < maxVisiblePages) {
-          startPage = Math.max(1, endPage - maxVisiblePages + 1);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-          const pageLi = document.createElement("li");
-          pageLi.className = `page-item ${i === currentPage ? "active" : ""}`;
-          pageLi.innerHTML = `<a class="page-link" href="#" onclick="loadProducts(${i}, '${currentCategory}', '${currentSubcategory}', '${currentSort}', '${currentPriceFilter}', '${currentSearch}')">${i}</a>`;
-          paginationContainer.appendChild(pageLi);
-        }
-
-        // Next button
-        const nextLi = document.createElement("li");
-        nextLi.className = `page-item ${!pagination.hasNextPage ? "disabled" : ""}`;
-        nextLi.innerHTML = `<a class="page-link" href="#" ${pagination.hasNextPage ? `onclick="loadProducts(${currentPage + 1}, '${currentCategory}', '${currentSubcategory}', '${currentSort}', '${currentPriceFilter}', '${currentSearch}')"` : ""}>Next</a>`;
-        paginationContainer.appendChild(nextLi);
-      }
-
-      // ========== FILTER FUNCTIONS ==========
-      function filterByCategory(categoryId) {
-        loadProducts(1, categoryId, '', currentSort, currentPriceFilter, currentSearch);
-      }
-
-      function filterBySubcategory(subcategoryId) {
-        loadProducts(1, '', subcategoryId, currentSort, currentPriceFilter, currentSearch);
-      }
-
-      function sortProducts(sortType) {
-        let sortParam = '';
-        switch(sortType) {
-          case 'newest':
-            sortParam = '-createdAt';
-            break;
-          case 'popular':
-            sortParam = '-rating';
-            break;
-          case 'price-low':
-            sortParam = 'price';
-            break;
-          case 'price-high':
-            sortParam = '-price';
-            break;
-        }
-        loadProducts(1, currentCategory, currentSubcategory, sortParam, currentPriceFilter, currentSearch);
-      }
-
-      function filterByPrice(min, max) {
-        const priceFilter = `${min}-${max}`;
-        loadProducts(1, currentCategory, currentSubcategory, currentSort, priceFilter, currentSearch);
-      }
-
-      function applyPriceFilter() {
-        const priceRange = document.getElementById('priceRange').value;
-        filterByPrice(0, priceRange);
-      }
-
-      function handleSearch() {
-        const searchBox = document.getElementById('searchBox');
-        const searchTerm = searchBox.value.trim();
-        loadProducts(1, currentCategory, currentSubcategory, currentSort, currentPriceFilter, searchTerm);
-      }
-
-      function resetFilters() {
-        currentCategory = '';
-        currentSubcategory = '';
-        currentSort = '';
-        currentPriceFilter = '';
-        currentSearch = '';
-        document.getElementById('searchBox').value = '';
-        document.getElementById('priceRange').value = 1000;
-        document.getElementById('priceRangeValue').textContent = '$1000';
-        loadProducts(1);
-      }
-
-      // ========== FEATURED PRODUCTS SIDEBAR ==========
-   // ========== FEATURED PRODUCTS SIDEBAR ==========
-async function loadFeaturedProductsSidebar() {
-  try {
-    const response = await fetch('/api/user/products?featured=true&limit=5');
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch featured products');
-    }
-    
-    const data = await response.json();
-    const sliderContainer = document.getElementById('sidebar-products-slider');
-    
-    if (data.success && data.products && data.products.length > 0) {
-      renderSidebarSlider(data.products);
-    } else {
-      sliderContainer.innerHTML = `
-        <div class="text-center p-4">
-          <i class="fa fa-exclamation-circle fa-2x text-muted"></i>
-          <p class="mt-2 text-muted">No featured products</p>
+    } catch (error) {
+      console.error("Search error:", error);
+      document.getElementById("products-container").innerHTML = `
+        <div class="col-12 text-center py-5">
+          <i class="fa fa-exclamation-triangle fa-3x text-danger"></i>
+          <h4 class="mt-3">Search Error</h4>
+          <p class="text-muted">${error.message}</p>
+          <button class="btn btn-primary mt-2" onclick="resetFilters()">Back to All Products</button>
         </div>
       `;
     }
-  } catch (error) {
-    console.error('Error loading featured products:', error);
-    document.getElementById('sidebar-products-slider').innerHTML = `
-      <div class="text-center p-4">
-        <i class="fa fa-exclamation-triangle fa-2x text-danger"></i>
-        <p class="mt-2 text-danger">Failed to load products</p>
-      </div>
-    `;
-  }
-}
-
-function renderSidebarSlider(products) {
-  const sliderContainer = document.getElementById("sidebar-products-slider");
-
-  if (!sliderContainer) {
-    console.error("Sidebar slider container not found");
-    return;
   }
 
-  if (!products || products.length === 0) {
-    sliderContainer.innerHTML = `
-      <div class="text-center p-4">
-        <i class="fa fa-exclamation-circle fa-2x text-muted"></i>
-        <p class="mt-2 text-muted">No products available</p>
-      </div>
-    `;
-    return;
+  // ========== UPDATE SEARCH HEADER ==========
+  function updateSearchHeader(searchQuery) {
+    const pageTitle = document.querySelector('.section-header h1');
+    if (pageTitle) {
+      pageTitle.innerHTML = `Search Results for: <span class="text-primary">"${searchQuery}"</span>`;
+    }
   }
 
-  let productsHTML = "";
-  let slideIndicatorsHTML = "";
-
-  // Create product slides
-  products.forEach((product, index) => {
-    const productId = product._id || product.id || "";
-    const productName = product.name || "Product Name";
-    const productPrice = parseFloat(product.price) || 0;
-    const productImage = getProductImageUrl(product.image || product.images || []);
-    const productRating = product.rating || 0;
-
-    // Create rating stars
-    let ratingStars = "";
-    const fullStars = Math.floor(productRating);
-    const hasHalfStar = productRating % 1 >= 0.5;
-
-    for (let i = 0; i < 5; i++) {
-      if (i < fullStars) {
-        ratingStars += '<i class="fa fa-star"></i>';
-      } else if (i === fullStars && hasHalfStar) {
-        ratingStars += '<i class="fa fa-star-half-alt"></i>';
+  // ========== UPDATE SEARCH RESULTS HEADER ==========
+  function updateSearchResultsHeader(searchQuery, totalResults) {
+    const sectionHeader = document.querySelector('.section-header');
+    if (sectionHeader) {
+      if (totalResults > 0) {
+        sectionHeader.innerHTML = `
+          <h1>Search Results for: "${searchQuery}"</h1>
+          <p class="text-muted">Found ${totalResults} product${totalResults !== 1 ? 's' : ''}</p>
+        `;
       } else {
-        ratingStars += '<i class="far fa-star"></i>';
+        sectionHeader.innerHTML = `
+          <h1>No Results for: "${searchQuery}"</h1>
+          <p class="text-muted">Try a different search term</p>
+        `;
       }
     }
+  }
 
-    const activeClass = index === 0 ? "active" : "";
-
-    productsHTML += `
-      <div class="carousel-item ${activeClass}">
-        <div class="product-item">
-          <div class="product-title">
-            <a href="product-detail.html?id=${productId}">${productName}</a>
-            <div class="ratting">
-              ${ratingStars}
-            </div>
-          </div>
-          <div class="product-image">
-            <a href="product-detail.html?id=${productId}">
-              <img src="${productImage}" alt="${productName}" 
-                   onerror="this.onerror=null; this.src='img/product-1.jpg'">
-            </a>
-            <div class="product-action">
-              <a href="#" class="add-to-cart-sidebar" data-product-id="${productId}">
-                <i class="fa fa-cart-plus"></i>
-              </a>
-              <a href="#"><i class="fa fa-heart"></i></a>
-              <a href="product-detail.html?id=${productId}">
-                <i class="fa fa-search"></i>
-              </a>
-            </div>
-          </div>
-          <div class="product-price">
-            <h3><span>$</span>${productPrice.toFixed(2)}</h3>
-            <a class="btn add-to-cart-sidebar" href="#" data-product-id="${productId}">
-              <i class="fa fa-shopping-cart"></i>Add to Cart
-            </a>
-          </div>
-        </div>
-      </div>
-    `;
-
-    // Create indicator
-    const indicatorActiveClass = index === 0 ? "active" : "";
-    slideIndicatorsHTML += `
-      <li data-target="#sidebarCarousel" data-slide-to="${index}" class="${indicatorActiveClass}"></li>
-    `;
-  });
-
-  // Build the complete slider HTML
-  const completeSliderHTML = `
-    <div id="sidebarCarousel" class="carousel slide" data-ride="carousel">
-      <!-- Indicators -->
-      <ol class="carousel-indicators">
-        ${slideIndicatorsHTML}
-      </ol>
-      
-      <!-- Slides -->
-      <div class="carousel-inner">
-        ${productsHTML}
-      </div>
-      
-      <!-- Controls -->
-      <a class="carousel-control-prev" href="#sidebarCarousel" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-      </a>
-      <a class="carousel-control-next" href="#sidebarCarousel" role="button" data-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-      </a>
-    </div>
-  `;
-
-  sliderContainer.innerHTML = completeSliderHTML;
-  console.log(`Rendered ${products.length} products in sidebar slider`);
-
-  // Initialize the carousel
-  initSidebarCarousel();
-
-  // Setup sidebar cart buttons
-  setupSidebarCartButtons();
-}
-
-function initSidebarCarousel() {
-  // Initialize Bootstrap carousel
-  $('#sidebarCarousel').carousel({
-    interval: 5000, // 5 seconds
-    pause: 'hover',
-    wrap: true,
-    keyboard: true
-  });
-  
-  console.log("Sidebar carousel initialized");
-}
-
-function setupSidebarCartButtons() {
-  // Use event delegation to handle dynamically created buttons
-  document.addEventListener('click', async function(e) {
-    // Check if the clicked element or its parent is a sidebar cart button
-    let target = e.target;
-    
-    // Traverse up to find the button with add-to-cart-sidebar class
-    while (target && !target.classList.contains('add-to-cart-sidebar')) {
-      target = target.parentElement;
-    }
-    
-    if (!target || !target.classList.contains('add-to-cart-sidebar')) {
+  // ========== LOAD PRODUCTS (REGULAR) ==========
+  async function loadProducts(page = 1, category = '', subcategory = '', sort = '', priceFilter = '', search = '') {
+    // If we have a search term, use the search endpoint
+    if (search && search.trim() !== '') {
+      loadProductsWithSearch(search);
       return;
     }
     
-    e.preventDefault();
-    e.stopPropagation();
-    
-    const productId = target.getAttribute('data-product-id');
-    if (!productId) return;
+    try {
+      currentPage = page;
+      currentCategory = category;
+      currentSubcategory = subcategory;
+      currentSort = sort;
+      currentPriceFilter = priceFilter;
+      currentSearch = search;
+      
+      const productsContainer = document.getElementById("products-container");
+      productsContainer.innerHTML = `
+        <div class="col-12 text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading products...</span>
+          </div>
+          <p class="mt-2">Loading products...</p>
+        </div>
+      `;
 
+      // Build query parameters
+      let queryParams = `page=${page}&limit=${productsPerPage}`;
+      
+      if (category) queryParams += `&category=${category}`;
+      if (subcategory) queryParams += `&subcategory=${subcategory}`;
+      if (sort) queryParams += `&sort=${sort}`;
+      if (priceFilter) queryParams += `&priceRange=${priceFilter}`;
+
+      console.log('Loading products with params:', queryParams);
+      
+      const response = await fetch(`/api/user/products?${queryParams}`);
+
+      if (!response.ok) throw new Error("Failed to load products");
+
+      const data = await response.json();
+      console.log('Products data:', data);
+
+      if (data.success) {
+        renderProducts(data.products);
+        setupPagination(data.pagination);
+      } else {
+        throw new Error(data.message || "Failed to load products");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      document.getElementById("products-container").innerHTML = `
+        <div class="col-12 text-center py-5">
+          <i class="fa fa-exclamation-triangle fa-3x text-danger"></i>
+          <p class="mt-3">Error loading products. Please try again.</p>
+        </div>
+      `;
+    }
+  }
+
+  // ========== RENDER PRODUCTS ==========
+  function renderProducts(products) {
+    const container = document.getElementById("products-container");
+    if (!container) return;
+    
+    container.innerHTML = "";
+
+    if (!products || products.length === 0) {
+      container.innerHTML = `
+        <div class="col-12 text-center py-5">
+          <i class="fa fa-search fa-3x text-muted"></i>
+          <h4 class="mt-3">No products found</h4>
+          <p class="text-muted">Try adjusting your search or filter criteria</p>
+          <button class="btn btn-primary" onclick="resetFilters()">Reset Filters</button>
+        </div>
+      `;
+      return;
+    }
+
+    products.forEach((product) => {
+      const productId = product._id || product.id;
+      const productName = product.name || 'Product Name';
+      const productPrice = parseFloat(product.price) || 0;
+      const productRating = product.rating || 0;
+      const productImage = getProductImageUrl(product.image || product.images || []);
+      
+      const productHTML = `
+        <div class="col-md-4">
+          <div class="product-item">
+            <div class="product-header">
+              <a href="product-detail.html?id=${productId}" class="product-name">${productName}</a>
+              <div class="product-header-right">
+                <div class="ratting">
+                  ${generateRatingStars(productRating)}
+                </div>
+                <!-- Wishlist icon -->
+                <a href="#" class="wishlist-icon-top" onclick="handleAddToWishlist(event, '${productId}')">
+                  <i class="fa fa-heart"></i>
+                </a>
+              </div>
+            </div>
+            <div class="product-image">
+              <a href="product-detail.html?id=${productId}">
+                <img src="${productImage}" 
+                     alt="${productName}"
+                     onerror="this.onerror=null; this.src='img/product-1.jpg'">
+              </a>
+            </div>
+            <div class="product-price">
+              <h3><span>₹</span>${productPrice.toFixed(2)}</h3>
+              <a class="btn" href="#" onclick="handleAddToCart(event, '${productId}')">
+                <i class="fa fa-shopping-cart"></i>Add to Cart
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+      container.innerHTML += productHTML;
+    });
+  }
+
+  function generateRatingStars(rating) {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    let starsHTML = "";
+
+    for (let i = 0; i < 5; i++) {
+      if (i < fullStars) {
+        starsHTML += '<i class="fa fa-star"></i>';
+      } else if (i === fullStars && hasHalfStar) {
+        starsHTML += '<i class="fa fa-star-half-alt"></i>';
+      } else {
+        starsHTML += '<i class="far fa-star"></i>';
+      }
+    }
+    return starsHTML;
+  }
+
+  function getProductImageUrl(imageData) {
+    const defaultImage = 'img/product-1.jpg';
+    
+    if (!imageData) return defaultImage;
+    
+    let imagePath = imageData;
+    if (Array.isArray(imageData)) {
+      if (imageData.length === 0) return defaultImage;
+      imagePath = imageData[0];
+    }
+    
+    if (typeof imagePath === 'string' && imagePath.trim()) {
+      let path = imagePath.trim();
+      
+      while (path.startsWith('uploads/')) {
+        path = path.replace('uploads/', '');
+      }
+      
+      if (path.startsWith('http') || path.startsWith('/')) {
+        return path;
+      } else if (path.includes('.')) {
+        return `/uploads/${path}`;
+      }
+    }
+    
+    return defaultImage;
+  }
+
+  // ========== PAGINATION ==========
+  function setupPagination(pagination) {
+    const paginationContainer = document.getElementById("pagination-container");
+    if (!paginationContainer) return;
+
+    paginationContainer.innerHTML = "";
+
+    if (!pagination || pagination.totalPages <= 1) return;
+
+    // Previous button
+    const prevLi = document.createElement("li");
+    prevLi.className = `page-item ${!pagination.hasPrevPage ? "disabled" : ""}`;
+    prevLi.innerHTML = `<a class="page-link" href="#" ${pagination.hasPrevPage ? `onclick="loadProducts(${currentPage - 1}, '${currentCategory}', '${currentSubcategory}', '${currentSort}', '${currentPriceFilter}', '${currentSearch}')"` : ""}>Previous</a>`;
+    paginationContainer.appendChild(prevLi);
+
+    // Page numbers
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(pagination.totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      const pageLi = document.createElement("li");
+      pageLi.className = `page-item ${i === currentPage ? "active" : ""}`;
+      pageLi.innerHTML = `<a class="page-link" href="#" onclick="loadProducts(${i}, '${currentCategory}', '${currentSubcategory}', '${currentSort}', '${currentPriceFilter}', '${currentSearch}')">${i}</a>`;
+      paginationContainer.appendChild(pageLi);
+    }
+
+    // Next button
+    const nextLi = document.createElement("li");
+    nextLi.className = `page-item ${!pagination.hasNextPage ? "disabled" : ""}`;
+    nextLi.innerHTML = `<a class="page-link" href="#" ${pagination.hasNextPage ? `onclick="loadProducts(${currentPage + 1}, '${currentCategory}', '${currentSubcategory}', '${currentSort}', '${currentPriceFilter}', '${currentSearch}')"` : ""}>Next</a>`;
+    paginationContainer.appendChild(nextLi);
+  }
+
+  // ========== SETUP SEARCH PAGINATION ==========
+  function setupSearchPagination(pagination, searchQuery) {
+    const paginationContainer = document.getElementById("pagination-container");
+    if (!paginationContainer) return;
+
+    paginationContainer.innerHTML = "";
+
+    if (!pagination || pagination.totalPages <= 1) return;
+
+    // Previous button
+    const prevLi = document.createElement("li");
+    prevLi.className = `page-item ${!pagination.hasPrevPage ? "disabled" : ""}`;
+    prevLi.innerHTML = `<a class="page-link" href="#" ${pagination.hasPrevPage ? `onclick="loadSearchPage(${currentPage - 1}, '${searchQuery}')"` : ""}>Previous</a>`;
+    paginationContainer.appendChild(prevLi);
+
+    // Page numbers
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(pagination.totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      const pageLi = document.createElement("li");
+      pageLi.className = `page-item ${i === currentPage ? "active" : ""}`;
+      pageLi.innerHTML = `<a class="page-link" href="#" onclick="loadSearchPage(${i}, '${searchQuery}')">${i}</a>`;
+      paginationContainer.appendChild(pageLi);
+    }
+
+    // Next button
+    const nextLi = document.createElement("li");
+    nextLi.className = `page-item ${!pagination.hasNextPage ? "disabled" : ""}`;
+    nextLi.innerHTML = `<a class="page-link" href="#" ${pagination.hasNextPage ? `onclick="loadSearchPage(${currentPage + 1}, '${searchQuery}')"` : ""}>Next</a>`;
+    paginationContainer.appendChild(nextLi);
+  }
+
+  // ========== LOAD SEARCH PAGE ==========
+  async function loadSearchPage(page, searchQuery) {
+    try {
+      currentPage = page;
+      
+      const productsContainer = document.getElementById("products-container");
+      productsContainer.innerHTML = `
+        <div class="col-12 text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading page ${page}...</span>
+          </div>
+          <p class="mt-2">Loading page ${page}...</p>
+        </div>
+      `;
+
+      const response = await fetch(`http://localhost:8070/api/user/search/${encodeURIComponent(searchQuery)}?page=${page}&limit=${productsPerPage}`);
+      
+      if (!response.ok) {
+        throw new Error(`Search failed: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // Extract products from response
+        const products = data.products || data.data?.products || [];
+        renderProducts(products);
+        
+        // Setup pagination
+        if (data.pagination || data.data?.pagination) {
+          const pagination = data.pagination || data.data.pagination;
+          setupSearchPagination(pagination, searchQuery);
+        }
+      } else {
+        throw new Error(data.message || "Search failed");
+      }
+    } catch (error) {
+      console.error("Search pagination error:", error);
+      document.getElementById("products-container").innerHTML = `
+        <div class="col-12 text-center py-5">
+          <i class="fa fa-exclamation-triangle fa-3x text-danger"></i>
+          <p class="mt-3">Error loading page. Please try again.</p>
+        </div>
+      `;
+    }
+  }
+
+  // ========== FILTER FUNCTIONS ==========
+  function filterByCategory(categoryId) {
+    currentCategory = categoryId;
+    currentSubcategory = '';
+    currentSearch = '';
+    
+    // Update URL
+    const url = new URL(window.location);
+    if (categoryId) {
+      url.searchParams.set('category', categoryId);
+    } else {
+      url.searchParams.delete('category');
+    }
+    url.searchParams.delete('search');
+    url.searchParams.delete('subcategory');
+    window.history.pushState({}, '', url);
+    
+    loadProducts(1, categoryId);
+  }
+
+  function filterBySubcategory(subcategoryId) {
+    currentSubcategory = subcategoryId;
+    currentCategory = '';
+    currentSearch = '';
+    
+    // Update URL
+    const url = new URL(window.location);
+    if (subcategoryId) {
+      url.searchParams.set('subcategory', subcategoryId);
+    } else {
+      url.searchParams.delete('subcategory');
+    }
+    url.searchParams.delete('search');
+    url.searchParams.delete('category');
+    window.history.pushState({}, '', url);
+    
+    loadProducts(1, '', subcategoryId);
+  }
+
+  function sortProducts(sortType) {
+    let sortParam = '';
+    switch(sortType) {
+      case 'newest':
+        sortParam = '-createdAt';
+        break;
+      case 'popular':
+        sortParam = '-rating';
+        break;
+      case 'price-low':
+        sortParam = 'price';
+        break;
+      case 'price-high':
+        sortParam = '-price';
+        break;
+    }
+    currentSort = sortParam;
+    loadProducts(1, currentCategory, currentSubcategory, sortParam, currentPriceFilter, currentSearch);
+  }
+
+  function filterByPrice(min, max) {
+    const priceFilter = `${min}-${max}`;
+    currentPriceFilter = priceFilter;
+    loadProducts(1, currentCategory, currentSubcategory, currentSort, priceFilter, currentSearch);
+  }
+
+  function applyPriceFilter() {
+    const priceRange = document.getElementById('priceRange').value;
+    filterByPrice(0, priceRange);
+  }
+
+  // ========== HANDLE SEARCH ==========
+  function handleSearch() {
+    const searchBox = document.getElementById('searchBox');
+    const searchTerm = searchBox.value.trim();
+    
+    if (!searchTerm) {
+      alert('Please enter a search term');
+      return;
+    }
+    
+    // Update URL without reloading
+    const url = new URL(window.location);
+    url.searchParams.set('search', searchTerm);
+    url.searchParams.delete('category');
+    url.searchParams.delete('subcategory');
+    window.history.pushState({}, '', url);
+    
+    // Load search results
+    loadProductsWithSearch(searchTerm);
+  }
+
+  // ========== WISHLIST FUNCTIONALITY ==========
+  async function handleAddToWishlist(event, productId) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      alert('Please login to add items to wishlist');
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    try {
+      const response = await fetch('http://localhost:8070/api/user/wishlist/add', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ productId })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        alert('Added to wishlist!');
+      } else {
+        alert('Failed to add to wishlist: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error adding to wishlist:', error);
+      alert('Error adding to wishlist. Please try again.');
+    }
+  }
+
+  // ========== CART FUNCTIONALITY ==========
+  async function handleAddToCart(event, productId) {
+    event.preventDefault();
+    event.stopPropagation();
+    
     const token = localStorage.getItem('token');
     
     if (!token) {
@@ -1199,131 +1278,311 @@ function setupSidebarCartButtons() {
       console.error('Error adding to cart:', error);
       alert('Error adding product to cart. Please try again.');
     }
-  });
-}
-      function renderFeaturedProductsSidebar(products) {
-        const container = document.getElementById('featuredProductsSidebar');
-        let productsHTML = '';
-        
-        products.forEach(product => {
-          const productId = product._id || product.id;
-          const productName = product.name || 'Product';
-          const productPrice = parseFloat(product.price) || 0;
-          const productImage = getProductImageUrl(product.image || product.images || []);
-          
-          productsHTML += `
-            <div class="product-item-sidebar mb-3">
-              <div class="row align-items-center">
-                <div class="col-4">
-                  <a href="product-detail.html?id=${productId}">
-                    <img src="${productImage}" 
-                         alt="${productName}"
-                         class="img-fluid"
-                         onerror="this.onerror=null; this.src='img/product-1.jpg'">
-                  </a>
-                </div>
-                <div class="col-8">
-                  <a href="product-detail.html?id=${productId}" class="d-block text-dark">
-                    <h6 class="mb-1">${productName.length > 30 ? productName.substring(0, 30) + '...' : productName}</h6>
-                  </a>
-                  <div class="ratting mb-1">
-                    ${generateRatingStars(product.rating || 0)}
-                  </div>
-                  <h5 class="mb-0">$${productPrice.toFixed(2)}</h5>
-                </div>
+  }
+
+  function updateCartCount() {
+    const cartCount = localStorage.getItem('cartCount') || '0';
+    const cartCountElement = document.getElementById('cartCount');
+    if (cartCountElement) {
+      cartCountElement.textContent = `(${cartCount})`;
+    }
+  }
+
+  // ========== EVENT LISTENERS ==========
+  function setupEventListeners() {
+    // Price range display
+    const priceRange = document.getElementById('priceRange');
+    const priceRangeValue = document.getElementById('priceRangeValue');
+    
+    if (priceRange && priceRangeValue) {
+      priceRange.addEventListener('input', function() {
+        priceRangeValue.textContent = `$${this.value}`;
+      });
+    }
+
+    // Enter key for search
+    const searchBox = document.getElementById('searchBox');
+    if (searchBox) {
+      searchBox.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          handleSearch();
+        }
+      });
+      
+      // Add search button click
+      const searchBtn = document.querySelector('.search button');
+      if (searchBtn) {
+        searchBtn.addEventListener('click', handleSearch);
+      }
+    }
+
+    // Listen for back/forward navigation
+    window.addEventListener('popstate', function() {
+      checkUrlForSearchQuery();
+    });
+  }
+
+  // ========== RESET FILTERS ==========
+  function resetFilters() {
+    currentCategory = '';
+    currentSubcategory = '';
+    currentSort = '';
+    currentPriceFilter = '';
+    currentSearch = '';
+    
+    // Clear URL parameters
+    const url = new URL(window.location);
+    url.searchParams.delete('search');
+    url.searchParams.delete('category');
+    url.searchParams.delete('subcategory');
+    window.history.pushState({}, '', url);
+    
+    // Reset UI elements
+    const searchBox = document.getElementById('searchBox');
+    if (searchBox) searchBox.value = '';
+    
+    if (document.getElementById('priceRange')) {
+      document.getElementById('priceRange').value = 1000;
+      document.getElementById('priceRangeValue').textContent = '$1000';
+    }
+    
+    // Reset header
+    const sectionHeader = document.querySelector('.section-header');
+    if (sectionHeader) {
+      sectionHeader.innerHTML = '<h1>All Products</h1>';
+    }
+    
+    // Load all products
+    loadProducts(1);
+  }
+
+  // ========== FEATURED PRODUCTS SIDEBAR ==========
+  async function loadFeaturedProductsSidebar() {
+    try {
+      const response = await fetch('/api/user/products?featured=true&limit=5');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch featured products');
+      }
+      
+      const data = await response.json();
+      const sliderContainer = document.getElementById('sidebar-products-slider');
+      
+      if (data.success && data.products && data.products.length > 0) {
+        renderSidebarSlider(data.products);
+      } else {
+        sliderContainer.innerHTML = `
+          <div class="text-center p-4">
+            <i class="fa fa-exclamation-circle fa-2x text-muted"></i>
+            <p class="mt-2 text-muted">No featured products</p>
+          </div>
+        `;
+      }
+    } catch (error) {
+      console.error('Error loading featured products:', error);
+      document.getElementById('sidebar-products-slider').innerHTML = `
+        <div class="text-center p-4">
+          <i class="fa fa-exclamation-triangle fa-2x text-danger"></i>
+          <p class="mt-2 text-danger">Failed to load products</p>
+        </div>
+      `;
+    }
+  }
+
+  function renderSidebarSlider(products) {
+    const sliderContainer = document.getElementById("sidebar-products-slider");
+
+    if (!sliderContainer) {
+      console.error("Sidebar slider container not found");
+      return;
+    }
+
+    if (!products || products.length === 0) {
+      sliderContainer.innerHTML = `
+        <div class="text-center p-4">
+          <i class="fa fa-exclamation-circle fa-2x text-muted"></i>
+          <p class="mt-2 text-muted">No products available</p>
+        </div>
+      `;
+      return;
+    }
+
+    let productsHTML = "";
+    let slideIndicatorsHTML = "";
+
+    // Create product slides
+    products.forEach((product, index) => {
+      const productId = product._id || product.id || "";
+      const productName = product.name || "Product Name";
+      const productPrice = parseFloat(product.price) || 0;
+      const productImage = getProductImageUrl(product.image || product.images || []);
+      const productRating = product.rating || 0;
+
+      // Create rating stars
+      let ratingStars = "";
+      const fullStars = Math.floor(productRating);
+      const hasHalfStar = productRating % 1 >= 0.5;
+
+      for (let i = 0; i < 5; i++) {
+        if (i < fullStars) {
+          ratingStars += '<i class="fa fa-star"></i>';
+        } else if (i === fullStars && hasHalfStar) {
+          ratingStars += '<i class="fa fa-star-half-alt"></i>';
+        } else {
+          ratingStars += '<i class="far fa-star"></i>';
+        }
+      }
+
+      const activeClass = index === 0 ? "active" : "";
+
+      productsHTML += `
+        <div class="carousel-item ${activeClass}">
+          <div class="product-item">
+            <div class="product-title">
+              <a href="product-detail.html?id=${productId}">${productName}</a>
+              <div class="ratting">
+                ${ratingStars}
               </div>
             </div>
-          `;
+            <div class="product-image">
+              <a href="product-detail.html?id=${productId}">
+                <img src="${productImage}" alt="${productName}" 
+                     onerror="this.onerror=null; this.src='img/product-1.jpg'">
+              </a>
+              <div class="product-action">
+                <a href="#" class="add-to-cart-sidebar" data-product-id="${productId}">
+                  <i class="fa fa-cart-plus"></i>
+                </a>
+                <a href="#"><i class="fa fa-heart"></i></a>
+                <a href="product-detail.html?id=${productId}">
+                  <i class="fa fa-search"></i>
+                </a>
+              </div>
+            </div>
+            <div class="product-price">
+              <h3><span>$</span>${productPrice.toFixed(2)}</h3>
+              <a class="btn add-to-cart-sidebar" href="#" data-product-id="${productId}">
+                <i class="fa fa-shopping-cart"></i>Add to Cart
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Create indicator
+      const indicatorActiveClass = index === 0 ? "active" : "";
+      slideIndicatorsHTML += `
+        <li data-target="#sidebarCarousel" data-slide-to="${index}" class="${indicatorActiveClass}"></li>
+      `;
+    });
+
+    // Build the complete slider HTML
+    const completeSliderHTML = `
+      <div id="sidebarCarousel" class="carousel slide" data-ride="carousel">
+        <!-- Indicators -->
+        <ol class="carousel-indicators">
+          ${slideIndicatorsHTML}
+        </ol>
+        
+        <!-- Slides -->
+        <div class="carousel-inner">
+          ${productsHTML}
+        </div>
+        
+        <!-- Controls -->
+        <a class="carousel-control-prev" href="#sidebarCarousel" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#sidebarCarousel" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+    `;
+
+    sliderContainer.innerHTML = completeSliderHTML;
+    console.log(`Rendered ${products.length} products in sidebar slider`);
+
+    // Initialize the carousel
+    initSidebarCarousel();
+
+    // Setup sidebar cart buttons
+    setupSidebarCartButtons();
+  }
+
+  function initSidebarCarousel() {
+    // Initialize Bootstrap carousel
+    $('#sidebarCarousel').carousel({
+      interval: 5000, // 5 seconds
+      pause: 'hover',
+      wrap: true,
+      keyboard: true
+    });
+    
+    console.log("Sidebar carousel initialized");
+  }
+
+  function setupSidebarCartButtons() {
+    // Use event delegation to handle dynamically created buttons
+    document.addEventListener('click', async function(e) {
+      // Check if the clicked element or its parent is a sidebar cart button
+      let target = e.target;
+      
+      // Traverse up to find the button with add-to-cart-sidebar class
+      while (target && !target.classList.contains('add-to-cart-sidebar')) {
+        target = target.parentElement;
+      }
+      
+      if (!target || !target.classList.contains('add-to-cart-sidebar')) {
+        return;
+      }
+      
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const productId = target.getAttribute('data-product-id');
+      if (!productId) return;
+
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        alert('Please login to add items to cart');
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      try {
+        const response = await fetch('http://localhost:8070/api/user/cart/addtocart', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            productId: productId,
+            quantity: 1,
+            size: 'M'
+          })
         });
         
-        container.innerHTML = productsHTML;
-      }
-
-      // ========== CART FUNCTIONALITY ==========
-      async function handleAddToCart(event, productId) {
-        event.preventDefault();
-        event.stopPropagation();
+        const data = await response.json();
         
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
-          alert('Please login to add items to cart');
-          window.location.href = 'login.html';
-          return;
-        }
-        
-        try {
-          const response = await fetch('http://localhost:8070/api/user/cart/addtocart', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              productId: productId,
-              quantity: 1,
-              size: 'M'
-            })
-          });
-          
-          const data = await response.json();
-          
-          if (data.success) {
-            if (data.cart && data.cart.totalItems) {
-              localStorage.setItem('cartCount', data.cart.totalItems.toString());
-              updateCartCount();
-            }
-            alert('Product added to cart!');
-          } else {
-            alert('Failed to add to cart: ' + data.message);
+        if (data.success) {
+          if (data.cart && data.cart.totalItems) {
+            localStorage.setItem('cartCount', data.cart.totalItems.toString());
+            updateCartCount();
           }
-        } catch (error) {
-          console.error('Error adding to cart:', error);
-          alert('Error adding product to cart. Please try again.');
+          alert('Product added to cart!');
+        } else {
+          alert('Failed to add to cart: ' + data.message);
         }
+      } catch (error) {
+        console.error('Error adding to cart:', error);
+        alert('Error adding product to cart. Please try again.');
       }
-
-      function updateCartCount() {
-        const cartCount = localStorage.getItem('cartCount') || '0';
-        const cartCountElement = document.getElementById('cartCount');
-        if (cartCountElement) {
-          cartCountElement.textContent = `(${cartCount})`;
-        }
-      }
-
-      // ========== EVENT LISTENERS ==========
-      function setupEventListeners() {
-        // Price range display
-        const priceRange = document.getElementById('priceRange');
-        const priceRangeValue = document.getElementById('priceRangeValue');
-        
-        if (priceRange && priceRangeValue) {
-          priceRange.addEventListener('input', function() {
-            priceRangeValue.textContent = `$${this.value}`;
-          });
-        }
-
-        // Enter key for search
-        const searchBox = document.getElementById('searchBox');
-        if (searchBox) {
-          searchBox.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-              handleSearch();
-            }
-          });
-        }
-
-        // Bottom bar search
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-          searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-              currentSearch = this.value.trim();
-              loadProducts(1, currentCategory, currentSubcategory, currentSort, currentPriceFilter, currentSearch);
-            }
-          });
-        }
-      }
-    </script>
+    });
+  }
+</script>
   </body>
 </html>
