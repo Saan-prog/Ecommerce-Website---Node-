@@ -16,6 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Source+Code+Pro:wght@700;900&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
 
     <style>
       body {
@@ -328,8 +329,54 @@
         </div>
       </div>
     </div>
-
+ <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <script>
+              const notyf = new Notyf({
+    duration: 3000, // 3 seconds
+    position: {
+      x: 'right',
+      y: 'top',
+    },
+    types: [
+      {
+        type: 'success',
+        background: '#28a745',
+        icon: {
+          className: 'fas fa-check-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'error',
+        background: '#dc3545',
+        icon: {
+          className: 'fas fa-exclamation-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'warning',
+        background: '#ffc107',
+        icon: {
+          className: 'fas fa-exclamation-triangle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'info',
+        background: '#17a2b8',
+        icon: {
+          className: 'fas fa-info-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      }
+    ]
+  });
+    
   // Global variables
   let selectedFiles = [];
   let previewIndexMap = new Map(); // To track preview indexes
@@ -344,7 +391,7 @@
     
     // Validate file count
     if (files.length > 5) {
-      alert('Maximum 5 images allowed');
+      notyf.warning('Maximum 5 images allowed');
       this.value = '';
       return;
     }
@@ -359,14 +406,14 @@
     files.forEach((file, originalIndex) => {
       // Type validation
       if (!validTypes.includes(file.type)) {
-        alert(`File ${file.name} is not a valid image type (JPEG/PNG only)`);
+        notyf.warning(`File ${file.name} is not a valid image type (JPEG/PNG only)`);
         this.value = '';
         return;
       }
       
       // Size validation
       if (file.size > maxSize) {
-        alert(`File ${file.name} is too large (max 5MB)`);
+        notyf.warning(`File ${file.name} is too large (max 5MB)`);
         this.value = '';
         return;
       }
@@ -503,31 +550,33 @@
     // Validate price
     const price = parseFloat(this.price.value);
     if (isNaN(price) || price < 0 || price > 10000000) {
-      alert('Price must be between 0 and 10,000,000');
+      notyf.warning('Price must be between 0 and 10,000,000');
       return;
     }
 
     // Validate images
     if (selectedFiles.length === 0) {
-      alert('Please select at least one product image');
+      notyf.warning('Please select at least one product image');
       return;
     }
 
     // Validate category and subcategory
     if (!this.category.value) {
-      alert('Please select a category');
+      notyf.warning('Please select a category');
       return;
     }
     if (!this.subcategory.value) {
-      alert('Please select a subcategory');
+      notyf.warning('Please select a subcategory');
       return;
     }
 
     const token = localStorage.getItem("adminToken");
 
     if (!token) {
-      alert("Error: No admin token found. Please log in again.");
-      window.location.href = 'admin-login.html';
+      notyf.error("Error: No admin token found. Please log in again.");
+      setTimeout(() => {
+    window.location.href = 'admin-login.html';
+  }, 1500);
       return;
     }
 
@@ -575,7 +624,7 @@
       console.log("API Response:", result);
 
       if (result.success) {
-        alert(`✅ ${result.message}\nImages uploaded: ${result.imageCount || 0}`);
+        notyf.success(`✅ ${result.message}\nImages uploaded: ${result.imageCount || 0}`);
         this.reset();
         selectedFiles = [];
         previewIndexMap.clear();
@@ -591,11 +640,11 @@
         if (result.errors && result.errors.length > 0) {
           errorMessage += "\n" + result.errors.join("\n");
         }
-        alert("❌ " + errorMessage);
+        notyf.error("❌ " + errorMessage);
       }
     } catch (error) {
       console.error("Submission error:", error);
-      alert("❌ Network error: " + error.message);
+      notyf.error("❌ Network error: " + error.message);
     } finally {
       // Restore button state
       submitBtn.innerHTML = originalText;
@@ -707,8 +756,10 @@
     const isLoggedIn = localStorage.getItem("adminLoggedIn") === 'true';
     
     if (!token || !isLoggedIn) {
-      alert("Please login first");
-      window.location.href = 'admin-login.html';
+      notyf.error("Please login first");
+     setTimeout(() => {
+    window.location.href = 'admin-login.html';
+  }, 1500);
       return;
     }
     

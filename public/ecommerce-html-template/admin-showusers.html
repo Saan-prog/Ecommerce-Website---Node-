@@ -10,8 +10,8 @@
     />
     <link
       href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Source+Code+Pro:wght@700;900&display=swap"
-      rel="stylesheet"
-    />
+      rel="stylesheet"/>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <style>
       * {
         margin: 0;
@@ -819,8 +819,55 @@
       </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <!-- JavaScript -->
     <script>
+      const notyf = new Notyf({
+    duration: 3000, // 3 seconds
+    position: {
+      x: 'right',
+      y: 'top',
+    },
+    types: [
+      {
+        type: 'success',
+        background: '#28a745',
+        icon: {
+          className: 'fas fa-check-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'error',
+        background: '#dc3545',
+        icon: {
+          className: 'fas fa-exclamation-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'warning',
+        background: '#ffc107',
+        icon: {
+          className: 'fas fa-exclamation-triangle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'info',
+        background: '#17a2b8',
+        icon: {
+          className: 'fas fa-info-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      }
+    ]
+  });
+
       let allUsers = [];
       let currentPage = 1;
       let usersPerPage = 10;
@@ -832,8 +879,11 @@
         const adminToken = localStorage.getItem("adminToken");
 
         if (!isLoggedIn || !adminToken) {
-          alert("Please login first");
-          window.location.href = "admin-login.html";
+          notyf.error("Please login first");
+          setTimeout(() => {
+            window.location.href = "admin-login.html";
+          }, 1500);
+        
           return;
         }
         
@@ -1008,7 +1058,7 @@
 
       function showError(message) {
         console.error("Error:", message);
-        alert("Error: " + message);
+        notyf.error("Error: " + message);
       }
 
       function updateStatistics() {
@@ -1399,13 +1449,13 @@
       function viewUserDetails(user) {
         console.log("View user details:", user);
         // You can implement this to show user details in a modal or separate page
-        alert(`Viewing details for: ${user.name}\nEmail: ${user.email}\nPhone: ${user.phone || 'N/A'}\nOrders: ${userOrdersMap[user._id] || 0}`);
+        notyf.info(`Viewing details for: ${user.name}\nEmail: ${user.email}\nPhone: ${user.phone || 'N/A'}\nOrders: ${userOrdersMap[user._id] || 0}`);
       }
 
       function editUser(user) {
         console.log("Edit user:", user);
         // Implement edit user functionality
-        alert(`Edit user functionality for: ${user.name}\nThis would open an edit form.`);
+        notyf.info(`Edit user functionality for: ${user.name}\nThis would open an edit form.`);
       }
       
       function viewUserOrders(user) {
@@ -1416,7 +1466,7 @@
 
       function exportUsers() {
         // Implement export functionality (CSV, Excel, etc.)
-        alert("Export functionality would be implemented here.\nUsers would be exported as CSV/Excel file.");
+        notyf.info("Export functionality would be implemented here.\nUsers would be exported as CSV/Excel file.");
       }
 
       function closeAllModals() {

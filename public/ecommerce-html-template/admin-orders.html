@@ -12,6 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Source+Code+Pro:wght@700;900&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+
     <style>
       * {
         margin: 0;
@@ -835,7 +837,54 @@
 
 
     <!-- JavaScript -->
+       <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <script>
+      const notyf = new Notyf({
+    duration: 3000, // 3 seconds
+    position: {
+      x: 'right',
+      y: 'top',
+    },
+    types: [
+      {
+        type: 'success',
+        background: '#28a745',
+        icon: {
+          className: 'fas fa-check-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'error',
+        background: '#dc3545',
+        icon: {
+          className: 'fas fa-exclamation-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'warning',
+        background: '#ffc107',
+        icon: {
+          className: 'fas fa-exclamation-triangle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'info',
+        background: '#17a2b8',
+        icon: {
+          className: 'fas fa-info-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      }
+    ]
+  });
+
       // Authentication check
       (function checkAuth() {
         const token = localStorage.getItem("adminToken");
@@ -896,8 +945,11 @@
 
           if (!response.ok) {
             if (response.status === 401) {
-              alert("Session expired. Please login again.");
-              window.location.href = "admin-login.html";
+              notyf.error("Session expired. Please login again.");
+              setTimeout(() => {
+                window.location.href = "admin-login.html";
+              }, 1500);
+              
               return;
             }
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -1114,135 +1166,9 @@
           
         } catch (error) {
           console.error("Error redirecting to order update page:", error);
-          alert("Error redirecting to order page. Please try again.");
+          notyf.error("Error redirecting to order page. Please try again.");
         }
       }
-
-      // // Update order status (still using modal for quick update)
-      // async function updateOrderStatus(orderId) {
-      //   currentOrderId = orderId;
-        
-      //   // First get current order to pre-select status
-      //   try {
-      //     const token = localStorage.getItem("adminToken");
-      //     const response = await fetch(`/api/admin/orders/${orderId}`, {
-      //       headers: {
-      //         Authorization: `Bearer ${token}`,
-      //         "Content-Type": "application/json",
-      //       },
-      //     });
-
-      //     if (response.ok) {
-      //       const data = await response.json();
-      //       if (data.success) {
-      //         showStatusUpdateModal(data.order);
-      //       }
-      //     }
-      //   } catch (error) {
-      //     console.error("Error loading order for update:", error);
-      //   }
-      // }
-
-      // // Show status update modal
-      // function showStatusUpdateModal(order) {
-      //   const content = document.getElementById("statusUpdateContent");
-      //   const currentStatus = order.status || order.statusValue;
-        
-      //   content.innerHTML = `
-      //     <p>Update status for order: <strong>${order.orderId || order._id}</strong></p>
-      //     <p>Current status: <span class="status-badge status-${currentStatus?.toLowerCase() || 'pending'}">${currentStatus || 'Pending'}</span></p>
-          
-      //     <div class="status-options">
-      //       <div class="status-option">
-      //         <input type="radio" id="status-pending" name="orderStatus" value="pending" ${
-      //           currentStatus === 'pending' || currentStatus === 'CREATED' || currentStatus === 'CONFIRMED' ? "checked" : ""
-      //         }>
-      //         <label for="status-pending" class="status-badge status-pending">Pending</label>
-      //       </div>
-      //       <div class="status-option">
-      //         <input type="radio" id="status-processing" name="orderStatus" value="processing" ${
-      //           currentStatus === 'processing' || currentStatus === 'SHIPPED' || currentStatus === 'OUT FOR DELIVERY' ? "checked" : ""
-      //         }>
-      //         <label for="status-processing" class="status-badge status-processing">Processing</label>
-      //       </div>
-      //       <div class="status-option">
-      //         <input type="radio" id="status-shipped" name="orderStatus" value="shipped" ${
-      //           currentStatus === 'shipped' ? "checked" : ""
-      //         }>
-      //         <label for="status-shipped" class="status-badge status-shipped">Shipped</label>
-      //       </div>
-      //       <div class="status-option">
-      //         <input type="radio" id="status-delivered" name="orderStatus" value="delivered" ${
-      //           currentStatus === 'delivered' ? "checked" : ""
-      //         }>
-      //         <label for="status-delivered" class="status-badge status-delivered">Delivered</label>
-      //       </div>
-      //       <div class="status-option">
-      //         <input type="radio" id="status-cancelled" name="orderStatus" value="cancelled" ${
-      //           currentStatus === 'cancelled' ? "checked" : ""
-      //         }>
-      //         <label for="status-cancelled" class="status-badge status-cancelled">Cancelled</label>
-      //       </div>
-      //     </div>
-          
-      //     <div class="modal-actions">
-      //       <button class="reset-filter-btn" onclick="closeModal('statusUpdateModal')">
-      //         Cancel
-      //       </button>
-      //       <button class="btn-update" onclick="saveOrderStatus()">
-      //         <i class="fas fa-save"></i> Update Status
-      //       </button>
-      //     </div>
-      //   `;
-        
-      //   showModal("statusUpdateModal");
-      // }
-
-      // // Save order status
-      // async function saveOrderStatus() {
-      //   try {
-      //     const status = document.querySelector('input[name="orderStatus"]:checked')?.value;
-      //     if (!status) {
-      //       alert("Please select a status");
-      //       return;
-      //     }
-
-      //     const token = localStorage.getItem("adminToken");
-      //     const response = await fetch(`/api/admin/orders/${currentOrderId}/status`, {
-      //       method: "PUT",
-      //       headers: {
-      //         Authorization: `Bearer ${token}`,
-      //         "Content-Type": "application/json",
-      //       },
-      //       body: JSON.stringify({ status }),
-      //     });
-
-      //     if (response.ok) {
-      //       const data = await response.json();
-      //       if (data.success) {
-      //         alert("Order status updated successfully");
-      //         closeModal("statusUpdateModal");
-      //         loadOrders(currentPage, currentStatus);
-      //       } else {
-      //         alert("Error: " + data.message);
-      //       }
-      //     } else {
-      //       alert("Error updating order status");
-      //     }
-      //   } catch (error) {
-      //     console.error("Error updating order status:", error);
-      //     alert("Error updating order status");
-      //   }
-      // }
-
-      // // Modal functions (only for status update now)
-      // function showModal(modalId) {
-      //   document.getElementById(modalId).style.display = "block";
-      // }
-
-      // function closeModal(modalId) {
-      //   document.getElementById(modalId).style.display = "none";
-      // }
 
       // Logout function
       function logout() {

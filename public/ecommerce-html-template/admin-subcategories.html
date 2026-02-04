@@ -6,7 +6,8 @@
     <title>ShopStyle - Admin Subcategories</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Source+Code+Pro:wght@700;900&display=swap" rel="stylesheet">
-    <style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+   <style>
         * {
             margin: 0;
             padding: 0;
@@ -704,9 +705,55 @@
             </div>
         </div>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <script>
-    // Global variables
+        const notyf = new Notyf({
+    duration: 3000, // 3 seconds
+    position: {
+      x: 'right',
+      y: 'top',
+    },
+    types: [
+      {
+        type: 'success',
+        background: '#28a745',
+        icon: {
+          className: 'fas fa-check-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'error',
+        background: '#dc3545',
+        icon: {
+          className: 'fas fa-exclamation-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'warning',
+        background: '#ffc107',
+        icon: {
+          className: 'fas fa-exclamation-triangle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'info',
+        background: '#17a2b8',
+        icon: {
+          className: 'fas fa-info-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      }
+    ]
+  });
+    
+  // Global variables
     let categories = [];
     let allSubcategories = [];
     let currentCategoryId = null;
@@ -747,8 +794,10 @@
         const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
         
         if (!token || !isLoggedIn) {
-            alert('Please login first');
-            window.location.href = 'admin-login.html';
+            notyf.error('Please login first');
+            setTimeout(() => {
+    window.location.href = 'admin-login.html';
+  }, 1500);
             return;
         }
     }
@@ -1179,11 +1228,6 @@
             // we need to find it from the current category's subcategories
             const token = localStorage.getItem('adminToken');
             
-            // Try to fetch subcategory details from the server
-            // This requires a new endpoint: router.get("/subcategory/:id", authenticate, getSubcategoryById);
-            
-            alert('Edit functionality requires a new endpoint: GET /api/admin/category/subcategory/:id');
-            
             // Temporary workaround: We'll load the current category's subcategories and find the one we want
             if (currentCategoryId) {
                 const response = await fetch(`/api/admin/category/subcategories/${currentCategoryId}`, {
@@ -1243,7 +1287,7 @@
         const categoryId = document.getElementById('subcategoryCategory').value;
 
         if (!name || !categoryId) {
-            alert('Please fill in all required fields');
+            notyf.error('Please fill in all required fields');
             return;
         }
 
@@ -1261,7 +1305,7 @@
             if (isEditMode) {
                 // Note: You need a PUT route for updating subcategories
                 // Currently your routes don't have one
-                alert('Edit functionality requires a PUT endpoint: PUT /api/admin/category/subcategories/:id');
+                notyf.info('Edit functionality requires a PUT endpoint: PUT /api/admin/category/subcategories/:id');
                 return;
             }
             
@@ -1277,7 +1321,7 @@
             const result = await response.json();
             
             if (result.success) {
-                alert(isEditMode ? 'Subcategory updated successfully!' : 'Subcategory created successfully!');
+                notyf.success(isEditMode ? 'Subcategory updated successfully!' : 'Subcategory created successfully!');
                 closeModal();
                 
                 // Reload data
@@ -1293,11 +1337,11 @@
                     await loadCategoriesForTabs();
                 }
             } else {
-                alert('Error: ' + (result.message || 'Operation failed'));
+                notyf.error('Error: ' + (result.message || 'Operation failed'));
             }
         } catch (error) {
             console.error('Error saving subcategory:', error);
-            alert('Error saving subcategory: ' + error.message);
+            // alert('Error saving subcategory: ' + error.message);
         }
     }
 
@@ -1309,13 +1353,13 @@
             const token = localStorage.getItem('adminToken');
             // Note: You need a DELETE route for subcategories
             // Currently your routes don't have one
-            alert('Delete functionality requires a DELETE endpoint: DELETE /api/admin/category/subcategories/:id');
+            notyf.info('Delete functionality requires a DELETE endpoint: DELETE /api/admin/category/subcategories/:id');
             
             // If you add the DELETE route, implement the fetch call here
             
         } catch (error) {
             console.error('Error deleting subcategory:', error);
-            alert('Error deleting subcategory: ' + error.message);
+            notyf.error('Error deleting subcategory: ' + error.message);
         }
     }
 

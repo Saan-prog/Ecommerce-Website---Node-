@@ -6,6 +6,7 @@
     <title>ShopStyle - Admin Categories</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Source+Code+Pro:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <style>
         * {
             margin: 0;
@@ -647,8 +648,53 @@
         </div>
     </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 <script>
+      const notyf = new Notyf({
+    duration: 3000, // 3 seconds
+    position: {
+      x: 'right',
+      y: 'top',
+    },
+    types: [
+      {
+        type: 'success',
+        background: '#28a745',
+        icon: {
+          className: 'fas fa-check-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'error',
+        background: '#dc3545',
+        icon: {
+          className: 'fas fa-exclamation-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'warning',
+        background: '#ffc107',
+        icon: {
+          className: 'fas fa-exclamation-triangle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'info',
+        background: '#17a2b8',
+        icon: {
+          className: 'fas fa-info-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      }
+    ]
+  });
     // Authentication check
     (function checkAuth() {
         const token = localStorage.getItem('adminToken');
@@ -920,14 +966,14 @@
                 const data = await response.json();
 
                 if (response.ok && data.success) {
-                    alert(`Category ${subcategoryCount > 0 ? 'and its subcategories ' : ''}deleted successfully!`);
+                    notyf.success(`Category ${subcategoryCount > 0 ? 'and its subcategories ' : ''}deleted successfully!`);
                     loadCategories(); // Reload categories after deletion
                 } else {
                     throw new Error(data.message || 'Failed to delete category');
                 }
             } catch (error) {
                 console.error('Error deleting category:', error);
-                alert('Error deleting category: ' + error.message);
+                notyf.error('Error deleting category: ' + error.message);
             }
         }
     }
@@ -938,7 +984,7 @@
         const description = document.getElementById('categoryDescription').value;
 
         if (!name) {
-            alert('Category name is required');
+            notyf.error('Category name is required');
             return;
         }
 
@@ -980,13 +1026,13 @@
             if (response.ok && data.success) {
                 closeModal();
                 loadCategories(); // Reload categories after saving
-                alert(currentEditingId ? 'Category updated successfully!' : 'Category added successfully!');
+                notyf.success(currentEditingId ? 'Category updated successfully!' : 'Category added successfully!');
             } else {
                 throw new Error(data.message || `Failed to ${currentEditingId ? 'update' : 'add'} category`);
             }
         } catch (error) {
             console.error('Error saving category:', error);
-            alert('Error saving category: ' + error.message);
+            notyf.error('Error saving category: ' + error.message);
         }
     }
 

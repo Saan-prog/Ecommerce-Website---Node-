@@ -290,7 +290,7 @@ const getRazorpayInstance = () => {
 const checkout = async (req, res) => {
     try {
         // ========== Get data from request body ==========
-        const { cartId, addressId, paymentMethod, couponCode, amount } = req.body;
+        const { cartId, addressId, paymentMethod, couponCode, amount, items: selectedItemsFromFrontend } = req.body;
         const userId = req.user._id;
 
         console.log("\n=== CHECKOUT REQUEST BODY ===");
@@ -299,7 +299,16 @@ const checkout = async (req, res) => {
         console.log("paymentMethod:", paymentMethod);
         console.log("couponCode:", couponCode);
         console.log("amount from frontend:", amount);
+        console.log("selectedItems from frontend:", selectedItemsFromFrontend);
         console.log("================================\n");
+
+        // IMPORTANT: Validate that selectedItems is present
+        if (!selectedItemsFromFrontend || !Array.isArray(selectedItemsFromFrontend) || selectedItemsFromFrontend.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'No items selected for checkout'
+            });
+        }
 
         const razorpay = getRazorpayInstance();
 
@@ -342,48 +351,87 @@ const checkout = async (req, res) => {
         }
 
         console.log("Cart items from database:", JSON.stringify(cart.items, null, 2));
+        console.log("Selected items from frontend:", JSON.stringify(selectedItemsFromFrontend, null, 2));
 
-        // ========== Process cart items ==========
-        const orderItems = cart.items.map(cartItem => {
-            const product = cartItem.product;
+        // ========== FILTER: Process ONLY selected cart items ==========
+        const orderItems = [];
+        const purchasedCartItemIds = []; // To track which cart items were purchased
 
-            console.log("\n=== Processing Cart Item ===");
-            console.log("Product:", product);
-            console.log("Product Images:", product?.image);
-            console.log("================================\n");
+        // Loop through selected items from frontend
+        selectedItemsFromFrontend.forEach(selectedItem => {
+            // Find matching cart item by productId and size
+            const cartItem = cart.items.find(item => {
+                const productId = item.product?._id.toString();
+                const size = item.size || 'M';
+                
+                return productId === selectedItem.productId && 
+                       size === selectedItem.size;
+            });
 
-            let productImages = [];
-            
-            // Get images from product
-            if (product?.image) {
-                if (Array.isArray(product.image)) {
-                    productImages = product.image;
-                } else if (typeof product.image === 'string') {
-                    productImages = [product.image];
+            if (cartItem) {
+                const product = cartItem.product;
+
+                console.log("\n=== Processing SELECTED Cart Item ===");
+                console.log("Selected item from frontend:", selectedItem);
+                console.log("Matched cart item:", cartItem);
+                console.log("Product:", product);
+                console.log("Product Images:", product?.image);
+                console.log("================================\n");
+
+                let productImages = [];
+                
+                // Get images from product
+                if (product?.image) {
+                    if (Array.isArray(product.image)) {
+                        productImages = product.image;
+                    } else if (typeof product.image === 'string') {
+                        productImages = [product.image];
+                    }
                 }
-            }
-            
-            // If no images, use default
-            if (productImages.length === 0) {
-                productImages = ['/uploads/default-product.jpg'];
-            }
+                
+                // If no images, use default
+                if (productImages.length === 0) {
+                    productImages = ['/uploads/default-product.jpg'];
+                }
 
-            return {
-                product: product?._id || null,
-                name: product?.name || "Product",
-                image: productImages,
-                quantity: cartItem.quantity || 1,
-                price: product?.price || 0,
-                size: cartItem.size || 'M'
-            };
+                // Use quantity from selected item (not cart item)
+                const quantity = selectedItem.quantity || cartItem.quantity || 1;
+                
+                orderItems.push({
+                    product: product?._id || null,
+                    name: product?.name || "Product",
+                    image: productImages,
+                    quantity: quantity,
+                    price: product?.price || 0,
+                    size: cartItem.size || 'M'
+                });
+
+                // Track this cart item as purchased
+                purchasedCartItemIds.push(cartItem._id.toString());
+            } else {
+                console.warn("WARNING: Selected item not found in cart:", selectedItem);
+            }
         });
 
+        // Check if we found any items
+        if (orderItems.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'No matching items found in cart'
+            });
+        }
+
         // Debug final order items
-        console.log("\n=== FINAL ORDER ITEMS WITH IMAGES ===");
+        console.log("\n=== FINAL ORDER ITEMS (ONLY SELECTED) ===");
+        console.log("Total selected items:", orderItems.length);
         orderItems.forEach((item, index) => {
-            console.log(`Item ${index + 1}: ${item.name}`);
+            console.log(`Item ${index + 1}: ${item.name} (Qty: ${item.quantity})`);
+            console.log(`  Product ID:`, item.product);
             console.log(`  Images:`, item.image);
             console.log(`  Image count:`, item.image.length);
+            console.log(`  Size:`, item.size);
+            console.log(`  Price: ₹${item.price} each`);
+            console.log(`  Total: ₹${item.price * item.quantity}`);
         });
         console.log("================================\n");
 
@@ -449,8 +497,9 @@ const checkout = async (req, res) => {
         const totalAmount = subtotal + shipping + tax - discount;
 
         // Debug calculated totals
-        console.log("\n=== CALCULATED TOTALS ===");
-        console.log("Subtotal:", subtotal);
+        console.log("\n=== CALCULATED TOTALS (ONLY SELECTED ITEMS) ===");
+        console.log("Selected Items Count:", orderItems.length);
+        console.log("Subtotal (selected items only):", subtotal);
         console.log("Shipping (fixed ₹50):", shipping);
         console.log("Tax (0%):", tax);
         console.log("Discount from coupon:", discount);
@@ -462,8 +511,7 @@ const checkout = async (req, res) => {
         if (amount && Math.abs(totalAmount - parseFloat(amount)) > 0.01) {
             console.warn("WARNING: Backend total doesn't match frontend total!");
             console.warn("Frontend:", amount, "Backend:", totalAmount);
-            // You might want to use the frontend amount for payment
-            // Or investigate why they differ
+            console.warn("Difference:", Math.abs(totalAmount - parseFloat(amount)));
         }
         console.log("================================\n");
 
@@ -471,7 +519,7 @@ const checkout = async (req, res) => {
         const orderData = {
             user: userId,
             address: addressId,
-            items: orderItems,
+            items: orderItems, // ONLY selected items
             subtotal: subtotal,
             shipping: shipping,
             tax: tax,
@@ -490,16 +538,39 @@ const checkout = async (req, res) => {
             refundAmount: 0
         };
 
-        console.log("Order data to save:", JSON.stringify(orderData, null, 2));
+        console.log("Order data to save (only selected items):", JSON.stringify(orderData, null, 2));
 
         const order = new Order(orderData);
         await order.save(); // This triggers your pre-save hooks!
 
-        // 7. Update cart
-        // Clear cart items
-        cart.items = [];
-        cart.total = 0;
-        cart.status = 'ordered';
+        // 7. Update cart - REMOVE ONLY PURCHASED ITEMS
+        console.log("\n=== UPDATING CART ===");
+        console.log("Cart items before removal:", cart.items.length);
+        console.log("Purchased cart item IDs:", purchasedCartItemIds);
+        
+        // Filter out only the purchased items
+        cart.items = cart.items.filter(item => 
+            !purchasedCartItemIds.includes(item._id.toString())
+        );
+        
+        // Recalculate cart total
+        cart.total = cart.items.reduce((sum, item) => {
+            const product = item.product;
+            const price = product?.price || 0;
+            const quantity = item.quantity || 1;
+            return sum + (price * quantity);
+        }, 0);
+        
+        console.log("Cart items after removal:", cart.items.length);
+        console.log("New cart total:", cart.total);
+        
+        // Update cart status
+        if (cart.items.length === 0) {
+            cart.status = 'ordered';
+        } else {
+            cart.status = 'active';
+        }
+        
         await cart.save();
 
         // 8. Handle Razorpay payment if ONLINE
@@ -523,7 +594,8 @@ const checkout = async (req, res) => {
                         orderId: order._id.toString(),
                         userId: userId.toString(),
                         discountApplied: discount,
-                        couponCode: finalCouponCode
+                        couponCode: finalCouponCode,
+                        itemsCount: orderItems.length // Add items count to notes
                     }
                 });
 
@@ -549,9 +621,8 @@ const checkout = async (req, res) => {
                 order.status = 'CANCELLED';
                 await order.save();
                 
-                // Revert cart
-                cart.status = 'active';
-                await cart.save();
+                // Revert cart changes - add back the items
+                // (You might want to implement this if needed)
                 
                 return res.status(500).json({
                     success: false,
@@ -582,7 +653,8 @@ const checkout = async (req, res) => {
                         quantity: item.quantity,
                         price: item.price,
                         size: item.size,
-                        image: item.image
+                        image: item.image,
+                        total: item.price * item.quantity
                     }))
                 }
             }
@@ -593,8 +665,13 @@ const checkout = async (req, res) => {
             response.data.payment = paymentResponse;
         }
 
-        console.log("Checkout successful, returning response");
-        console.log("Order total in response:", response.data.order.totalAmount);
+        console.log("\n=== CHECKOUT SUCCESSFUL ===");
+        console.log("Order created with ID:", order._id);
+        console.log("Total items in order:", order.items.length);
+        console.log("Total amount:", order.totalAmount);
+        console.log("Items:", order.items.map(item => `${item.name} (Qty: ${item.quantity})`));
+        console.log("================================\n");
+
         res.status(201).json(response);
 
     } catch (error) {

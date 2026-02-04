@@ -1,82 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <title>Manage Addresses - ShopStyle</title>
-    <!-- Include your existing CSS and JS libraries -->
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="Modern eCommerce HTML Template" name="keywords" />
+    <meta content="Contemporary eCommerce Template" name="description" />
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
 
     <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
     <!-- CSS Libraries -->
-    <link
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet" />
     <link href="lib/slick/slick.css" rel="stylesheet" />
     <link href="lib/slick/slick-theme.css" rel="stylesheet" />
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet" />
     <style>
-      .nav .login-btn {
-        color: #fff;
-        background-color: #ff6f61;
-        border: none;
-        padding: 6px 15px;
-        margin-left: 10px;
-        border-radius: 3px;
-        font-weight: 500;
-        font-size: 14px;
-        transition: 0.3s;
-      }
-
-      .nav .login-btn:hover {
-        background-color: #e85c50;
-        color: #fff;
-      }
-      .user-account {
-        display: none;
-      }
-      .protected-menu {
-        display: none;
-      }
-      .spinner-border {
-        width: 3rem;
-        height: 3rem;
-      }
-      .navbar-nav .dropdown-menu {
-        background-color: #f8f9fa;
-        border: 1px solid #dee2e6;
-      }
-      .navbar-nav .dropdown-item {
-        color: #495057;
-        padding: 8px 20px;
-      }
-      .navbar-nav .dropdown-item:hover {
-        background-color: #e9ecef;
-        color: #007bff;
-      }
-      .navbar-nav .dropdown-divider {
-        border-top: 1px solid #dee2e6;
-        margin: 5px 0;
+      :root {
+        --primary: #2C3E50;
+        --primary-dark: #5a52d5;
+        --primary-hover: #7d75ff;
+        --success: #28a745;
+        --success-hover: #218838;
+        --danger: #dc3545;
+        --warning: #ffc107;
+        --info: #17a2b8;
+        --dark: #343a40;
+        --light: #f8f9fa;
       }
 
       /* Manage Addresses Main Container */
       .manage-addresses-container {
-        background-color: #f8f9fa;
+        background-color: #ffffff;
         padding: 30px;
         border-radius: 10px;
         margin-top: 20px;
         margin-bottom: 40px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid #eaeaea;
       }
 
       .manage-addresses-header {
@@ -85,20 +53,21 @@
         align-items: center;
         margin-bottom: 30px;
         padding-bottom: 20px;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 2px solid #f0f0f0;
       }
 
       .manage-addresses-header h2 {
-        color: #333;
-        font-weight: 600;
+        color: var(--dark);
+        font-weight: 700;
         margin: 0;
+        font-size: 24px;
       }
 
       .manage-addresses-header h2 i {
-        color: #ee714a;
+        color: var(--primary);
       }
 
-      /* Address Rows (Table-like layout) */
+      /* Address Rows */
       .address-row {
         display: flex;
         align-items: center;
@@ -111,25 +80,25 @@
       }
 
       .address-row:hover {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(108, 99, 255, 0.1);
+        transform: translateY(-3px);
+        border-color: var(--primary);
       }
 
       .address-row.selected {
-        border-color: #28a745;
+        border-color: var(--success);
         border-width: 2px;
-        background-color: #f0fff4;
+        background-color: rgba(40, 167, 69, 0.03);
       }
 
       .address-row.default {
-        border-color: #ee714a;
+        border-color: var(--primary);
         border-width: 2px;
-        background-color: #fff9f7;
+        background-color: rgba(108, 99, 255, 0.03);
       }
 
       .address-row.selected.default {
-        border-color: #28a745;
-        background: linear-gradient(135deg, #f0fff4 0%, #fff9f7 100%);
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.03) 0%, rgba(108, 99, 255, 0.03) 100%);
       }
 
       /* Selection Radio */
@@ -151,8 +120,8 @@
       }
 
       .address-selection .form-check-input:checked {
-        background-color: #28a745;
-        border-color: #28a745;
+        background-color: var(--success);
+        border-color: var(--success);
       }
 
       /* Address Details */
@@ -169,7 +138,7 @@
 
       .address-name {
         font-weight: 600;
-        color: #333;
+        color: var(--dark);
         font-size: 16px;
         margin: 0;
       }
@@ -180,41 +149,47 @@
 
       .address-type-badge .badge {
         font-size: 11px;
-        padding: 4px 8px;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-weight: 500;
       }
 
       .address-info {
         color: #666;
-        line-height: 1.5;
+        line-height: 1.6;
       }
 
       .address-info p {
-        margin-bottom: 5px;
+        margin-bottom: 6px;
+        font-size: 14px;
       }
 
       .address-info i {
-        color: #ee714a;
-        width: 20px;
-        margin-right: 5px;
+        color: var(--primary);
+        width: 18px;
+        margin-right: 8px;
       }
 
       /* Address Actions */
       .address-actions {
-        flex: 0 0 150px;
+        flex: 0 0 180px;
         display: flex;
         flex-direction: column;
         gap: 8px;
       }
 
       .address-actions .btn {
-        font-size: 12px;
-        padding: 6px 12px;
+        font-size: 13px;
+        padding: 8px 15px;
         width: 100%;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s;
       }
 
       .btn-set-default {
-        background-color: #ffc107;
-        border-color: #ffc107;
+        background-color: var(--warning);
+        border-color: var(--warning);
         color: #212529;
       }
 
@@ -222,11 +197,13 @@
         background-color: #e0a800;
         border-color: #d39e00;
         color: #212529;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
       }
 
       .btn-edit {
-        background-color: #17a2b8;
-        border-color: #17a2b8;
+        background-color: var(--info);
+        border-color: var(--info);
         color: white;
       }
 
@@ -234,11 +211,13 @@
         background-color: #138496;
         border-color: #117a8b;
         color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
       }
 
       .btn-delete {
-        background-color: #dc3545;
-        border-color: #dc3545;
+        background-color: var(--danger);
+        border-color: var(--danger);
         color: white;
       }
 
@@ -246,46 +225,52 @@
         background-color: #c82333;
         border-color: #bd2130;
         color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
       }
 
       /* Action Buttons Container */
       .action-buttons-container {
         display: flex;
-        gap: 10px;
-        margin-top: 20px;
+        gap: 15px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 2px solid #f0f0f0;
       }
 
       .add-address-btn {
-        background: linear-gradient(135deg, #b37de8 0%, #ee714a 100%);
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
         border: none;
         color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-weight: 500;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 600;
         transition: all 0.3s;
+        font-size: 15px;
       }
 
       .add-address-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary) 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(108, 99, 255, 0.3);
         color: white;
       }
 
       .proceed-checkout-btn {
-        background-color: #28a745;
-        border-color: #28a745;
+        background: linear-gradient(135deg, var(--success) 0%, #1e7e34 100%);
+        border: none;
         color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-weight: 500;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 600;
         transition: all 0.3s;
+        font-size: 15px;
       }
 
       .proceed-checkout-btn:hover {
-        background-color: #218838;
-        border-color: #1e7e34;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, var(--success-hover) 0%, var(--success) 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
         color: white;
       }
 
@@ -295,11 +280,12 @@
         padding: 60px 20px;
         background-color: white;
         border-radius: 10px;
-        border: 2px dashed #ddd;
+        border: 2px dashed #e0e0e0;
+        margin: 20px 0;
       }
 
       .empty-state i {
-        color: #ccc;
+        color: #ddd;
         font-size: 60px;
         margin-bottom: 20px;
       }
@@ -307,144 +293,157 @@
       .empty-state h4 {
         color: #666;
         margin-bottom: 10px;
+        font-weight: 600;
       }
 
       .empty-state p {
         color: #999;
         margin-bottom: 25px;
+        font-size: 15px;
       }
 
       /* Loading State */
       .loading-state {
         text-align: center;
-        padding: 40px;
+        padding: 50px 20px;
       }
 
       .loading-state p {
         color: #666;
         margin-top: 15px;
+        font-size: 15px;
       }
 
       /* Selection Status */
       .selection-status {
-        background-color: #e8f5e9;
-        border-left: 4px solid #28a745;
-        padding: 15px;
-        border-radius: 4px;
-        margin-bottom: 20px;
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(40, 167, 69, 0.05) 100%);
+        border-left: 4px solid var(--success);
+        padding: 18px;
+        border-radius: 8px;
+        margin-bottom: 25px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+      }
+
+      .selection-status h6 {
+        color: #155724;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .selection-status p {
+        color: #666;
+        margin: 0;
+        font-size: 14px;
       }
 
       .no-selection-msg {
-        background-color: #fff3cd;
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 193, 7, 0.05) 100%);
         border: 1px solid #ffeaa7;
         border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 20px;
+        padding: 18px;
+        margin-bottom: 25px;
         text-align: center;
+        color: #856404;
       }
 
-      /* Success Message Styles - FIXED */
-      .success-message-container {
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        z-index: 99999;
-        min-width: 350px;
-        max-width: 400px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        border-radius: 8px;
-        overflow: hidden;
-        display: none;
-      }
-
-      .success-message-container.show {
-        display: block;
-        animation: slideInRight 0.5s ease-out;
-      }
-
-      .success-message-container.hide {
-        animation: slideOutRight 0.5s ease-out forwards;
-      }
-
-      @keyframes slideInRight {
-        from {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-
-      @keyframes slideOutRight {
-        from {
-          transform: translateX(0);
-          opacity: 1;
-        }
-        to {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-      }
-
-      .success-message-content {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        color: white;
-        padding: 20px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .success-message-text {
-        flex: 1;
-        font-weight: 500;
-        font-size: 16px;
-      }
-
-      .success-message-icon {
-        font-size: 24px;
-        margin-right: 15px;
-      }
-
-      .success-message-close {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 20px;
-        cursor: pointer;
-        padding: 0;
-        margin-left: 15px;
+      .no-selection-msg i {
+        color: #ffc107;
+        margin-right: 10px;
       }
 
       /* Modal Styles */
       .modal-header {
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #e0e0e0;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+        border-bottom: none;
+        border-radius: 8px 8px 0 0;
+        padding: 20px;
       }
 
       .modal-title {
-        color: #333;
+        color: white;
         font-weight: 600;
+        font-size: 18px;
+      }
+
+      .modal-body {
+        padding: 25px;
+      }
+
+      .modal-footer {
+        border-top: 1px solid #eaeaea;
+        padding: 20px;
       }
 
       .modal-footer .btn-primary {
-        background-color: #ee714a;
-        border-color: #ee714a;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border: none;
+        padding: 10px 25px;
+        font-weight: 600;
       }
 
       .modal-footer .btn-primary:hover {
-        background-color: #e85c50;
-        border-color: #e85c50;
+        background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+      }
+
+      .form-label {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .form-control {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 10px 15px;
+        font-size: 14px;
+        transition: all 0.3s;
+      }
+
+      .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.15);
+      }
+
+      /* Badge for counts */
+      .wishlist span, .cart span {
+        /* background-color: var(--primary); */
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        min-width: 22px;
+        display: inline-block;
+        text-align: center;
       }
 
       /* Responsive adjustments */
       @media (max-width: 768px) {
+        .manage-addresses-container {
+          padding: 20px;
+          margin-left: -10px;
+          margin-right: -10px;
+          border-radius: 0;
+          box-shadow: none;
+          border: none;
+        }
+
+        .manage-addresses-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 15px;
+        }
+
+        .manage-addresses-header h2 {
+          font-size: 20px;
+        }
+
         .address-row {
           flex-direction: column;
           align-items: flex-start;
@@ -453,11 +452,12 @@
         .address-selection {
           margin-bottom: 15px;
           flex: 0 0 auto;
+          align-self: flex-start;
         }
 
         .address-details {
           padding: 0;
-          margin-bottom: 15px;
+          margin-bottom: 20px;
           width: 100%;
         }
 
@@ -465,191 +465,164 @@
           flex: 0 0 auto;
           width: 100%;
           flex-direction: row;
-          justify-content: flex-end;
+          justify-content: space-between;
+          gap: 10px;
         }
 
         .address-actions .btn {
           flex: 1;
+          min-width: 0;
         }
 
         .action-buttons-container {
           flex-direction: column;
+          gap: 10px;
         }
 
-        .success-message-container {
-          top: 80px;
-          left: 10px;
-          right: 10px;
-          min-width: auto;
-          max-width: none;
+        .add-address-btn, .proceed-checkout-btn {
+          width: 100%;
+          text-align: center;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .modal-dialog {
+          margin: 10px;
+        }
+        
+        .modal-body {
+          padding: 20px 15px;
+        }
+        
+        .address-actions {
+          flex-direction: column;
+        }
+        
+        .address-actions .btn {
+          width: 100%;
         }
       }
     </style>
   </head>
   <body>
-    <!-- Your existing header, nav, top bar, etc. -->
     <!-- Top bar Start -->
     <div class="top-bar">
       <div class="container-fluid">
         <div class="row">
           <div class="col-sm-6">
             <i class="fa fa-envelope"></i>
-            support@email.com
+            support@shopstyle.com
           </div>
-          <div class="col-sm-6">
+          <div class="col-sm-6 text-sm-right">
             <i class="fa fa-phone-alt"></i>
-            +012-345-6789
+            +1 (234) 567-8900
           </div>
         </div>
       </div>
     </div>
     <!-- Top bar End -->
 
-    <!-- Nav Bar Start -->
+    <!-- Navigation Bar Start -->
     <div class="nav">
       <div class="container-fluid">
-        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-          <a href="#" class="navbar-brand">ShopStyle</a>
-          <button
-            type="button"
-            class="navbar-toggler"
-            data-toggle="collapse"
-            data-target="#navbarCollapse"
-          >
+        <nav class="navbar navbar-expand-lg">
+          <a class="navbar-brand" href="index.html">
+            <!-- <span class="logo-text">ShopStyle</span> -->
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMain">
             <span class="navbar-toggler-icon"></span>
           </button>
 
-          <div
-            class="collapse navbar-collapse justify-content-between"
-            id="navbarCollapse"
-          >
-            <div class="navbar-nav mr-auto">
-              <a href="index.html" class="nav-item nav-link active">Home</a>
-              <a href="product-list.html" class="nav-item nav-link">Products</a>
-              <a
-                href="product-detail.html"
-                class="nav-item nav-link"
-                style="display: none"
-                >Product Detail</a
-              >
-              <!-- Protected menu items -->
-              <a
-                href="cart.html"
-                class="nav-item nav-link protected-menu"
-                id="cartMenuItem"
-                >Cart</a
-              >
-              <a
-                href="checkout.html"
-                class="nav-item nav-link protected-menu"
-                id="checkoutMenuItem"
-                >Checkout</a
-              >
-            </div>
+          <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="product-list.html">Products</a>
+              </li>
+              <li class="nav-item protected-menu" style="display: none;">
+                <a class="nav-link" href="cart.html" id="cartMenuItem">Cart</a>
+              </li>
+              <li class="nav-item protected-menu" style="display: none;">
+                <a class="nav-link" href="checkout.html" id="checkoutMenuItem">Checkout</a>
+              </li>
+              <li class="nav-item protected-menu" style="display: none;">
+                <a class="nav-link" href="order-history.html" id="orderMenuItem">My Orders</a>
+              </li>
+            </ul>
+
             <div class="navbar-nav ml-auto align-items-center">
-              <!-- User Account dropdown (only visible after login) -->
-              <div
-                class="nav-item dropdown user-account"
-                id="userAccountDropdown"
-              >
-                <a
-                  href="#"
-                  class="nav-link dropdown-toggle"
-                  data-toggle="dropdown"
-                >
-                  <i class="fa fa-user-circle"></i> My Account
+              <div class="nav-item dropdown user-account" id="userAccountDropdown" style="display: none;">
+                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                  <i class="fa fa-user-circle mr-1"></i> Account
                 </a>
                 <div class="dropdown-menu dropdown-menu-right">
-                  <!-- <a href="my-account.html" class="dropdown-item">Dashboard</a>
-                  <a href="manage-addresses.html" class="dropdown-item">Manage Addresses</a>
-                  <a href="order-history.html" class="dropdown-item">Order History</a>
-                  <div class="dropdown-divider"></div> -->
-                  <a href="#" class="dropdown-item" id="logoutBtn">Logout</a>
+                  <a class="dropdown-item" href="my-account.html">Dashboard</a>
+                  <a class="dropdown-item" href="#" id="logoutBtn">Logout</a>
                 </div>
               </div>
-
-              <!-- Login button (only visible before login) -->
-              <a href="login.html" class="btn login-btn" id="loginBtn">LOGIN</a>
+              <a class="btn btn-sm btn-outline-primary" href="login.html" id="loginBtn" style="display: none;">LOGIN</a>
             </div>
           </div>
         </nav>
       </div>
     </div>
-    <!-- Nav Bar End -->
+    <!-- Navigation Bar End -->
 
-    <!-- Bottom Bar Start -->
+    <!-- Search Bar Start -->
     <div class="bottom-bar">
       <div class="container-fluid">
         <div class="row align-items-center">
-          <div class="col-md-3">
+          <div class="col-md-2">
             <div class="logo">
-              <a href="index.html">
-                <img src="img/logo.png" alt="Logo" />
+              <a href="index.html" class="font-logo">
+                <span class="logo-text">ShopStyle</span>
               </a>
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-8">
             <div class="search">
-              <input type="text" placeholder="Search" />
-              <button><i class="fa fa-search"></i></button>
+              <input type="text" id="searchInput" placeholder="Search for products, brands, and more...">
+              <button id="searchBtn"><i class="fa fa-search"></i></button>
             </div>
           </div>
-          <div class="col-md-3">
-            <div class="user">
+          <div class="col-md-2">
+            <div class="user text-right">
               <a href="wishlist.html" class="btn wishlist">
                 <i class="fa fa-heart"></i>
-                <span class="wishlist-count">(0)</span>
+                <span id="wishlist-count">(0)</span>
               </a>
-              <a href="cart.html" class="btn cart cart-link">
+              <a href="cart.html" class="btn cart">
                 <i class="fa fa-shopping-cart"></i>
-                <span class="cart-count">(0)</span>
+                <span id="cart-count">(0)</span>
               </a>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- Bottom Bar Ends -->
+    <!-- Search Bar End -->
 
-    <!-- Breadcrumb -->
+    <!-- Breadcrumb Start -->
     <div class="breadcrumb-wrap">
       <div class="container-fluid">
         <ul class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item">
-            <a href="my-account.html">My Account</a>
-          </li>
+          <li class="breadcrumb-item"><a href="my-account.html">My Account</a></li>
           <li class="breadcrumb-item active">Manage Addresses</li>
         </ul>
       </div>
     </div>
-
-    <!-- Success Message Container - FIXED POSITION -->
-    <div id="successMessageContainer" class="success-message-container">
-      <div class="success-message-content">
-        <div class="success-message-icon">
-          <i class="fa fa-check-circle"></i>
-        </div>
-        <div class="success-message-text" id="successMessageText">
-          Address added successfully!
-        </div>
-        <button class="success-message-close" onclick="hideSuccessMessage()">
-          &times;
-        </button>
-      </div>
-    </div>
+    <!-- Breadcrumb End -->
 
     <!-- Main Content -->
     <div class="container-fluid">
       <div class="manage-addresses-container">
         <div class="manage-addresses-header">
-          <h2><i class="fa fa-map-marker-alt mr-2"></i>Manage Addresses</h2>
-          <button
-            class="btn add-address-btn"
-            data-toggle="modal"
-            data-target="#addressModal"
-          >
-            <i class="fa fa-plus mr-2"></i>Add New Address
+          <h2><i class="fa fa-map-marker-alt me-2"></i>Manage Addresses</h2>
+          <button class="btn add-address-btn" data-toggle="modal" data-target="#addressModal">
+            <i class="fa fa-plus me-2"></i>Add New Address
           </button>
         </div>
 
@@ -658,8 +631,7 @@
           <div class="selection-status">
             <div>
               <h6 class="mb-1">
-                <i class="fa fa-check-circle text-success mr-2"></i>Address
-                Selected for Checkout
+                <i class="fa fa-check-circle text-success me-2"></i>Address Selected for Checkout
               </h6>
               <p class="mb-0" id="selectedAddressInfo"></p>
             </div>
@@ -668,7 +640,7 @@
 
         <!-- No Selection Message -->
         <div id="noSelectionMessage" class="no-selection-msg" style="display: none">
-          <i class="fa fa-exclamation-triangle mr-2"></i>
+          <i class="fa fa-exclamation-triangle me-2"></i>
           No address selected. Please select an address for checkout.
         </div>
 
@@ -685,14 +657,10 @@
         <!-- Action Buttons -->
         <div class="action-buttons-container" id="actionButtons" style="display: none">
           <a href="checkout.html" class="btn proceed-checkout-btn">
-            <i class="fa fa-shopping-cart mr-2"></i>Proceed to Checkout
+            <i class="fa fa-shopping-cart me-2"></i>Proceed to Checkout
           </a>
-          <button
-            class="btn add-address-btn"
-            data-toggle="modal"
-            data-target="#addressModal"
-          >
-            <i class="fa fa-plus mr-2"></i>Add Another Address
+          <button class="btn add-address-btn" data-toggle="modal" data-target="#addressModal">
+            <i class="fa fa-plus me-2"></i>Add Another Address
           </button>
         </div>
 
@@ -701,28 +669,23 @@
           <i class="fa fa-map-marker-alt"></i>
           <h4>No Addresses Found</h4>
           <p class="text-muted">
-            You haven't added any addresses yet. Add your first address to get
-            started.
+            You haven't added any addresses yet. Add your first address to get started.
           </p>
-          <button
-            class="btn add-address-btn"
-            data-toggle="modal"
-            data-target="#addressModal"
-          >
-            <i class="fa fa-plus mr-2"></i>Add Your First Address
+          <button class="btn add-address-btn" data-toggle="modal" data-target="#addressModal">
+            <i class="fa fa-plus me-2"></i>Add Your First Address
           </button>
         </div>
       </div>
     </div>
 
     <!-- Add/Edit Address Modal -->
-    <div class="modal fade" id="addressModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog modal-lg" role="document">
+    <div class="modal fade" id="addressModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="modalTitle">Add New Address</h5>
-            <button type="button" class="close" data-dismiss="modal">
-              <span>&times;</span>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
@@ -731,62 +694,40 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label>Full Name *</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="fullName"
-                      required
-                    />
+                    <label class="form-label">Full Name *</label>
+                    <input type="text" class="form-control" id="fullName" required />
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label>Phone Number *</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="phone"
-                      required
-                    />
-                    <small class="form-text text-muted"
-                      >10-digit mobile number</small
-                    >
+                    <label class="form-label">Phone Number *</label>
+                    <input type="text" class="form-control" id="phone" required />
+                    <small class="form-text text-muted">10-digit mobile number</small>
                   </div>
                 </div>
               </div>
 
               <div class="form-group">
-                <label>House/Building/Apartment *</label>
+                <label class="form-label">House/Building/Apartment *</label>
                 <input type="text" class="form-control" id="house" required />
               </div>
 
               <div class="form-group">
-                <label>Street/Locality</label>
+                <label class="form-label">Street/Locality</label>
                 <input type="text" class="form-control" id="street" />
               </div>
 
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label>City *</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="city"
-                      required
-                    />
+                    <label class="form-label">City *</label>
+                    <input type="text" class="form-control" id="city" required />
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label>State *</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="state"
-                      required
-                    />
+                    <label class="form-label">State *</label>
+                    <input type="text" class="form-control" id="state" required />
                   </div>
                 </div>
               </div>
@@ -794,42 +735,23 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label>Pin Code *</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="pinCode"
-                      required
-                    />
-                    <small class="form-text text-muted"
-                      >6-digit postal code</small
-                    >
+                    <label class="form-label">Pin Code *</label>
+                    <input type="text" class="form-control" id="pinCode" required />
+                    <small class="form-text text-muted">6-digit postal code</small>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label>Country</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="country"
-                      value="India"
-                      readonly
-                    />
-                    <small class="form-text text-muted"
-                      >Currently we only deliver to India</small
-                    >
+                    <label class="form-label">Country</label>
+                    <input type="text" class="form-control" id="country" value="India" readonly />
+                    <small class="form-text text-muted">Currently we only deliver to India</small>
                   </div>
                 </div>
               </div>
 
               <div class="form-group">
                 <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="isDefault"
-                  />
+                  <input class="form-check-input" type="checkbox" id="isDefault" />
                   <label class="form-check-label" for="isDefault">
                     Set as default address
                   </label>
@@ -838,71 +760,64 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-dismiss="modal"
-            >
-              Cancel
-            </button>
-            <button type="button" class="btn btn-primary" id="saveAddressBtn">
-              Save Address
-            </button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="saveAddressBtn">Save Address</button>
           </div>
         </div>
       </div>
     </div>
-    
+
     <!-- Footer Start -->
     <div class="footer">
       <div class="container-fluid">
         <div class="row">
           <div class="col-lg-3 col-md-6">
             <div class="footer-widget">
-              <h2>Get in Touch</h2>
+              <h2>ShopStyle</h2>
               <div class="contact-info">
-                <p>
-                  <i class="fa fa-map-marker"></i>123 E Store, Los Angeles, USA
-                </p>
-                <p><i class="fa fa-envelope"></i>email@example.com</p>
-                <p><i class="fa fa-phone"></i>+123-456-7890</p>
+                <p><i class="fa fa-map-marker"></i>123 Business Street, New York, NY 10001</p>
+                <p><i class="fa fa-envelope"></i>support@shopstyle.com</p>
+                <p><i class="fa fa-phone"></i>+1 (234) 567-8900</p>
+              </div>
+              <div class="social">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
               </div>
             </div>
           </div>
-
           <div class="col-lg-3 col-md-6">
             <div class="footer-widget">
-              <h2>Follow Us</h2>
-              <div class="contact-info">
-                <div class="social">
-                  <a href=""><i class="fab fa-twitter"></i></a>
-                  <a href=""><i class="fab fa-facebook-f"></i></a>
-                  <a href=""><i class="fab fa-linkedin-in"></i></a>
-                  <a href=""><i class="fab fa-instagram"></i></a>
-                  <a href=""><i class="fab fa-youtube"></i></a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-3 col-md-6">
-            <div class="footer-widget">
-              <h2>Company Info</h2>
+              <h2>Quick Links</h2>
               <ul>
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">Privacy Policy</a></li>
-                <li><a href="#">Terms & Condition</a></li>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="product-list.html">Products</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
               </ul>
             </div>
           </div>
-
           <div class="col-lg-3 col-md-6">
             <div class="footer-widget">
-              <h2>Purchase Info</h2>
+              <h2>Customer Service</h2>
               <ul>
-                <li><a href="#">Pyament Policy</a></li>
-                <li><a href="#">Shipping Policy</a></li>
-                <li><a href="#">Return Policy</a></li>
+                <li><a href="faq.html">FAQ</a></li>
+                <li><a href="shipping.html">Shipping Policy</a></li>
+                <li><a href="returns.html">Return Policy</a></li>
+                <li><a href="privacy.html">Privacy Policy</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-widget">
+              <h2>My Account</h2>
+              <ul>
+                <li><a href="my-account.html">My Account</a></li>
+                <li><a href="order-history.html">Order History</a></li>
+                <li><a href="wishlist.html">Wishlist</a></li>
+                <li><a href="newsletter.html">Newsletter</a></li>
               </ul>
             </div>
           </div>
@@ -911,46 +826,95 @@
         <div class="row payment align-items-center">
           <div class="col-md-6">
             <div class="payment-method">
-              <h2>We Accept:</h2>
-              <img src="img/payment-method.png" alt="Payment Method" />
+              <h3>We Accept:</h3>
+              <img src="img/payment-method.png" alt="Payment Methods">
             </div>
           </div>
           <div class="col-md-6">
             <div class="payment-security">
-              <h2>Secured By:</h2>
-              <img src="img/godaddy.svg" alt="Payment Security" />
-              <img src="img/norton.svg" alt="Payment Security" />
-              <img src="img/ssl.svg" alt="Payment Security" />
+              <h3>Secured By:</h3>
+              <img src="img/godaddy.svg" alt="GoDaddy">
+              <img src="img/norton.svg" alt="Norton">
+              <img src="img/ssl.svg" alt="SSL">
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- Footer End -->
 
-    <!-- Footer Bottom Start -->
+    <!-- Footer Bottom -->
     <div class="footer-bottom">
       <div class="container">
         <div class="row">
-          <div class="col-md-6 copyright">
-            <p>
-              Copyright &copy; <a href="#">ShopStyle</a>. All Rights Reserved
-            </p>
+          <div class="col-md-6">
+            <p>&copy; 2024 ShopStyle. All rights reserved.</p>
           </div>
-
-          <div class="col-md-6 template-by">
-            <p>Designed By <a href="https://htmlcodex.com">HTML Codex</a></p>
+          <div class="col-md-6 text-right">
+            <p>Designed with <i class="fa fa-heart text-danger"></i> for modern eCommerce</p>
           </div>
         </div>
       </div>
     </div>
-    <!-- Footer Bottom End -->
 
-    <!-- JavaScript -->
+    <!-- Back to Top -->
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/slick/slick.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 
-       <script>
+    <!-- Template Javascript -->
+    <script>
+      // ========== NOTYF NOTIFICATION SETUP ==========
+      const notyf = new Notyf({
+        duration: 3000,
+        position: {
+          x: 'right',
+          y: 'top',
+        },
+        types: [
+          {
+            type: 'success',
+            background: '#10b981',
+            icon: {
+              className: 'fas fa-check-circle',
+              tagName: 'i',
+              color: '#fff'
+            }
+          },
+          {
+            type: 'error',
+            background: '#ef4444',
+            icon: {
+              className: 'fas fa-exclamation-circle',
+              tagName: 'i',
+              color: '#fff'
+            }
+          },
+          {
+            type: 'warning',
+            background: '#f59e0b',
+            icon: {
+              className: 'fas fa-exclamation-triangle',
+              tagName: 'i',
+              color: '#fff'
+            }
+          },
+          {
+            type: 'info',
+            background: '#3b82f6',
+            icon: {
+              className: 'fas fa-info-circle',
+              tagName: 'i',
+              color: '#fff'
+            }
+          }
+        ]
+      });
+
       let addresses = [];
       let selectedAddressId = null;
       let redirectTimer = null;
@@ -958,6 +922,7 @@
       // Load addresses when page loads
       document.addEventListener("DOMContentLoaded", function () {
         console.log("Page loaded");
+        
         checkAuthAndUpdateUI();
         loadAddresses();
         setupEventListeners();
@@ -967,30 +932,54 @@
       });
 
       function setupEventListeners() {
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+
+        if (searchInput && searchBtn) {
+          searchInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+              handleSearch();
+            }
+          });
+
+          searchBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            handleSearch();
+          });
+        }
+
         // Save address button
-        document
-          .getElementById("saveAddressBtn")
-          .addEventListener("click", saveAddress);
+        document.getElementById("saveAddressBtn").addEventListener("click", saveAddress);
 
         // Modal reset when closed
-        $("#addressModal").on("hidden.bs.modal", function () {
+        $('#addressModal').on('hidden.bs.modal', function () {
           resetForm();
         });
 
         // Logout functionality
-        document
-          .getElementById("logoutBtn")
-          .addEventListener("click", logoutUser);
+        document.getElementById("logoutBtn").addEventListener("click", logoutUser);
 
-        // Add address button
-        document
-          .querySelector(".add-address-btn")
-          .addEventListener("click", function () {
-            document.getElementById("modalTitle").textContent =
-              "Add New Address";
-            document.getElementById("addressId").value = "";
-            $("#addressModal").modal("show");
-          });
+        // Add address buttons
+        document.querySelectorAll(".add-address-btn").forEach(btn => {
+          if (!btn.dataset.listenerAdded) {
+            btn.addEventListener("click", function () {
+              document.getElementById("modalTitle").textContent = "Add New Address";
+              document.getElementById("addressId").value = "";
+            });
+            btn.dataset.listenerAdded = true;
+          }
+        });
+      }
+
+      function handleSearch() {
+        const query = document.getElementById('searchInput').value.trim();
+
+        if (!query) {
+          notyf.error('Please enter something to search');
+          return;
+        }
+        window.location.href = `product-list.html?search=${encodeURIComponent(query)}`;
       }
 
       // Check authentication and update UI
@@ -1001,8 +990,7 @@
         if (isLoggedIn) {
           // Hide login button, show user account
           document.getElementById("loginBtn").style.display = "none";
-          document.getElementById("userAccountDropdown").style.display =
-            "block";
+          document.getElementById("userAccountDropdown").style.display = "block";
 
           // Show protected menu items
           document.querySelectorAll(".protected-menu").forEach((item) => {
@@ -1020,6 +1008,12 @@
           document.querySelectorAll(".protected-menu").forEach((item) => {
             item.style.display = "none";
           });
+          
+          // Redirect to login if not logged in
+          notyf.error("Please login to access address management");
+          setTimeout(() => {
+            window.location.href = "login.html";
+          }, 1500);
         }
       }
 
@@ -1052,7 +1046,7 @@
               cartCount = data.cart.items.reduce(
                 (total, item) => total + (item.quantity || 0),
                 0
-              );
+            );
             } else if (data.success && data.cartItems) {
               // Alternative data structure
               cartCount = data.cartItems.length || 0;
@@ -1074,8 +1068,7 @@
 
       // Update cart count UI
       function updateCartCountUI(count) {
-        const cartCountElement = document.querySelector(".cart-count");
-
+        const cartCountElement = document.getElementById("cart-count");
         if (cartCountElement) {
           cartCountElement.textContent = `(${count})`;
         }
@@ -1083,26 +1076,23 @@
 
       // Logout function
       function logoutUser() {
-        const logoutConfirmed = showConfirmMessage(
-          "Are you sure you want to logout?", 
+        showNotyfConfirm(
+          "Are you sure you want to logout?",
           "Confirm Logout"
-        );
-        
-        if (logoutConfirmed) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("userName");
-          localStorage.removeItem("userId");
-          localStorage.removeItem("selectedAddressId");
+        ).then((confirmed) => {
+          if (confirmed) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("userId");
+            localStorage.removeItem("selectedAddressId");
 
-          // Clear cart count
-          updateCartCountUI(0);
+            // Clear cart count
+            updateCartCountUI(0);
 
-          // Update UI
-          checkAuthAndUpdateUI();
-
-          // Redirect to home page
-          window.location.href = "index.html";
-        }
+            // Redirect to home page
+            window.location.href = "index.html";
+          }
+        });
       }
 
       async function loadAddresses() {
@@ -1135,7 +1125,7 @@
           }
         } catch (error) {
           console.error("Error loading addresses:", error);
-          showMessage("Error loading addresses", "danger");
+          notyf.error("Error loading addresses");
         }
       }
 
@@ -1151,9 +1141,6 @@
           
           // Update radio buttons
           updateRadioButtons();
-          
-          // Save to backend (optional)
-          saveSelectedAddress(addressId);
         }
       }
 
@@ -1191,23 +1178,6 @@
           selectionStatus.style.display = 'none';
           noSelectionMessage.style.display = 'block';
           actionButtons.style.display = 'flex';
-        }
-      }
-
-      // Optional: Save selected address to backend
-      async function saveSelectedAddress(addressId) {
-        const token = localStorage.getItem("token");
-        try {
-          await fetch("/api/user/selected-address", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ addressId }),
-          });
-        } catch (error) {
-          console.error("Error saving selected address:", error);
         }
       }
 
@@ -1283,7 +1253,7 @@
                   <h6 class="address-name">${address.fullName}</h6>
                   ${
                     address.isDefault
-                      ? '<span class="address-type-badge"><span class="badge badge-success"><i class="fa fa-star mr-1"></i>Default</span></span>'
+                      ? '<span class="address-type-badge"><span class="badge bg-success"><i class="fa fa-star me-1"></i>Default</span></span>'
                       : ""
                   }
                 </div>
@@ -1303,22 +1273,20 @@
               </div>
               
               <div class="address-actions">
-                ${
-                  !address.isDefault
-                    ? `<button class="btn btn-set-default" onclick="setDefaultAddress('${address._id}')">
-                        <i class="fa fa-star mr-1"></i>Set Default
-                      </button>`
-                    : ""
-                }
+                <button class="btn btn-set-default" onclick="setDefaultAddress('${
+                  address._id
+                }')">
+                  <i class="fa fa-star me-1"></i>Set Default
+                </button>
                 <button class="btn btn-edit" onclick="editAddress('${
                   address._id
                 }')">
-                  <i class="fa fa-edit mr-1"></i>Edit
+                  <i class="fa fa-edit me-1"></i>Edit
                 </button>
                 <button class="btn btn-delete" onclick="deleteAddress('${
                   address._id
                 }')">
-                  <i class="fa fa-trash mr-1"></i>Delete
+                  <i class="fa fa-trash me-1"></i>Delete
                 </button>
               </div>
             </div>
@@ -1345,7 +1313,7 @@
         document.getElementById("country").value = address.country || "India";
         document.getElementById("isDefault").checked = address.isDefault;
 
-        $("#addressModal").modal("show");
+        $('#addressModal').modal('show');
       }
 
       // Validate phone number
@@ -1359,363 +1327,267 @@
         return pinCode.length === 6 && /^\d+$/.test(pinCode);
       }
 
-async function saveAddress() {
-  const token = localStorage.getItem("token");
-  const addressId = document.getElementById("addressId").value;
-  const isEdit = !!addressId;
+      async function saveAddress() {
+        const token = localStorage.getItem("token");
+        const addressId = document.getElementById("addressId").value;
+        const isEdit = !!addressId;
 
-  const addressData = {
-    fullName: document.getElementById("fullName").value.trim(),
-    phone: document.getElementById("phone").value.trim(),
-    pinCode: document.getElementById("pinCode").value.trim(),
-    street: document.getElementById("street").value.trim(),
-    house: document.getElementById("house").value.trim(),
-    city: document.getElementById("city").value.trim(),
-    state: document.getElementById("state").value.trim(),
-    country: document.getElementById("country").value.trim(),
-    isDefault: document.getElementById("isDefault").checked,
-  };
+        const addressData = {
+          fullName: document.getElementById("fullName").value.trim(),
+          phone: document.getElementById("phone").value.trim(),
+          pinCode: document.getElementById("pinCode").value.trim(),
+          street: document.getElementById("street").value.trim(),
+          house: document.getElementById("house").value.trim(),
+          city: document.getElementById("city").value.trim(),
+          state: document.getElementById("state").value.trim(),
+          country: document.getElementById("country").value.trim(),
+          isDefault: document.getElementById("isDefault").checked,
+        };
 
-  // Basic validation
-  if (
-    !addressData.fullName ||
-    !addressData.phone ||
-    !addressData.pinCode ||
-    !addressData.house ||
-    !addressData.city ||
-    !addressData.state
-  ) {
-    showMessage("Please fill all required fields", "warning");
-    return;
-  }
+        // Basic validation
+        if (
+          !addressData.fullName ||
+          !addressData.phone ||
+          !addressData.pinCode ||
+          !addressData.house ||
+          !addressData.city ||
+          !addressData.state
+        ) {
+          notyf.error("Please fill all required fields");
+          return;
+        }
 
-  // Phone validation
-  if (!validatePhoneNumber(addressData.phone)) {
-    showMessage("Please enter a valid 10-digit phone number", "warning");
-    return;
-  }
+        // Phone validation
+        if (!validatePhoneNumber(addressData.phone)) {
+          notyf.error("Please enter a valid 10-digit phone number");
+          return;
+        }
 
-  // Pin code validation
-  if (!validatePinCode(addressData.pinCode)) {
-    showMessage("Please enter a valid 6-digit pin code", "warning");
-    return;
-  }
+        // Pin code validation
+        if (!validatePinCode(addressData.pinCode)) {
+          notyf.error("Please enter a valid 6-digit pin code");
+          return;
+        }
 
-  try {
-    const url = isEdit
-      ? `/api/user/addresses/${addressId}`
-      : "/api/user/addresses";
-    const method = isEdit ? "PUT" : "POST";
+        try {
+          const url = isEdit
+            ? `/api/user/addresses/${addressId}`
+            : "/api/user/addresses";
+          const method = isEdit ? "PUT" : "POST";
 
-    console.log("📤 Saving address:", {
-      url,
-      method,
-      isEdit,
-      addressData
-    });
+          console.log("📤 Saving address:", {
+            url,
+            method,
+            isEdit,
+            addressData
+          });
 
-    // Show loading state
-    const saveBtn = document.getElementById("saveAddressBtn");
-    const originalBtnText = saveBtn.innerHTML;
-    saveBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Saving...';
-    saveBtn.disabled = true;
+          // Show loading state
+          const saveBtn = document.getElementById("saveAddressBtn");
+          const originalBtnText = saveBtn.innerHTML;
+          saveBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Saving...';
+          saveBtn.disabled = true;
 
-    const response = await fetch(url, {
-      method: method,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(addressData),
-    });
+          const response = await fetch(url, {
+            method: method,
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(addressData),
+          });
 
-    console.log("📥 Save response status:", response.status);
+          console.log("📥 Save response status:", response.status);
 
-    // Restore button state
-    saveBtn.innerHTML = originalBtnText;
-    saveBtn.disabled = false;
+          // Restore button state
+          saveBtn.innerHTML = originalBtnText;
+          saveBtn.disabled = false;
 
-    // Try to parse response
-    let responseData;
-    try {
-      responseData = await response.json();
-      console.log("📥 Save response data:", responseData);
-    } catch (jsonError) {
-      console.log("📥 No JSON response or parse error:", jsonError);
-      responseData = {};
-    }
+          // Try to parse response
+          let responseData;
+          try {
+            responseData = await response.json();
+            console.log("📥 Save response data:", responseData);
+          } catch (jsonError) {
+            console.log("📥 No JSON response or parse error:", jsonError);
+            responseData = {};
+          }
 
-    if (response.ok) {
-      // Close modal
-      $("#addressModal").modal("hide");
-      resetForm();
-      
-      // Show success message
-      const message = isEdit ? "Address updated successfully!" : "Address added successfully!";
-      console.log("✅ Showing success message:", message);
-      
-      // Show success message
-      showSuccessMessage(message);
-      
-      // Clear any existing redirect timer
-      if (redirectTimer) {
-        clearTimeout(redirectTimer);
-      }
-      
-      // Set redirect timer
-      redirectTimer = setTimeout(() => {
-        console.log("🔄 Redirecting to address.html");
-        window.location.href = "address.html";
-      }, 2000); // 2 seconds delay
-      
-      // Reload addresses
-      loadAddresses();
-      
-    } else {
-      // Handle error response
-      const errorMessage = responseData.message || 
-                          responseData.error || 
-                          `Failed to ${isEdit ? 'update' : 'add'} address. Status: ${response.status}`;
-      console.error("❌ Save error:", errorMessage);
-      showMessage(errorMessage, "danger");
-      
-      // If it's a 401 error (unauthorized), redirect to login
-      if (response.status === 401) {
-        showMessage("Session expired. Please login again.", "warning");
-        setTimeout(() => {
-          window.location.href = "login.html";
-        }, 2000);
-      }
-    }
-  } catch (error) {
-    console.error("💥 Network/Request error:", error);
-    showMessage("Network error. Please check your connection.", "danger");
-    
-    // Restore button state in case of error
-    const saveBtn = document.getElementById("saveAddressBtn");
-    saveBtn.innerHTML = "Save Address";
-    saveBtn.disabled = false;
-  }
-}
-
-// Show success message (non-alert)
-function showSuccessMessage(message) {
-  console.log("🚀 Attempting to show success message:", message);
-  
-  const messageContainer = document.getElementById("successMessageContainer");
-  const messageText = document.getElementById("successMessageText");
-  
-  if (!messageContainer) {
-    console.error("❌ Success message container not found!");
-    showMessage(message, "success"); // Fallback to regular message
-    return;
-  }
-  
-  if (!messageText) {
-    console.error("❌ Success message text element not found!");
-    showMessage(message, "success"); // Fallback to regular message
-    return;
-  }
-  
-  // Update message text
-  messageText.textContent = message;
-  
-  // Remove any existing animation classes
-  messageContainer.classList.remove("hide", "show");
-  
-  // Force reflow
-  void messageContainer.offsetWidth;
-  
-  // Show with animation
-  messageContainer.style.display = "block";
-  messageContainer.classList.add("show");
-  
-  console.log("✅ Success message should be visible now");
-  
-  // Auto-hide after 3 seconds
-  setTimeout(() => {
-    hideSuccessMessage();
-  }, 3000);
-}
-
-// Hide success message
-function hideSuccessMessage() {
-  const messageContainer = document.getElementById("successMessageContainer");
-  if (!messageContainer) return;
-  
-  messageContainer.classList.remove("show");
-  messageContainer.classList.add("hide");
-  
-  // Hide after animation
-  setTimeout(() => {
-    messageContainer.classList.remove("hide");
-    messageContainer.style.display = "none";
-  }, 500);
-}
-
-async function deleteAddress(addressId) {
-  const address = addresses.find((addr) => addr._id === addressId);
-  if (!address) return;
-
-  // Show custom confirmation dialog instead of alert
-  if (!await showConfirmMessage(`Are you sure you want to delete the address for ${address.fullName}?`, "Confirm Deletion")) {
-    return;
-  }
-
-  const token = localStorage.getItem("token");
-  try {
-    const response = await fetch(`/api/user/addresses/${addressId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (response.ok) {
-      // If deleted address was selected, clear selection
-      if (selectedAddressId === addressId) {
-        selectedAddressId = null;
-        localStorage.removeItem("selectedAddressId");
-        showMessage(
-          `Address "${address.fullName}" deleted and unselected`,
-          "info"
-        );
-      } else {
-        showMessage("Address deleted successfully", "success");
+          if (response.ok) {
+            // Close modal
+            $('#addressModal').modal('hide');
+            resetForm();
+            
+            // Show success message
+            const message = isEdit ? "Address updated successfully!" : "Address added successfully!";
+            console.log("✅ Showing success message:", message);
+            
+            // Show success notification
+            notyf.success(message);
+            
+            // Clear any existing redirect timer
+            if (redirectTimer) {
+              clearTimeout(redirectTimer);
+            }
+            
+            // Reload addresses
+            loadAddresses();
+            
+          } else {
+            // Handle error response
+            const errorMessage = responseData.message || 
+                                responseData.error || 
+                                `Failed to ${isEdit ? 'update' : 'add'} address. Status: ${response.status}`;
+            console.error("❌ Save error:", errorMessage);
+            notyf.error(errorMessage);
+            
+            // If it's a 401 error (unauthorized), redirect to login
+            if (response.status === 401) {
+              notyf.error("Session expired. Please login again.");
+              setTimeout(() => {
+                window.location.href = "login.html";
+              }, 2000);
+            }
+          }
+        } catch (error) {
+          console.error("💥 Network/Request error:", error);
+          notyf.error("Network error. Please check your connection.");
+          
+          // Restore button state in case of error
+          const saveBtn = document.getElementById("saveAddressBtn");
+          saveBtn.innerHTML = "Save Address";
+          saveBtn.disabled = false;
+        }
       }
 
-      loadAddresses();
-    } else {
-      throw new Error("Failed to delete address");
-    }
-  } catch (error) {
-    console.error("Error deleting address:", error);
-    showMessage("Error deleting address", "danger");
-  }
-}
+      async function deleteAddress(addressId) {
+        const address = addresses.find((addr) => addr._id === addressId);
+        if (!address) return;
 
-async function setDefaultAddress(addressId) {
-  const address = addresses.find((addr) => addr._id === addressId);
-  if (!address) return;
+        // Show custom confirmation dialog
+        showNotyfConfirm(
+          `Are you sure you want to delete the address for ${address.fullName}?`,
+          "Confirm Deletion"
+        ).then(async (confirmed) => {
+          if (!confirmed) return;
 
-  const token = localStorage.getItem("token");
-  try {
-    const response = await fetch(`/api/user/addresses/${addressId}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ isDefault: true }),
-    });
+          const token = localStorage.getItem("token");
+          try {
+            const response = await fetch(`/api/user/addresses/${addressId}`, {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            });
 
-    if (response.ok) {
-      // If no address is currently selected, select this one as it becomes default
-      if (!selectedAddressId) {
-        selectedAddressId = addressId;
-        localStorage.setItem("selectedAddressId", addressId);
-        showMessage(
-          `Address set as default and selected: ${address.fullName}`,
-          "success"
-        );
-      } else {
-        showMessage("Address set as default successfully", "success");
+            if (response.ok) {
+              // If deleted address was selected, clear selection
+              if (selectedAddressId === addressId) {
+                selectedAddressId = null;
+                localStorage.removeItem("selectedAddressId");
+                notyf.info(
+                  `Address "${address.fullName}" deleted and unselected`
+                );
+              } else {
+                notyf.success("Address deleted successfully");
+              }
+
+              loadAddresses();
+            } else {
+              throw new Error("Failed to delete address");
+            }
+          } catch (error) {
+            console.error("Error deleting address:", error);
+            notyf.error("Error deleting address");
+          }
+        });
       }
 
-      loadAddresses();
-    } else {
-      throw new Error("Failed to set default address");
-    }
-  } catch (error) {
-    console.error("Error setting default address:", error);
-    showMessage("Error setting default address", "danger");
-  }
-}
+      async function setDefaultAddress(addressId) {
+        const address = addresses.find((addr) => addr._id === addressId);
+        if (!address) return;
 
-function resetForm() {
-  document.getElementById("addressForm").reset();
-  document.getElementById("addressId").value = "";
-  document.getElementById("country").value = "India";
-}
+        const token = localStorage.getItem("token");
+        try {
+          const response = await fetch(`/api/user/addresses/${addressId}`, {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ isDefault: true }),
+          });
 
-function showMessage(message, type) {
-  const alertDiv = document.createElement("div");
-  alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-  alertDiv.innerHTML = `
-      ${message}
-      <button type="button" class="close" data-dismiss="alert">
-          <span>&times;</span>
-      </button>
-  `;
+          if (response.ok) {
+            // If no address is currently selected, select this one as it becomes default
+            if (!selectedAddressId) {
+              selectedAddressId = addressId;
+              localStorage.setItem("selectedAddressId", addressId);
+              notyf.success(
+                `Address set as default and selected: ${address.fullName}`
+              );
+            } else {
+              notyf.success("Address set as default successfully");
+            }
 
-  document
-    .querySelector(".manage-addresses-container")
-    .insertBefore(
-      alertDiv,
-      document.querySelector(".manage-addresses-container").firstChild
-    );
-
-  setTimeout(() => {
-    if (alertDiv.parentElement) {
-      alertDiv.remove();
-    }
-  }, 5000);
-}
-
-// Custom confirmation dialog function
-function showConfirmMessage(message, title = "Confirm") {
-  return new Promise((resolve) => {
-    // Remove any existing confirmation modal
-    const existingModal = document.getElementById("customConfirmModal");
-    if (existingModal) {
-      existingModal.remove();
-    }
-
-    // Create confirmation modal
-    const modalHtml = `
-      <div class="modal fade" id="customConfirmModal" tabindex="-1" role="dialog" data-backdrop="static">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">${title}</h5>
-              <button type="button" class="close" data-dismiss="modal" onclick="document.getElementById('customConfirmModal').remove(); resolve(false);">
-                <span>&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <p>${message}</p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="document.getElementById('customConfirmModal').remove(); resolve(false);">
-                Cancel
-              </button>
-              <button type="button" class="btn btn-primary" onclick="document.getElementById('customConfirmModal').remove(); resolve(true);">
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-
-    // Add modal to DOM
-    const modalContainer = document.createElement('div');
-    modalContainer.innerHTML = modalHtml;
-    document.body.appendChild(modalContainer);
-
-    // Show modal
-    $('#customConfirmModal').modal('show');
-
-    // Clean up when modal is hidden
-    $('#customConfirmModal').on('hidden.bs.modal', function () {
-      if (document.getElementById('customConfirmModal')) {
-        document.getElementById('customConfirmModal').remove();
-        resolve(false);
+            loadAddresses();
+          } else {
+            throw new Error("Failed to set default address");
+          }
+        } catch (error) {
+          console.error("Error setting default address:", error);
+          notyf.error("Error setting default address");
+        }
       }
-    });
-  });
-}
+
+      function resetForm() {
+        document.getElementById("addressForm").reset();
+        document.getElementById("addressId").value = "";
+        document.getElementById("country").value = "India";
+      }
+
+      // Custom confirmation dialog function using Notyf
+      function showNotyfConfirm(message, title = "Confirm") {
+        return new Promise((resolve) => {
+          // Create a custom notification
+          const confirmNotification = notyf.open({
+            type: 'warning',
+            duration: 0, // No auto-dismiss
+            message: `
+              <div style="text-align: left; padding: 10px;">
+                <h6 style="margin-bottom: 10px;">${title}</h6>
+                <p style="margin-bottom: 15px;">${message}</p>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                  <button id="confirmCancel" class="btn btn-sm btn-secondary" style="padding: 5px 15px;">Cancel</button>
+                  <button id="confirmOk" class="btn btn-sm btn-primary" style="padding: 5px 15px;">Confirm</button>
+                </div>
+              </div>
+            `,
+            dismissible: false
+          });
+
+          // Add event listeners to buttons
+          setTimeout(() => {
+            const cancelBtn = document.getElementById('confirmCancel');
+            const okBtn = document.getElementById('confirmOk');
+            
+            if (cancelBtn) {
+              cancelBtn.onclick = function() {
+                notyf.dismiss(confirmNotification);
+                resolve(false);
+              };
+            }
+            
+            if (okBtn) {
+              okBtn.onclick = function() {
+                notyf.dismiss(confirmNotification);
+                resolve(true);
+              };
+            }
+          }, 100);
+        });
+      }
     </script>
   </body>
 </html>

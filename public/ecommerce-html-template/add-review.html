@@ -13,13 +13,14 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap"
         rel="stylesheet">
 
-    <!-- CSS Libraries -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <style>
         /* Add Review Page Styles */
         .add-review-page {
@@ -539,14 +540,14 @@
     <!-- Nav Bar Start -->
     <div class="nav">
         <div class="container-fluid">
-            <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+            <nav class="navbar navbar-expand-md navbar-dark bg-dark">
                 <a href="#" class="navbar-brand">MENU</a>
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                    <div class="navbar-nav mr-auto">
+                    <div class="navbar-nav me-auto">
                         <a href="index.html" class="nav-item nav-link">Home</a>
                         <a href="product-list.html" class="nav-item nav-link">Products</a>
                         <a href="cart.html" class="nav-item nav-link">Cart</a>
@@ -554,12 +555,12 @@
                         <a href="checkout.html" class="nav-item nav-link">Checkout</a>
                         <a href="order-history.html" class="nav-item nav-link">My Orders</a>
                     </div>
-                    <div class="navbar-nav ml-auto align-items-center">
+                    <div class="navbar-nav ms-auto align-items-center">
                         <div class="nav-item dropdown user-account" id="userAccountDropdown" style="display: none;">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                                 <i class="fa fa-user-circle"></i> My Account
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right">
+                            <div class="dropdown-menu dropdown-menu-end">
                                 <a href="my-account.html" class="dropdown-item">Dashboard</a>
                                 <a href="#" class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i>
                                     Logout</a>
@@ -567,8 +568,8 @@
                         </div>
 
                         <div class="nav-item dropdown" id="loginDropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Login</a>
-                            <div class="dropdown-menu dropdown-menu-right">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Login</a>
+                            <div class="dropdown-menu dropdown-menu-end">
                                 <a href="login.html" class="dropdown-item">Login</a>
                                 <a href="register.html" class="dropdown-item">Register</a>
                             </div>
@@ -632,7 +633,7 @@
             <div class="review-container">
                 <!-- Review Header -->
                 <div class="review-header">
-                    <h1><i class="fas fa-star mr-2"></i>Write a Review</h1>
+                    <h1><i class="fas fa-star me-2"></i>Write a Review</h1>
                     <p>Share your experience to help other shoppers</p>
                 </div>
 
@@ -755,10 +756,10 @@
                     <!-- Action Buttons -->
                     <div class="action-buttons">
                         <button type="button" class="btn btn-secondary" id="cancelBtn">
-                            <i class="fas fa-times mr-2"></i> Cancel
+                            <i class="fas fa-times me-2"></i> Cancel
                         </button>
                         <button type="button" class="btn btn-primary" id="submitBtn">
-                            <i class="fas fa-paper-plane mr-2"></i> Submit Review
+                            <i class="fas fa-paper-plane me-2"></i> Submit Review
                         </button>
                     </div>
                 </div>
@@ -773,8 +774,8 @@
     </div>
 
     <!-- Success Modal -->
-    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="success-modal-content">
                     <div class="success-icon">
@@ -784,10 +785,10 @@
                     <p class="success-message" id="successMessage">Thank you for sharing your experience. Your review helps other shoppers make better decisions.</p>
                     <div class="mt-4">
                         <button type="button" class="btn btn-primary" id="backToOrdersBtn" style="padding: 10px 30px;">
-                            <i class="fas fa-arrow-left mr-2"></i> Back to My Orders
+                            <i class="fas fa-arrow-left me-2"></i> Back to My Orders
                         </button>
                         <button type="button" class="btn btn-secondary" id="viewProductBtn" style="padding: 10px 30px; margin-left: 10px;">
-                            <i class="fas fa-eye mr-2"></i> View Product
+                            <i class="fas fa-eye me-2"></i> View Product
                         </button>
                     </div>
                 </div>
@@ -887,14 +888,60 @@
     <!-- Back to Top -->
     <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
 
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-
+    <!-- Bootstrap 5 JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <script>
+        const notyf = new Notyf({
+            duration: 3000,
+            position: {
+                x: 'right',
+                y: 'top',
+            },
+            types: [
+                {
+                    type: 'success',
+                    background: '#28a745',
+                    icon: {
+                        className: 'fas fa-check-circle',
+                        tagName: 'i',
+                        color: '#fff'
+                    }
+                },
+                {
+                    type: 'error',
+                    background: '#dc3545',
+                    icon: {
+                        className: 'fas fa-exclamation-circle',
+                        tagName: 'i',
+                        color: '#fff'
+                    }
+                },
+                {
+                    type: 'warning',
+                    background: '#ffc107',
+                    icon: {
+                        className: 'fas fa-exclamation-triangle',
+                        tagName: 'i',
+                        color: '#fff'
+                    }
+                },
+                {
+                    type: 'info',
+                    background: '#17a2b8',
+                    icon: {
+                        className: 'fas fa-info-circle',
+                        tagName: 'i',
+                        color: '#fff'
+                    }
+                }
+            ]
+        });
+
         // Global variables
         let productDetails = null;
         let currentProductId = null;
+        let successModal = null;
 
         // When page loads
         document.addEventListener("DOMContentLoaded", function () {
@@ -903,8 +950,10 @@
 
             if (!token) {
                 // If not logged in, redirect to login page
-                alert("Please login to write a review");
-                window.location.href = "login.html";
+                notyf.error("Session expired. Please login again.");
+                setTimeout(() => {
+                    window.location.href = "admin-login.html";
+                }, 1500);
                 return;
             }
 
@@ -927,7 +976,13 @@
                 return;
             }
 
-            // 4. Fetch product details
+            // 4. Initialize Bootstrap modal
+            const modalElement = document.getElementById('successModal');
+            if (modalElement) {
+                successModal = new bootstrap.Modal(modalElement);
+            }
+
+            // 5. Fetch product details
             showLoading("Loading product details...");
             fetchProductDetails(currentProductId, token)
                 .then(() => {
@@ -943,13 +998,13 @@
                     initializeEventListeners();
                 });
 
-            // 5. Setup logout button
+            // 6. Setup logout button
             const logoutBtn = document.getElementById("logoutBtn");
             if (logoutBtn) {
                 logoutBtn.addEventListener("click", function (e) {
                     e.preventDefault();
                     localStorage.removeItem("token");
-                    alert("You have been logged out successfully.");
+                    notyf.success("You have been logged out successfully.");
                     window.location.href = "index.html";
                 });
             }
@@ -1187,12 +1242,12 @@
 
             function previewFile(file) {
                 if (!file.type.match('image.*')) {
-                    alert('Please upload only image files.');
+                    notyf.warning('Please upload only image files.');
                     return;
                 }
 
                 if (file.size > 5 * 1024 * 1024) { // 5MB limit
-                    alert('File size should be less than 5MB.');
+                    notyf.warning('File size should be less than 5MB.');
                     return;
                 }
 
@@ -1327,7 +1382,10 @@
                     document.getElementById('successMessage').textContent = 
                         `Thank you for reviewing "${productName}"! Your feedback helps other shoppers.`;
                     
-                    $('#successModal').modal('show');
+                    // Show modal using Bootstrap 5
+                    if (successModal) {
+                        successModal.show();
+                    }
                     
                 } else {
                     // Handle API error

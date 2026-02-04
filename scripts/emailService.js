@@ -1,13 +1,13 @@
 const nodemailer = require("nodemailer");
+require("dotenv").config();
+
 
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.ethereal.email",
-  port: 587,
-  secure: false, // true for 465, false for other ports
+service:'gmail',
   auth: {
-    user: "ella42@ethereal.email",
-    pass: "Nk97uU5KaJRxvGRW47",
+    user: process.env.EMAIL,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -19,7 +19,7 @@ const sendPasswordResetEmail = async (email, resetLink) => {
         console.log(resetLink);
 
         const mailOptions = {
-            from: '"ShopStyle" <ella42@ethereal.email>',
+            from: '"ShopStyle" <${process.env.EMAIL}>',
             to: email,
             subject: 'ShopStyle - Password Reset Request',
             html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -52,9 +52,8 @@ const sendPasswordResetEmail = async (email, resetLink) => {
         console.log('Preview URL:', nodemailer.getTestMessageUrl(result));
         return result;
     }catch(error){
-        console.error('Error sending mail', error);
-        logger.error('Error sending mail', error);
-        throw new error('Failed to send Email' + error.message);
+        console.error('Error sending mail:', error);
+        throw new error('Failed to send Email:' + error.message);
     }
 };
 

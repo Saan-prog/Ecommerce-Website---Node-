@@ -12,6 +12,7 @@
       href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Source+Code+Pro:wght@700;900&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <style>
       * {
         margin: 0;
@@ -849,8 +850,56 @@
       </div>
     </div>
 
+
     <!-- JavaScript -->
+     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 <script>
+   const notyf = new Notyf({
+    duration: 3000, // 3 seconds
+    position: {
+      x: 'right',
+      y: 'top',
+    },
+    types: [
+      {
+        type: 'success',
+        background: '#28a745',
+        icon: {
+          className: 'fas fa-check-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'error',
+        background: '#dc3545',
+        icon: {
+          className: 'fas fa-exclamation-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'warning',
+        background: '#ffc107',
+        icon: {
+          className: 'fas fa-exclamation-triangle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'info',
+        background: '#17a2b8',
+        icon: {
+          className: 'fas fa-info-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      }
+    ]
+  });
+
   // Authentication check
   (function checkAuth() {
     const token = localStorage.getItem("adminToken");
@@ -1019,8 +1068,11 @@
 
       if (!response.ok) {
         if (response.status === 401) {
-          alert("Session expired. Please login again.");
-          window.location.href = "admin-login.html";
+          
+notyf.error("Session expired. Please login again.");
+              setTimeout(() => {
+                window.location.href = "admin-login.html";
+              }, 1500);
           return;
         }
         if (response.status === 404) {
@@ -1179,12 +1231,12 @@
     const selectedStatus = document.querySelector('input[name="orderStatus"]:checked')?.value;
     
     if (!selectedStatus) {
-      alert('Please select a status');
+      notyf.warning('Please select a status');
       return;
     }
     
     if (!currentOrder || !currentOrder._id) {
-      alert('No order data available');
+      notyf.warning('No order data available');
       return;
     }
     
@@ -1205,8 +1257,11 @@
 
       if (!response.ok) {
         if (response.status === 401) {
-          alert("Token expired. Please login again.");
-          window.location.href = "admin-login.html";
+          
+notyf.error("Session expired. Please login again.");
+              setTimeout(() => {
+                window.location.href = "admin-login.html";
+              }, 1500);
           return;
         }
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -1237,11 +1292,11 @@
         }, 3000);
         
       } else {
-        alert(data.message || 'Failed to update order status');
+        notyf.error(data.message || 'Failed to update order status');
       }
     } catch (error) {
       console.error('Error updating order status:', error);
-      alert('Error updating order status. Please try again.');
+      notyf.error('Error updating order status. Please try again.');
     }
   }
 

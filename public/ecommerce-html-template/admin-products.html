@@ -10,8 +10,8 @@
     />
     <link
       href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Source+Code+Pro:wght@700;900&display=swap"
-      rel="stylesheet"
-    />
+      rel="stylesheet"/>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <style>
       * {
         margin: 0;
@@ -643,7 +643,55 @@
     </div>
 
     <!-- JavaScript -->
+     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 <script>
+          const notyf = new Notyf({
+    duration: 3000, // 3 seconds
+    position: {
+      x: 'right',
+      y: 'top',
+    },
+    types: [
+      {
+        type: 'success',
+        background: '#28a745',
+        icon: {
+          className: 'fas fa-check-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'error',
+        background: '#dc3545',
+        icon: {
+          className: 'fas fa-exclamation-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'warning',
+        background: '#ffc107',
+        icon: {
+          className: 'fas fa-exclamation-triangle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'info',
+        background: '#17a2b8',
+        icon: {
+          className: 'fas fa-info-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      }
+    ]
+  });
+    
+
   // Authentication check - run immediately when page loads
   (function checkAuth() {
     const token = localStorage.getItem("adminToken");
@@ -792,8 +840,10 @@
       if (!response.ok) {
         if (response.status === 401) {
           // Token is invalid or expired
-           alert("Session expired. Please login again.");
-                window.location.href = "admin-login.html"
+           notyf.error("Session expired. Please login again.");
+                setTimeout(() => {
+    window.location.href = 'admin-login.html';
+  }, 1500);
          console.log("error")
           return;
         }
@@ -1189,17 +1239,17 @@ function renderProductsTable(products) {
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          alert("Product deleted successfully");
+          notyf.success("Product deleted successfully");
           loadProducts(currentPage, currentFilters); // Reload products
         } else {
-          alert("Error: " + data.message);
+          notyf.error("Error: " + data.message);
         }
       } else {
-        alert("Error deleting product");
+        notyf.error("Error deleting product");
       }
     } catch (error) {
       console.error("Error deleting product:", error);
-      alert("Error deleting product");
+      notyf.error("Error deleting product");
     }
   }
 

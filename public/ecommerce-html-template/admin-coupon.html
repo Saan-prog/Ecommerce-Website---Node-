@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Source+Code+Pro:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <style>
         * {
             margin: 0;
@@ -959,8 +960,56 @@
     </div>
 
     <!-- Scripts -->
+     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
  <script>
+     const notyf = new Notyf({
+    duration: 3000, // 3 seconds
+    position: {
+      x: 'right',
+      y: 'top',
+    },
+    types: [
+      {
+        type: 'success',
+        background: '#28a745',
+        icon: {
+          className: 'fas fa-check-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'error',
+        background: '#dc3545',
+        icon: {
+          className: 'fas fa-exclamation-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'warning',
+        background: '#ffc107',
+        icon: {
+          className: 'fas fa-exclamation-triangle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      },
+      {
+        type: 'info',
+        background: '#17a2b8',
+        icon: {
+          className: 'fas fa-info-circle',
+          tagName: 'i',
+          color: '#fff'
+        }
+      }
+    ]
+  });
+
+
     // Initialize date pickers
     flatpickr(".date-picker", {
         enableTime: false,
@@ -1276,14 +1325,14 @@
                 const data = await response.json();
 
                 if (response.ok && data.success) {
-                    alert('Coupon deleted successfully!');
+                    notyf.success('Coupon deleted successfully!');
                     loadCoupons();
                 } else {
                     throw new Error(data.message || 'Failed to delete coupon');
                 }
             } catch (error) {
                 console.error('Error deleting coupon:', error);
-                alert('Error deleting coupon: ' + error.message);
+                notyf.error('Error deleting coupon: ' + error.message);
             }
         }
     }
@@ -1304,52 +1353,52 @@
 
         // Validation
         if (!code || code.length < 4) {
-            alert('Coupon code must be at least 4 characters');
+            notyf.warning('Coupon code must be at least 4 characters');
             return;
         }
 
         if (!discountType) {
-            alert('Please select discount type');
+            notyf.warning('Please select discount type');
             return;
         }
 
         if (!discountValue || discountValue <= 0) {
-            alert('Discount value must be greater than 0');
+            notyf.warning('Discount value must be greater than 0');
             return;
         }
 
         if (discountType === 'percentage' && discountValue > 100) {
-            alert('Percentage discount cannot exceed 100%');
+            notyf.warning('Percentage discount cannot exceed 100%');
             return;
         }
 
         if (minPurchase < 0) {
-            alert('Minimum purchase cannot be negative');
+            notyf.warning('Minimum purchase cannot be negative');
             return;
         }
 
         if (maxDiscount < 0) {
-            alert('Maximum discount cannot be negative');
+            notyf.warning('Maximum discount cannot be negative');
             return;
         }
 
         if (!startDate) {
-            alert('Start date is required');
+            notyf.warning('Start date is required');
             return;
         }
 
         if (!expiryDate) {
-            alert('Expiry date is required');
+            notyf.warning('Expiry date is required');
             return;
         }
 
         if (new Date(startDate) > new Date(expiryDate)) {
-            alert('Expiry date must be after start date');
+            notyf.warning('Expiry date must be after start date');
             return;
         }
 
         if (usageLimit < 0) {
-            alert('Usage limit cannot be negative');
+            notyf.warning('Usage limit cannot be negative');
             return;
         }
 
@@ -1398,13 +1447,13 @@
             if (response.ok && data.success) {
                 closeModal();
                 loadCoupons();
-                alert(currentEditingId ? 'Coupon updated successfully!' : 'Coupon created successfully!');
+                notyf.success(currentEditingId ? 'Coupon updated successfully!' : 'Coupon created successfully!');
             } else {
                 throw new Error(data.message || `Failed to ${currentEditingId ? 'update' : 'create'} coupon`);
             }
         } catch (error) {
             console.error('Error saving coupon:', error);
-            alert('Error saving coupon: ' + error.message);
+            notyf.error('Error saving coupon: ' + error.message);
         }
     }
 
