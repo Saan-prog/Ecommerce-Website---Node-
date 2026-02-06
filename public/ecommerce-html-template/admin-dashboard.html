@@ -765,7 +765,7 @@
     let conversionChartInstance = null;
 
     // API Base URL
-    const API_BASE = 'http://localhost:8070/api/admin/dashboard';
+    const API_BASE = '/api/admin/dashboard';
 
     // Check authentication on page load
     document.addEventListener('DOMContentLoaded', function() {
@@ -1360,7 +1360,7 @@ function formatCustomerChartData(result) {
         try {
             console.log('🛒 Loading recent orders from /api/admin/orders/getAll...');
             
-            const response = await fetch('http://localhost:8070/api/admin/orders/getAll', {
+            const response = await fetch('/api/admin/orders/getAll', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'

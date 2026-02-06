@@ -761,7 +761,7 @@
                 const productData = await productResponse.json();
                 if (!productData.success) throw new Error(productData.message);
 
-                const cartResponse = await fetch('http://localhost:8070/api/user/cart/addtocart', {
+                const cartResponse = await fetch('/api/user/cart/addtocart', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,

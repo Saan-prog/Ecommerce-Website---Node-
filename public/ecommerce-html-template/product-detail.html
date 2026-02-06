@@ -2556,7 +2556,7 @@ function resetZoomLevel() {
       }
       
       try {
-        const response = await fetch('http://localhost:8070/api/user/cart/addtocart', {
+        const response = await fetch('/api/user/cart/addtocart', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
