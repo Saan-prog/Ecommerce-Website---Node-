@@ -53,7 +53,7 @@ const sendPasswordResetEmail = async (email, resetLink) => {
         return result;
     }catch(error){
         console.error('Error sending mail:', error);
-        throw new error('Failed to send Email:' + error.message);
+        throw new Error('Failed to send Email:' + error.message);
     }
 };
 
