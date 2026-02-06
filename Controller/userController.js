@@ -98,7 +98,7 @@ const forgotPassword = async (req, res) => {
 
         // In a real app, you would send an email here
         // For now, we'll return the token (in development only)
-        const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:8070'}/reset-password.html?token=${resetToken}&user=${user._id}`;
+        const resetLink = `${process.env.FRONTEND_URL || 'https://ecommerce-website-node-3.onrender.com/'}/reset-password.html?token=${resetToken}&user=${user._id}`;
         
         console.log("📧 Reset link:", resetLink);
 
