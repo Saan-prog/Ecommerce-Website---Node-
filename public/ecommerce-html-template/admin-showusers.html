@@ -941,7 +941,7 @@
 
           const token = localStorage.getItem("adminToken");
 
-          const response = await fetch("http://localhost:8070/api/admin/users", {
+          const response = await fetch("/api/admin/users", {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -979,7 +979,7 @@
           const token = localStorage.getItem("adminToken");
 
           // Try to fetch from order counts endpoint
-          const response = await fetch("http://localhost:8070/api/admin/users/order-counts", {
+          const response = await fetch("/api/admin/users/order-counts", {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -1008,7 +1008,7 @@
         try {
           const token = localStorage.getItem("adminToken");
 
-          const response = await fetch("http://localhost:8070/api/admin/orders/getAll?limit=1000", {
+          const response = await fetch("/api/admin/orders/getAll?limit=1000", {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -1323,7 +1323,7 @@
         try {
           const token = localStorage.getItem("adminToken");
 
-          const response = await fetch(`http://localhost:8070/api/admin/users/${userId}/block`, {
+          const response = await fetch(`/api/admin/users/${userId}/block`, {
             method: "PATCH",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -1359,7 +1359,7 @@
         try {
           const token = localStorage.getItem("adminToken");
 
-          const response = await fetch(`http://localhost:8070/api/admin/users/${userId}/block`, {
+          const response = await fetch(`/api/admin/users/${userId}/block`, {
             method: "PATCH",
             headers: {
               Authorization: `Bearer ${token}`,

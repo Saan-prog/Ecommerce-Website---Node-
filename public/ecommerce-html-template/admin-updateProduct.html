@@ -513,7 +513,7 @@
                 return;
             }
 
-            const response = await fetch('http://localhost:8070/api/admin/products/getCategories', {
+            const response = await fetch('/api/admin/products/getCategories', {
                 headers: {
                     'Authorization': 'Bearer ' + token,
                     'Content-Type': 'application/json'
@@ -555,7 +555,7 @@
                 return;
             }
 
-            const response = await fetch(`http://localhost:8070/api/admin/products/getSubcategories/${categoryId}`, {
+            const response = await fetch(`/api/admin/products/getSubcategories/${categoryId}`, {
                 headers: {
                     'Authorization': 'Bearer ' + token,
                     'Content-Type': 'application/json'
@@ -608,7 +608,7 @@
                 return;
             }
 
-            const response = await fetch(`http://localhost:8070/api/admin/products/${productId}`, {
+            const response = await fetch(`/api/admin/products/${productId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -919,9 +919,9 @@ function handleImageError(img, index) {
                 console.log(pair[0] + ': ' + (pair[1] instanceof File ? pair[1].name : pair[1]));
             }
 
-            console.log('Making PUT request to:', `http://localhost:8070/api/admin/products/updateProduct/${productId}`);
+            console.log('Making PUT request to:', `/api/admin/products/updateProduct/${productId}`);
             
-            const response = await fetch(`http://localhost:8070/api/admin/products/updateProduct/${productId}`, {
+            const response = await fetch(`/api/admin/products/updateProduct/${productId}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`

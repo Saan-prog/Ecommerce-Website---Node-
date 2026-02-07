@@ -774,7 +774,7 @@
                 
                 document.getElementById('empty-wishlist-message')?.classList.add('d-none');
                 
-                const response = await fetch('http://localhost:8070/api/user/wishlist/all', {
+                const response = await fetch('/api/user/wishlist/all', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -917,7 +917,7 @@
             }
             
             try {
-                const response = await fetch(`http://localhost:8070/api/user/wishlist/remove/${productId}`, {
+                const response = await fetch(`/api/user/wishlist/remove/${productId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`,

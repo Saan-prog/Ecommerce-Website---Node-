@@ -847,7 +847,7 @@
                     try {
                         console.log('Fetching cart from backend with token:', token);
                         
-                        const response = await fetch('http://localhost:8070/api/user/cart/getAll', {
+                        const response = await fetch('/api/user/cart/getAll', {
                             method: 'GET',
                             headers: {
                                 'Authorization': `Bearer ${token}`,
@@ -1180,7 +1180,7 @@
                     try {
                         console.log('Updating backend quantity for product:', productId, 'quantity:', newQuantity, 'size:', size);
                         
-                        const response = await fetch(`http://localhost:8070/api/user/cart/updateCart/${productId}`, {
+                        const response = await fetch(`/api/user/cart/updateCart/${productId}`, {
                             method: 'PUT',
                             headers: {
                                 'Authorization': `Bearer ${token}`,
@@ -1258,7 +1258,7 @@
                         console.log('Removing from backend product:', productId, 'size:', size);
                         
                         // Backend expects DELETE with productId in URL and size as query parameter
-                        const response = await fetch(`http://localhost:8070/api/user/cart/removeCartItem/${productId}?size=${encodeURIComponent(size)}`, {
+                        const response = await fetch(`/api/user/cart/removeCartItem/${productId}?size=${encodeURIComponent(size)}`, {
                             method: 'DELETE',
                             headers: {
                                 'Authorization': `Bearer ${token}`,
@@ -1312,7 +1312,7 @@
 
                 async function clearBackendCart() {
                     try {
-                        const response = await fetch('http://localhost:8070/api/user/cart', {
+                        const response = await fetch('/api/user/cart', {
                             method: 'DELETE',
                             headers: {
                                 'Authorization': `Bearer ${token}`,
@@ -1361,7 +1361,7 @@
                     try {
                         // 1. Get fresh cart data from backend
                         console.log('Fetching fresh cart data for checkout...');
-                        const response = await fetch('http://localhost:8070/api/user/cart/getAll', {
+                        const response = await fetch('/api/user/cart/getAll', {
                             headers: { 'Authorization': `Bearer ${token}` }
                         });
                         

@@ -631,7 +631,7 @@ document.getElementById("adminLoginForm").addEventListener("submit", async funct
     
     try {
         // Try the API call first
-        const response = await fetch("http://localhost:8070/api/admin/login", {
+        const response = await fetch("/api/admin/login", {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json"
@@ -737,7 +737,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Add this to help debug - check if API is reachable
 async function checkApiStatus() {
     try {
-        const response = await fetch('http://localhost:8070/api/admin/login', { method: 'HEAD' });
+        const response = await fetch('/api/admin/login', { method: 'HEAD' });
         console.log('✅ API is reachable');
     } catch (error) {
         console.warn('❌ API is not reachable:', error.message);

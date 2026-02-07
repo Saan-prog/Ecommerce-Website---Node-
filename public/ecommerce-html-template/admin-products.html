@@ -723,7 +723,7 @@
       const token = localStorage.getItem("adminToken");
       if (!token) return;
 
-      const response = await fetch("http://localhost:8070/api/admin/products/getCategories", {
+      const response = await fetch("/api/admin/products/getCategories", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -760,7 +760,7 @@
       console.log(`Loading subcategories for category: ${categoryId}`);
 
       const response = await fetch(
-        `http://localhost:8070/api/admin/products/getSubcategories/${categoryId}`,
+        `/api/admin/products/getSubcategories/${categoryId}`,
         {
           headers: {
             Authorization: "Bearer " + token,
@@ -824,11 +824,11 @@
       if (filters.isAvailable) params.append("isAvailable", filters.isAvailable);
       if (filters.sort) params.append("sort", filters.sort);
 
-       console.log("🔍 Making request to:", `http://localhost:8070/api/admin/products?${params.toString()}`);
+       console.log("🔍 Making request to:", `/api/admin/products?${params.toString()}`);
 
       // Make API request WITH AUTHORIZATION HEADER
       const response = await fetch(
-        `http://localhost:8070/api/admin/products?${params.toString()}`,
+        `/api/admin/products?${params.toString()}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -891,7 +891,7 @@
       let categoriesData = {};
       if (categoryIds.length > 0) {
         const categoriesResponse = await fetch(
-          `http://localhost:8070/api/admin/products/getCategories`,
+          `/api/admin/products/getCategories`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -992,7 +992,7 @@ function renderProductsTable(products) {
       statusText = "Out of Stock";
       break;
   }
-  
+
         const productRow = `
         <tr>
           <td>
@@ -1183,7 +1183,7 @@ function generateRatingStars(rating) {
 
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch(`http://localhost:8070/api/admin/products/${productId}`, {
+      const response = await fetch(`/api/admin/products/${productId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

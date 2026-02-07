@@ -1026,7 +1026,7 @@
         async function fetchProductDetails(productId, token) {
             try {
                 // Fetch product details from your API
-                const response = await fetch(`http://localhost:8070/api/products/${productId}`, {
+                const response = await fetch(`/api/products/${productId}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -1347,7 +1347,7 @@
                 }
                 
                 // Submit review to backend API
-                const response = await fetch('http://localhost:8070/api/user/cart/order/reviews/add', {
+                const response = await fetch('/api/user/cart/order/reviews/add', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,

@@ -724,7 +724,7 @@
             const container = document.getElementById("categories-container");
             container.innerHTML = '<div class="loading">Loading categories...</div>';
 
-            const response = await fetch('http://localhost:8070/api/admin/category/all/subcategory', {
+            const response = await fetch('/api/admin/category/all/subcategory', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -955,7 +955,7 @@
         if (confirm(message)) {
             try {
                 const token = localStorage.getItem('adminToken');
-                const response = await fetch(`http://localhost:8070/api/admin/category/all/${categoryId}`, {
+                const response = await fetch(`/api/admin/category/all/${categoryId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -994,11 +994,11 @@
 
             if (currentEditingId) {
                 // Edit existing category
-                url = `http://localhost:8070/api/admin/category/all/${currentEditingId}`;
+                url = `/api/admin/category/all/${currentEditingId}`;
                 method = 'PUT';
             } else {
                 // Add new category
-                url = 'http://localhost:8070/api/admin/category/all';
+                url = '/api/admin/category/all';
                 method = 'POST';
             }
 
