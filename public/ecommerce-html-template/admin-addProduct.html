@@ -611,7 +611,7 @@
         console.log(`${key}:`, value instanceof File ? `${value.name} (${value.size} bytes)` : value);
       }
 
-      const response = await fetch("/api/admin/products/addProduct", {
+      const response = await fetch("http://localhost:8070/api/admin/products/addProduct", {
         method: "POST",
         headers: {
           Authorization: "Bearer " + token,
@@ -663,7 +663,7 @@
       }
 
       const response = await fetch(
-        "/api/admin/products/getCategories",
+        "http://localhost:8070/api/admin/products/getCategories",
         {
           headers: {
             Authorization: "Bearer " + token,
@@ -711,7 +711,7 @@
       }
 
       const response = await fetch(
-        `/api/admin/products/getSubcategories/${categoryId}`,
+        `http://localhost:8070/api/admin/products/getSubcategories/${categoryId}`,
         {
           headers: {
             Authorization: "Bearer " + token,

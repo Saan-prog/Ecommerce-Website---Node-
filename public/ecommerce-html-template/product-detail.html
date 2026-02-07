@@ -1246,7 +1246,7 @@
 
       try {
         showLoading();
-        const response = await fetch(`/api/user/products/${productId}`);
+        const response = await fetch(`http://localhost:8070/api/user/products/${productId}`);
         
         if (!response.ok) {
           throw new Error("Product not found");
@@ -1402,7 +1402,7 @@
       try {
         console.log(`Fetching reviews for product: ${productId}`);
         
-        const response = await fetch(`/api/user/products/${productId}/reviews`);
+        const response = await fetch(`http://localhost:8070/api/user/products/${productId}/reviews`);
         
         console.log(`Response status: ${response.status}`);
         
@@ -2116,7 +2116,7 @@ function resetZoomLevel() {
       }
       
       try {
-        const response = await fetch("/api/user/cart/addtocart", {
+        const response = await fetch("http://localhost:8070/api/user/cart/addtocart", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -2227,7 +2227,7 @@ function resetZoomLevel() {
     async function loadSidebarData() {
       try {
         // Load categories
-        const catResponse = await fetch("/api/user/category/all");
+        const catResponse = await fetch("http://localhost:8070/api/user/category/all");
         if (catResponse.ok) {
           const catData = await catResponse.json();
           if (catData.success && catData.data) {
@@ -2315,7 +2315,7 @@ function resetZoomLevel() {
         let products = [];
 
         // Try featured products first
-        const featuredResponse = await fetch("/api/user/products?featured=true&limit=5");
+        const featuredResponse = await fetch("http://localhost:8070/api/user/products?featured=true&limit=5");
         if (featuredResponse.ok) {
           const featuredData = await featuredResponse.json();
           if (featuredData.success && featuredData.products && featuredData.products.length > 0) {
@@ -2325,7 +2325,7 @@ function resetZoomLevel() {
 
         // If no featured products, try latest products
         if (products.length === 0) {
-          const latestResponse = await fetch("/api/user/products?limit=5&sort=-createdAt");
+          const latestResponse = await fetch("http://localhost:8070/api/user/products?limit=5&sort=-createdAt");
           if (latestResponse.ok) {
             const latestData = await latestResponse.json();
             if (latestData.success && latestData.products) {
@@ -2556,7 +2556,7 @@ function resetZoomLevel() {
       }
       
       try {
-        const response = await fetch('/api/user/cart/addtocart', {
+        const response = await fetch('http://localhost:8070/api/user/cart/addtocart', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

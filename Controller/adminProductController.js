@@ -228,7 +228,7 @@ const addProduct = async (req, res) => {
         }
 
         // Extract filenames only (matches schema)
-        const images = req.files.map(file => file.filename);
+        const images = req.files.map(file => file.path);
 
         // Create product
         const newProduct = new Product({
@@ -261,10 +261,10 @@ const addProduct = async (req, res) => {
         const productResponse = populatedProduct.toObject();
 
         // Build full URLs for frontend
-        productResponse.images = productResponse.image.map(filename => ({
-            filename,
-            url: `/uploads/${filename}`,
-        }));
+        // productResponse.images = productResponse.image.map(filename => ({
+        //     filename,
+        //     url: `/uploads/${filename}`,
+        // }));
 
         return res.status(201).json({
             success: true,
@@ -335,43 +335,16 @@ const updateProduct = async (req, res) => {
         if (isAvailable !== undefined) updateData.isAvailable = isAvailable === 'true';
 
         // CRITICAL FIX: Handle image replacement
-        if (req.files && req.files.length > 0) {
-            console.log('Received new files:', req.files.length, 'files');
-            
-            // 1. Get new image paths
-            const uploadedImages = req.files.map(file => 
-                file.path.replace(/\\/g, '/')
-            );
-            
-            // 2. Remove duplicates from new uploads
-            const uniqueImages = [...new Set(uploadedImages)];
-            
-            // 3. Set ONLY the new images (REPLACE, not append)
-            updateData.image = uniqueImages.slice(0, 5);
-            
-            console.log('Setting new images:', updateData.image);
-            
-            // 4. Optional: Delete old image files from server
-            // (If you want to physically delete old files)
-            if (existingProduct.image && existingProduct.image.length > 0) {
-                const fs = require('fs').promises;
-                const path = require('path');
-                
-                for (const oldImage of existingProduct.image) {
-                    try {
-                        const fullPath = path.join(__dirname, '..', oldImage);
-                        await fs.unlink(fullPath);
-                        console.log('Deleted old image:', oldImage);
-                    } catch (err) {
-                        console.log('Could not delete old image:', oldImage, err.message);
-                        // Continue even if deletion fails
-                    }
-                }
-            }
-        } else {
-            // If no new files, keep existing images
-            updateData.image = existingProduct.image;
-        }
+        // Handle image replacement (Cloudinary)
+if (req.files && req.files.length > 0) {
+    const uploadedImages = req.files.map(file => file.secure_url);
+
+    // Remove duplicates & limit to 5
+    updateData.image = [...new Set(uploadedImages)].slice(0, 5);
+} else {
+    // Keep existing images
+    updateData.image = existingProduct.image;
+}
 
         // Update the product
         const updatedProduct = await Product.findByIdAndUpdate(

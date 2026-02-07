@@ -1319,7 +1319,7 @@
             if (!token) return;
 
             try {
-                const response = await fetch("/api/user/cart/getAll", {
+                const response = await fetch("http://localhost:8070/api/user/cart/getAll", {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -1548,7 +1548,7 @@
             }
 
             try {
-                const response = await fetch("/api/user/addresses", {
+                const response = await fetch("http://localhost:8070/api/user/addresses", {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -1759,7 +1759,7 @@
         async function fetchAndDisplayCoupons(token, subtotal) {
             try {
                 // Try to fetch coupons from your backend API
-                const response = await fetch('/api/user/coupon/getAll', {
+                const response = await fetch('http://localhost:8070/api/user/coupon/getAll', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -1987,7 +1987,7 @@
 
             try {
                 // Call your backend API
-                const response = await fetch('/api/user/coupon/validate', {
+                const response = await fetch('http://localhost:8070/api/user/coupon/validate', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -2133,7 +2133,7 @@
                     },
                 };
 
-                const orderEndpoint = `/api/user/cart/order/checkout`;
+                const orderEndpoint = `http://localhost:8070/api/user/cart/order/checkout`;
 
                 const orderResponse = await fetch(orderEndpoint, {
                     method: "POST",
@@ -2176,7 +2176,7 @@
                         showLoading("Verifying payment...");
 
                         try {
-                            const verifyResponse = await fetch("/api/user/cart/order/verifyPayment", {
+                            const verifyResponse = await fetch("http://localhost:8070/api/user/cart/order/verifyPayment", {
                                 method: "POST",
                                 headers: {
                                     Authorization: `Bearer ${token}`,
@@ -2332,7 +2332,7 @@
                     couponCode: appliedCoupon ? appliedCoupon.code : null,
                 };
 
-                const orderEndpoint = `/api/user/cart/order/checkout`;
+                const orderEndpoint = `http://localhost:8070/api/user/cart/order/checkout`;
 
                 const orderResponse = await fetch(orderEndpoint, {
                     method: "POST",

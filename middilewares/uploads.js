@@ -1,33 +1,24 @@
 const multer = require("multer");
-const path = require("path");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("./cloudinary");
 
-// Storage
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, "uploads");
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
+// Cloudinary storage
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "shopstyle/products",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    transformation: [{ width: 800, height: 800, crop: "limit" }],
+  },
 });
-
-// File filter
-function fileFilter(req, file, cb) {
-    const ext = path.extname(file.originalname).toLowerCase();
-    if (![".jpg", ".jpeg", ".png", ".webp"].includes(ext)) {
-        return cb(new Error("Only images are allowed"), false);
-    }
-    cb(null, true);
-}
 
 // Multer instance
 const upload = multer({
-    storage,
-    fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 }
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 });
 
-//  <-- THIS IS WHERE YOU DEFINE
+// SAME as your existing export
 const uploadProductImages = upload.array("image", 5);
 
 module.exports = { uploadProductImages };

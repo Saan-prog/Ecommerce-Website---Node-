@@ -1447,7 +1447,7 @@
         function updateCartCount() {
             const token = localStorage.getItem("token");
             if (token) {
-                fetch('/api/user/cart/getAll', {
+                fetch('http://localhost:8070/api/user/cart/getAll', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -1486,7 +1486,7 @@
             }
             
             try {
-                const response = await fetch("/api/user/reviews/get", {
+                const response = await fetch("http://localhost:8070/api/user/reviews/get", {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -1528,7 +1528,7 @@
             try {
                 // Fetch orders and reviews in parallel
                 const [ordersResponse, userReviews] = await Promise.all([
-                    fetch("/api/user/cart/order/getAll", {
+                    fetch("http://localhost:8070/api/user/cart/order/getAll", {
                         method: "GET",
                         headers: {
                             "Authorization": `Bearer ${token}`,
@@ -2111,7 +2111,7 @@
             
             try {
                 // Send to backend API
-                const response = await fetch("/api/user/cart/order/reviews/add", {
+                const response = await fetch("http://localhost:8070/api/user/cart/order/reviews/add", {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -2257,7 +2257,7 @@
             const token = localStorage.getItem("token");
             
             try {
-                const response = await fetch(`/api/user/cart/order/${orderId}`, {
+                const response = await fetch(`http://localhost:8070/api/user/cart/order/${orderId}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -2290,7 +2290,7 @@
             const token = localStorage.getItem("token");
             
             try {
-                const response = await fetch(`/api/user/cart/order/${orderId}/invoice`, {
+                const response = await fetch(`http://localhost:8070/api/user/cart/order/${orderId}/invoice`, {
                     headers: { 
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'

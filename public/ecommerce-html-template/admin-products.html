@@ -723,7 +723,7 @@
       const token = localStorage.getItem("adminToken");
       if (!token) return;
 
-      const response = await fetch("/api/admin/products/getCategories", {
+      const response = await fetch("http://localhost:8070/api/admin/products/getCategories", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -760,7 +760,7 @@
       console.log(`Loading subcategories for category: ${categoryId}`);
 
       const response = await fetch(
-        `/api/admin/products/getSubcategories/${categoryId}`,
+        `http://localhost:8070/api/admin/products/getSubcategories/${categoryId}`,
         {
           headers: {
             Authorization: "Bearer " + token,
@@ -824,11 +824,11 @@
       if (filters.isAvailable) params.append("isAvailable", filters.isAvailable);
       if (filters.sort) params.append("sort", filters.sort);
 
-       console.log("🔍 Making request to:", `/api/admin/products?${params.toString()}`);
+       console.log("🔍 Making request to:", `http://localhost:8070/api/admin/products?${params.toString()}`);
 
       // Make API request WITH AUTHORIZATION HEADER
       const response = await fetch(
-        `/api/admin/products?${params.toString()}`,
+        `http://localhost:8070/api/admin/products?${params.toString()}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -891,7 +891,7 @@
       let categoriesData = {};
       if (categoryIds.length > 0) {
         const categoriesResponse = await fetch(
-          `/api/admin/products/getCategories`,
+          `http://localhost:8070/api/admin/products/getCategories`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -951,24 +951,7 @@ function renderProductsTable(products) {
         return;
     }
 
-//     products.forEach((product) => {
-//        console.log("Product image data:", product.image);
-//         // Get the first image from the array or use placeholder
-//         let productImage = "https://via.placeholder.com/60x60?text=No+Image";
-//    if (product.image && Array.isArray(product.image) && product.image.length > 0) {
-//     let rawImage = product.image[0];
-
-//      if (typeof rawImage === 'object' && rawImage.url) {
-//             rawImage = rawImage.url;
-//         }
-//     // Clean up path
-//     productImage = `/uploads/${rawImage.replace(/\\/g, '/')}`;
-//     console.log("Constructed image path:", productImage);
-    
-// } else if (typeof product.image === 'string' && product.image.trim() !== '') {
-//     productImage = `/uploads/${product.image.replace(/\\/g, '/')}`;
-// }
-       products.forEach((product) => {
+    products.forEach((product) => {
     console.log("Product image data:", product.image);
     
     // Get the first image from the array or use placeholder
@@ -977,68 +960,39 @@ function renderProductsTable(products) {
     if (product.image && Array.isArray(product.image) && product.image.length > 0) {
         let rawImage = product.image[0];
 
-        // Handle object format
-        if (typeof rawImage === 'object' && rawImage.url) {
-            rawImage = rawImage.url;
+        // If it's already a Cloudinary URL, use it directly
+        if (typeof rawImage === 'string' && 
+            (rawImage.includes('cloudinary.com') || rawImage.startsWith('http'))) {
+            productImage = rawImage;
+            console.log("Cloudinary URL detected:", productImage);
+        } else if (typeof rawImage === 'object' && rawImage.url) {
+            // Handle object format
+            productImage = rawImage.url;
+        } else if (typeof rawImage === 'string') {
+            // For backward compatibility with old paths
+            productImage = `/uploads/${rawImage.replace(/\\/g, '/').replace(/^\/+/, '')}`;
         }
+      }
 
-        // Clean up path - FIXED VERSION
-        if (typeof rawImage === 'string' && rawImage.trim() !== '') {
-            // First, fix backslashes
-            rawImage = rawImage.replace(/\\/g, '/');
-            
-            // Remove any leading slashes
-            rawImage = rawImage.replace(/^\/+/, '');
-            
-            // Check if it already starts with 'uploads/'
-            if (rawImage.startsWith('uploads/')) {
-                // If it already has 'uploads/', remove it first
-                rawImage = rawImage.replace(/^uploads\//, '');
-            }
-            
-            // Now construct the path
-            productImage = `/uploads/${rawImage}`;
-            console.log("Constructed image path:", productImage);
-        }
-        
-    } else if (typeof product.image === 'string' && product.image.trim() !== '') {
-        // Handle single string image
-        let rawImage = product.image.replace(/\\/g, '/');
-        rawImage = rawImage.replace(/^\/+/, '');
-        
-        // Check if it already starts with 'uploads/'
-        if (rawImage.startsWith('uploads/')) {
-            rawImage = rawImage.replace(/^uploads\//, '');
-        }
-        
-        productImage = `/uploads/${rawImage}`;
-    } 
-        // Determine status based on product.status
-        let statusText = "";
-        let statusClass = "";
+       // ✅ ADD THIS
+  let statusClass = "status-inactive";
+  let statusText = "Inactive";
 
-        switch (product.status) {
-            case "active":
-                statusText = "Active";
-                statusClass = "status-active";
-                break;
-            case "inactive":
-                statusText = "Inactive";
-                statusClass = "status-inactive";
-                break;
-            case "discontinued":
-                statusText = "Discontinued";
-                statusClass = "status-discontinued";
-                break;
-            case "out_of_stock":
-                statusText = "Out of Stock";
-                statusClass = "status-out-of-stock";
-                break;
-            default:
-                statusText = product.status || "Unknown";
-                statusClass = "status-unknown";
-        }
-
+  switch (product.status) {
+    case "active":
+      statusClass = "status-active";
+      statusText = "Active";
+      break;
+    case "discontinued":
+      statusClass = "status-discontinued";
+      statusText = "Discontinued";
+      break;
+    case "out_of_stock":
+      statusClass = "status-out-of-stock";
+      statusText = "Out of Stock";
+      break;
+  }
+  
         const productRow = `
         <tr>
           <td>
@@ -1082,7 +1036,8 @@ function renderProductsTable(products) {
       tableBody.innerHTML += productRow;
     });
 }
-  function generateRatingStars(rating) {
+  
+function generateRatingStars(rating) {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     let starsHTML = "";
@@ -1228,7 +1183,7 @@ function renderProductsTable(products) {
 
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch(`/api/admin/products/${productId}`, {
+      const response = await fetch(`http://localhost:8070/api/admin/products/${productId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

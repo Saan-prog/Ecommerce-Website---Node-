@@ -323,7 +323,7 @@
                                 <div class="form-container">
                                     <h2 class="form-title">Welcome Back</h2>
                                     <div class="form-content">
-                                        <form id="loginForm" action="/api/user/login" method="POST" class="login-form-horizontal">
+                                        <form id="loginForm" action="http://localhost:8070/api/user/login" method="POST" class="login-form-horizontal">
                                             <div class="form-row">
                                                 <label for="email">E-mail / Username</label>
                                                 <input class="form-control" type="text" id="email" name="email" placeholder="E-mail or Username" required>
@@ -355,7 +355,7 @@
                                 <div class="form-container">
                                     <h2 class="form-title">Create Account</h2>
                                     <div class="form-content">
-                                        <form id="signupForm" action="/api/user/signup" method="POST">
+                                        <form id="signupForm" action="http://localhost:8070/api/user/signup" method="POST">
                                             <div class="form-row">
                                                 <label>Full Name</label>
                                                 <input class="form-control" type="text" name="name" placeholder="Full Name" required>
@@ -752,7 +752,7 @@
             }
 
             try {
-                const productResponse = await fetch(`/api/user/products/${productId}`, {
+                const productResponse = await fetch(`http://localhost:8070/api/user/products/${productId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
@@ -761,7 +761,7 @@
                 const productData = await productResponse.json();
                 if (!productData.success) throw new Error(productData.message);
 
-                const cartResponse = await fetch('/api/user/cart/addtocart', {
+                const cartResponse = await fetch('http://localhost:8070/api/user/cart/addtocart', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -824,7 +824,7 @@
             };
 
             try {
-                const response = await fetch("/api/user/login", {
+                const response = await fetch("http://localhost:8070/api/user/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(formData),
@@ -877,7 +877,7 @@
             };
 
             try {
-                const response = await fetch("/api/user/signup", {
+                const response = await fetch("http://localhost:8070/api/user/signup", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(formData),

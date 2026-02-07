@@ -1027,7 +1027,7 @@
 
         try {
           console.log("🛒 Loading cart count...");
-          const response = await fetch("/api/user/cart/getAll", {
+          const response = await fetch("http://localhost:8070/api/user/cart/getAll", {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -1104,7 +1104,7 @@
 
         try {
           console.log("🔍 Loading addresses...");
-          const response = await fetch("/api/user/addresses", {
+          const response = await fetch("http://localhost:8070/api/user/addresses", {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -1371,8 +1371,8 @@
 
         try {
           const url = isEdit
-            ? `/api/user/addresses/${addressId}`
-            : "/api/user/addresses";
+            ? `http://localhost:8070/api/user/addresses/${addressId}`
+            : "http://localhost:8070/api/user/addresses";
           const method = isEdit ? "PUT" : "POST";
 
           console.log("📤 Saving address:", {
@@ -1473,7 +1473,7 @@
 
           const token = localStorage.getItem("token");
           try {
-            const response = await fetch(`/api/user/addresses/${addressId}`, {
+            const response = await fetch(`http://localhost:8070/api/user/addresses/${addressId}`, {
               method: "DELETE",
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -1510,7 +1510,7 @@
 
         const token = localStorage.getItem("token");
         try {
-          const response = await fetch(`/api/user/addresses/${addressId}`, {
+          const response = await fetch(`http://localhost:8070/api/user/addresses/${addressId}`, {
             method: "PUT",
             headers: {
               Authorization: `Bearer ${token}`,

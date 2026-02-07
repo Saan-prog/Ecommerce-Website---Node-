@@ -23,42 +23,18 @@ const listProducts = async (req, res) => {
         ]);
 
         // Transform products to include full image URL
-        const transformedProducts = products.map(product => {
-            // Get the first image from the image array
-            let imageFilename = '';
-            
-            if (product.image && Array.isArray(product.image) && product.image.length > 0) {
-                imageFilename = product.image[0];
-            }
-            
-            // DEBUG: Log what's in the database
-            console.log(`Product: ${product.name}, Image array: ${JSON.stringify(product.image)}, First image: ${imageFilename}`);
-            
-            // Create full image URL - FIXED: Check if filename already has path
-            let imageUrl = '/img/product-1.jpg'; // Default
-            
-            if (imageFilename) {
-                // Check if filename already contains 'uploads/'
-                if (imageFilename.includes('uploads/')) {
-                    // Remove any duplicate 'uploads/' prefix and ensure single slash
-                    imageFilename = imageFilename.replace(/^\/?uploads\//, '');
-                    imageUrl = `/uploads/${imageFilename}`;
-                } else if (imageFilename.startsWith('/')) {
-                    // If it already starts with /, use as is
-                    imageUrl = imageFilename;
-                } else {
-                    // Otherwise, add /uploads/ prefix
-                    imageUrl = `/uploads/${imageFilename}`;
-                }
-            }
-            
-            console.log(`Final image URL: ${imageUrl}`);
-            
-            return {
-                ...product,
-                image: imageUrl
-            };
-        });
+const transformedProducts = products.map(product => {
+    let imageUrl = '/img/product-1.jpg'; // Default fallback
+
+    if (product.image && Array.isArray(product.image) && product.image.length > 0) {
+        imageUrl = product.image[0]; // Cloudinary URL
+    }
+
+    return {
+        ...product,
+        image: imageUrl
+    };
+});
 
         const totalPages = Math.ceil(totalProducts / limitNum);
         

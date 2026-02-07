@@ -931,10 +931,10 @@
             params.append("status", status);
           }
 
-          console.log("Fetching orders from:", `/api/admin/orders/getAll?${params.toString()}`);
+          console.log("Fetching orders from:", `http://localhost:8070/api/admin/orders/getAll?${params.toString()}`);
 
           const response = await fetch(
-            `/api/admin/orders/getAll?${params.toString()}`,
+            `http://localhost:8070/api/admin/orders/getAll?${params.toString()}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,

@@ -712,7 +712,7 @@
     // ========== LOAD CATEGORIES ==========
     async function loadCategories() {
       try {
-        const response = await fetch('/api/user/category/all');
+        const response = await fetch('http://localhost:8070/api/user/category/all');
 
         if (!response.ok) {
           throw new Error(`Failed to fetch categories: ${response.status}`);
@@ -879,7 +879,7 @@
     // ========== LOAD FEATURED PRODUCTS ==========
     async function loadFeaturedProducts() {
       try {
-        const response = await fetch('/api/user/products?featured=true&limit=8');
+        const response = await fetch('http://localhost:8070/api/user/products?featured=true&limit=8');
 
         if (!response.ok) {
           throw new Error('Failed to fetch featured products');
@@ -920,7 +920,7 @@
     // ========== LOAD RECENT PRODUCTS ==========
     async function loadRecentProducts() {
       try {
-        const response = await fetch('/api/user/products?sort=-createdAt&limit=8');
+        const response = await fetch('http://localhost:8070/api/user/products?sort=-createdAt&limit=8');
 
         if (!response.ok) {
           throw new Error('Failed to fetch recent products');
@@ -1087,7 +1087,7 @@
 
       try {
         // First add product to cart
-        const cartResponse = await fetch('/api/user/cart/addtocart', {
+        const cartResponse = await fetch('http://localhost:8070/api/user/cart/addtocart', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -1137,7 +1137,7 @@
       }
 
       try {
-        const cartResponse = await fetch('/api/user/cart/addtocart', {
+        const cartResponse = await fetch('http://localhost:8070/api/user/cart/addtocart', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -1178,16 +1178,19 @@
       }
 
       if (typeof imagePath === 'string' && imagePath.trim()) {
-        let path = imagePath.trim();
-        while (path.startsWith('uploads/')) {
-          path = path.replace('uploads/', '');
-        }
+         if (imagePath.includes('cloudinary.com') || imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    let path = imagePath.trim();
+    while (path.startsWith('uploads/')) {
+      path = path.replace('uploads/', '');
+    }
 
-        if (path.startsWith('http') || path.startsWith('/')) {
-          return path;
-        } else if (path.includes('.')) {
-          return `/uploads/${path}`;
-        }
+       if (path.startsWith('/')) {
+      return path;
+    } else if (path.includes('.')) {
+      return `/uploads/${path}`;
+    }
       }
       return defaultImage;
     }

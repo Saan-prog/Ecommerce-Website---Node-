@@ -838,7 +838,7 @@
             const token = localStorage.getItem('adminToken');
             console.log('Token exists:', !!token);
             
-            const response = await fetch('/api/admin/category/all', {
+            const response = await fetch('http://localhost:8070/api/admin/category/all', {
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
@@ -876,7 +876,7 @@
     async function loadCategoriesForStats() {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch('/api/admin/category/all/subcategory', {
+            const response = await fetch('http://localhost:8070/api/admin/category/all/subcategory', {
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
@@ -899,7 +899,7 @@
     async function loadAllSubcategoriesForStats() {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch('/api/admin/category/all/subcategory', {
+            const response = await fetch('http://localhost:8070/api/admin/category/all/subcategory', {
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
@@ -991,7 +991,7 @@
     async function loadSubcategoriesByCategory(categoryId) {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`/api/admin/category/subcategories/${categoryId}`, {
+            const response = await fetch(`http://localhost:8070/api/admin/category/subcategories/${categoryId}`, {
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
@@ -1097,7 +1097,7 @@
             const token = localStorage.getItem('adminToken');
             
             // First, we need to get all categories to map subcategories to their parent categories
-            const categoriesResponse = await fetch('/api/admin/category/all/subcategory', {
+            const categoriesResponse = await fetch('http://localhost:8070/api/admin/category/all/subcategory', {
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
@@ -1187,7 +1187,7 @@
     async function loadCategoriesForModal() {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch('/api/admin/category/all/subcategory', {
+            const response = await fetch('http://localhost:8070/api/admin/category/all/subcategory', {
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
@@ -1230,7 +1230,7 @@
             
             // Temporary workaround: We'll load the current category's subcategories and find the one we want
             if (currentCategoryId) {
-                const response = await fetch(`/api/admin/category/subcategories/${currentCategoryId}`, {
+                const response = await fetch(`http://localhost:8070/api/admin/category/subcategories/${currentCategoryId}`, {
                     headers: {
                         'Authorization': 'Bearer ' + token
                     }
@@ -1293,7 +1293,7 @@
 
         try {
             const token = localStorage.getItem('adminToken');
-            const url = '/api/admin/category/subcategories';
+            const url = 'http://localhost:8070/api/admin/category/subcategories';
             const method = 'POST';
             const bodyData = {
                 name,
@@ -1305,7 +1305,7 @@
             if (isEditMode) {
                 // Note: You need a PUT route for updating subcategories
                 // Currently your routes don't have one
-                notyf.info('Edit functionality requires a PUT endpoint: PUT /api/admin/category/subcategories/:id');
+                notyf.info('Edit functionality requires a PUT endpoint: PUT http://localhost:8070/api/admin/category/subcategories/:id');
                 return;
             }
             
@@ -1353,7 +1353,7 @@
             const token = localStorage.getItem('adminToken');
             // Note: You need a DELETE route for subcategories
             // Currently your routes don't have one
-            notyf.info('Delete functionality requires a DELETE endpoint: DELETE /api/admin/category/subcategories/:id');
+            notyf.info('Delete functionality requires a DELETE endpoint: DELETE http://localhost:8070/api/admin/category/subcategories/:id');
             
             // If you add the DELETE route, implement the fetch call here
             

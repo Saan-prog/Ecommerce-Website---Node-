@@ -951,7 +951,7 @@
     // ========== LOAD CATEGORIES ==========
     async function loadCategories() {
       try {
-        const response = await fetch('/api/user/category/all');
+        const response = await fetch('http://localhost:8070/api/user/category/all');
         
         if (!response.ok) {
           throw new Error('Failed to fetch categories');
@@ -1091,7 +1091,7 @@
         // Update page header
         updateSearchHeader(searchQuery);
 
-        const response = await fetch(`/api/user/search/${encodeURIComponent(searchQuery)}?page=1&limit=${productsPerPage}`);
+        const response = await fetch(`http://localhost:8070/api/user/search/${encodeURIComponent(searchQuery)}?page=1&limit=${productsPerPage}`);
         
         console.log('Search response status:', response.status);
         
@@ -1192,7 +1192,7 @@
 
         console.log('Loading products with params:', queryParams);
         
-        const response = await fetch(`/api/user/products?${queryParams}`);
+        const response = await fetch(`http://localhost:8070/api/user/products?${queryParams}`);
 
         if (!response.ok) throw new Error("Failed to load products");
 
@@ -1392,7 +1392,7 @@
           </div>
         `;
 
-        const response = await fetch(`/api/user/search/${encodeURIComponent(searchQuery)}?page=${page}&limit=${productsPerPage}`);
+        const response = await fetch(`http://localhost:8070/api/user/search/${encodeURIComponent(searchQuery)}?page=${page}&limit=${productsPerPage}`);
         
         if (!response.ok) {
           throw new Error(`Search failed: ${response.status}`);
@@ -1518,7 +1518,7 @@
       }
       
       try {
-        const response = await fetch('/api/user/wishlist/add', {
+        const response = await fetch('http://localhost:8070/api/user/wishlist/add', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -1554,7 +1554,7 @@
       }
       
       try {
-        const response = await fetch('/api/user/cart/addtocart', {
+        const response = await fetch('http://localhost:8070/api/user/cart/addtocart', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -1644,7 +1644,7 @@
     // ========== FEATURED PRODUCTS SIDEBAR ==========
     async function loadFeaturedProductsSidebar() {
       try {
-        const response = await fetch('/api/user/products?featured=true&limit=5');
+        const response = await fetch('http://localhost:8070/api/user/products?featured=true&limit=5');
         
         if (!response.ok) {
           throw new Error('Failed to fetch featured products');

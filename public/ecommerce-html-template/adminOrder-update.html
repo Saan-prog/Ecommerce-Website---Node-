@@ -1058,7 +1058,7 @@
 
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch(`/api/admin/orders/getAll/${orderId}`, {
+      const response = await fetch(`http://localhost:8070/api/admin/orders/getAll/${orderId}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -1244,7 +1244,7 @@ notyf.error("Session expired. Please login again.");
     
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch(`/api/admin/orders/getAll/${currentOrder._id}`, {
+      const response = await fetch(`http://localhost:8070/api/admin/orders/getAll/${currentOrder._id}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,

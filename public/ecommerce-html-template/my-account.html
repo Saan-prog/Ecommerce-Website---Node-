@@ -788,7 +788,7 @@
             console.log("🚀 Starting to fetch user profile...");
 
             // Call your actual backend API
-            const response = await fetch("/api/user/profile", {
+            const response = await fetch("http://localhost:8070/api/user/profile", {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
@@ -875,7 +875,7 @@
 
             console.log("🔄 Updating profile with:", formData);
 
-            const updateResponse = await fetch("/api/user/profile", {
+            const updateResponse = await fetch("http://localhost:8070/api/user/profile", {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
@@ -983,7 +983,7 @@
             };
 
             // Call your password update API
-            const passwordResponse = await fetch("/api/user/change-password", {
+            const passwordResponse = await fetch("http://localhost:8070/api/user/change-password", {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",

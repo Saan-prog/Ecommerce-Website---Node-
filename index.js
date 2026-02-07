@@ -46,7 +46,7 @@ app.use("/api/user/coupon", userCouponRoutes);
 app.use("/api/admin/dashboard", adminDashboardRoutes);
 // app.use("/api/admin/category", adminSubcategories);
 // Static files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "public", "ecommerce-html-template")));
 

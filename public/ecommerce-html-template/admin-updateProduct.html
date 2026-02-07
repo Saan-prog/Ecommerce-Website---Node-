@@ -513,7 +513,7 @@
                 return;
             }
 
-            const response = await fetch('/api/admin/products/getCategories', {
+            const response = await fetch('http://localhost:8070/api/admin/products/getCategories', {
                 headers: {
                     'Authorization': 'Bearer ' + token,
                     'Content-Type': 'application/json'
@@ -555,7 +555,7 @@
                 return;
             }
 
-            const response = await fetch(`/api/admin/products/getSubcategories/${categoryId}`, {
+            const response = await fetch(`http://localhost:8070/api/admin/products/getSubcategories/${categoryId}`, {
                 headers: {
                     'Authorization': 'Bearer ' + token,
                     'Content-Type': 'application/json'
@@ -608,7 +608,7 @@
                 return;
             }
 
-            const response = await fetch(`/api/admin/products/${productId}`, {
+            const response = await fetch(`http://localhost:8070/api/admin/products/${productId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -677,104 +677,63 @@
         displayCurrentImages(product.images || product.image || []);
     }
 
-    // Display current images in horizontal layout
-    // function displayCurrentImages(images) {
-    //     const container = document.getElementById('currentImagesHorizontal');
-    //     const countBadge = document.getElementById('imageCountBadge');
-        
-    //     let imagesArray = Array.isArray(images) ? images : [images].filter(Boolean);
-        
-    //     console.log('Displaying images:', imagesArray);
-        
-    //     if (imagesArray.length > 0) {
-    //         container.innerHTML = imagesArray.map((img, index) => {
-                
-    //             // Normalize path
-    //             let cleanPath = typeof img === "string" ? img.replace(/\\/g, "/") : img.url;
-                
-    //             // Remove duplicate uploads/
-    //             cleanPath = cleanPath.replace(/^uploads\//i, "");
-                
-    //             // Build final URL
-    //             const imageUrl = `/uploads/${cleanPath}`;
-
-    //             return `
-    //                 <div class="image-card-horizontal">
-    //                     <img src="${imageUrl}" 
-    //                         alt="Product image ${index + 1}" 
-    //                         onerror="handleImageError(this, ${index + 1})">
-    //                     <div class="image-card-body-horizontal">
-    //                         <small>Image ${index + 1}</small>
-    //                     </div>
-    //                 </div>
-    //             `;
-    //         }).join('');
-            
-    //         countBadge.textContent = `${imagesArray.length} image${imagesArray.length !== 1 ? 's' : ''}`;
-    //         countBadge.className = 'badge bg-success';
-    //     } else {
-    //         container.innerHTML = `
-    //             <div class="no-images-message w-100">
-    //                 <i class="fas fa-image"></i>
-    //                 <p class="mb-0">No images available for this product</p>
-    //                 <small class="text-muted">You can upload up to 5 images</small>
-    //             </div>
-    //         `;
-    //         countBadge.textContent = '0 images';
-    //         countBadge.className = 'badge bg-secondary';
-    //     }
-    // }
     
 function displayCurrentImages(images) {
     const container = document.getElementById('currentImagesHorizontal');
     const countBadge = document.getElementById('imageCountBadge');
-    
+
     let imagesArray = Array.isArray(images) ? images : [images].filter(Boolean);
-    
+
     console.log('Displaying images:', imagesArray);
-    
+
     if (imagesArray.length > 0) {
         container.innerHTML = imagesArray.map((img, index) => {
-            
-            let imageUrl;
-            let rawImage = img;
-            
-            // If img is an object with url property
+
+            let imageUrl = '';
+
+            // Case 1: Image object (future-proof)
             if (img && typeof img === 'object' && img.url) {
-                rawImage = img.url;
+                imageUrl = img.url;
             }
-            
-            if (typeof rawImage === 'string' && rawImage.trim() !== '') {
-                // Use SAME logic as admin-products.html
-                rawImage = rawImage.replace(/\\/g, '/');
-                rawImage = rawImage.replace(/^\/+/, '');
-                
-                // Remove 'uploads/' prefix if present
-                if (rawImage.startsWith('uploads/')) {
-                    rawImage = rawImage.replace(/^uploads\//, '');
+
+            // Case 2: String URL
+            else if (typeof img === 'string') {
+                img = img.replace(/\\/g, '/').trim();
+
+                // ✅ Cloudinary / external URL
+                if (img.startsWith('http')) {
+                    imageUrl = img;
                 }
-                
-                // Construct final URL
-                imageUrl = `/uploads/${rawImage}`;
-                console.log(`Image ${index} URL:`, imageUrl);
-            } else {
-                imageUrl = 'https://via.placeholder.com/60x60?text=No+Image';
+                // ✅ Old local uploads
+                else {
+                    img = img.replace(/^\/+/, '');
+                    img = img.replace(/^uploads\//, '');
+                    imageUrl = `/uploads/${img}`;
+                }
             }
-            
+
+            // Fallback
+            if (!imageUrl) {
+                imageUrl = 'https://via.placeholder.com/150?text=No+Image';
+            }
+
+            console.log(`Image ${index + 1} resolved URL:`, imageUrl);
+
             return `
                 <div class="image-card-horizontal">
-                    <img src="${imageUrl}" 
-                        alt="Product image ${index + 1}" 
-                        onerror="handleImageError(this, ${index + 1})">
+                    <img src="${imageUrl}"
+                         alt="Product image ${index + 1}"
+                         onerror="handleImageError(this, ${index + 1})">
                     <div class="image-card-body-horizontal">
                         <small>Image ${index + 1}</small>
                     </div>
                 </div>
             `;
         }).join('');
-        
+
         countBadge.textContent = `${imagesArray.length} image${imagesArray.length !== 1 ? 's' : ''}`;
         countBadge.className = 'badge bg-success';
+
     } else {
         container.innerHTML = `
             <div class="no-images-message w-100">
@@ -788,7 +747,8 @@ function displayCurrentImages(images) {
     }
 }
 
-    function handleImageError(img, index) {
+
+function handleImageError(img, index) {
         console.warn(`Image ${index} failed to load:`, img.src);
 
         // Provide fallback image
@@ -959,9 +919,9 @@ function displayCurrentImages(images) {
                 console.log(pair[0] + ': ' + (pair[1] instanceof File ? pair[1].name : pair[1]));
             }
 
-            console.log('Making PUT request to:', `/api/admin/products/updateProduct/${productId}`);
+            console.log('Making PUT request to:', `http://localhost:8070/api/admin/products/updateProduct/${productId}`);
             
-            const response = await fetch(`/api/admin/products/updateProduct/${productId}`, {
+            const response = await fetch(`http://localhost:8070/api/admin/products/updateProduct/${productId}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`
